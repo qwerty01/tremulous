@@ -424,7 +424,7 @@ ifeq ($(PLATFORM),darwin)
   #CXXFLAGS+=-stdlib=libc++
 
   # FIXME This is probably bad idea to comment this out 
-  #BASE_CFLAGS += -mmacosx-version-min=10.7 -DMAC_OS_X_VERSION_MIN_REQUIRED=1070
+  BASE_CFLAGS += -mmacosx-version-min=10.9 -DMAC_OS_X_VERSION_MIN_REQUIRED=1090
 
   GRANGER_LIBS = -framework Cocoa -framework Security
 
