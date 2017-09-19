@@ -380,12 +380,13 @@ CL_ShutdonwCGame
 void CL_ShutdownCGame( void ) {
 	Key_SetCatcher( Key_GetCatcher( ) & ~KEYCATCH_CGAME );
 	cls.cgameStarted = false;
-	if ( !cls.cgame ) {
+
+	if ( !cls.cgame )
 		return;
-	}
-	VM_Call( cls.cgame, CG_SHUTDOWN );
-	VM_Free( cls.cgame );
-	cls.cgame = NULL;
+
+    cls.cgame->Call( CG_SHUTDOWN );
+	delete cls.cgame;
+	cls.cgame = nullptr;
 }
 
 static int	FloatAsInt( float f ) {
@@ -404,6 +405,7 @@ CL_CgameSystemCalls
 The cgame module is making a system call
 ====================
 */
+#define	VMA(x) cls.cgame->ArgPtr(args[x])
 intptr_t CL_CgameSystemCalls( intptr_t *args )
 {
 	if( cls.cgInterface == 2 && args[0] >= CG_R_SETCLIPREGION && args[0] < CG_MEMSET )
@@ -772,12 +774,12 @@ CL_InitCGame
 Should only be called by CL_StartHunkUsers
 ====================
 */
-void CL_InitCGame( void ) {
-	const char			*info;
-	const char			*mapname;
-	int					t1, t2;
-	char				backup[ MAX_STRING_CHARS ];
-	vmInterpret_t		interpret;
+void CL_InitCGame( void )
+{
+	const char *info;
+	const char *mapname;
+	int	t1, t2;
+	char backup[ MAX_STRING_CHARS ];
 
 	t1 = Sys_Milliseconds();
 
@@ -787,7 +789,7 @@ void CL_InitCGame( void ) {
 	Com_sprintf( cl.mapname, sizeof( cl.mapname ), "maps/%s.bsp", mapname );
 
 	// load the dll or bytecode
-	interpret = (vmInterpret_t)Cvar_VariableValue("vm_cgame");
+    VMType interpret = static_cast<VMType>(Cvar_VariableValue("vm_cgame"));
 	if(cl_connectedToPureServer)
 	{
 		// if sv_pure is set we only allow qvms to be loaded
@@ -795,26 +797,29 @@ void CL_InitCGame( void ) {
 			interpret = VMI_COMPILED;
 	}
 
-	cls.cgame = VM_Create( "cgame", CL_CgameSystemCalls, interpret );
-	if ( !cls.cgame ) {
-		Com_Error( ERR_DROP, "VM_Create on cgame failed" );
-	}
+    cls.cgame = VMFactory::createVM(interpret, "cgame", CL_CgameSystemCalls);
 	clc.state = CA_LOADING;
 
 	Cvar_VariableStringBuffer( "cl_voipSendTarget", backup, sizeof( backup ) );
 	Cvar_Set( "cl_voipSendTarget", "" );
 	cls.cgInterface = 0;
 	probingCG = true;
-	if ( setjmp( cgProbingJB ) == 0 ) {
-		VM_Call( cls.cgame, CG_VOIP_STRING );
-	} else {
-		VM_ClearCallLevel( cls.cgame );
+
+	if ( setjmp( cgProbingJB ) == 0 )
+    {
+		cls.cgame->Call( CG_VOIP_STRING );
+	}
+    else
+    {
+		cls.cgame->ClearCallLevel();
 		cls.cgInterface = 2;
 	}
 	probingCG = false;
+
 	Cvar_Set( "cl_voipSendTarget", backup );
 
-	if ( ( clc.netchan.alternateProtocol == 2 ) != ( cls.cgInterface == 2 ) ) {
+	if ( ( clc.netchan.alternateProtocol == 2 ) != ( cls.cgInterface == 2 ) )
+    {
 		Com_Error( ERR_DROP, "%s protocol %i, but a cgame module using the %s interface was found",
 		           ( clc.demoplaying ? "Demo was recorded using" : "Server uses" ),
 		           ( clc.netchan.alternateProtocol == 0 ? PROTOCOL_VERSION : clc.netchan.alternateProtocol == 1 ? 70 : 69 ),
@@ -824,7 +829,7 @@ void CL_InitCGame( void ) {
 	// init for this gamestate
 	// use the lastExecutedServerCommand instead of the serverCommandSequence
 	// otherwise server commands sent just before a gamestate are dropped
-	VM_Call( cls.cgame, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum );
+    cls.cgame->Call( CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum );
 
 	// reset any CVAR_CHEAT cvars registered by cgame
 	if ( !clc.demoplaying && !cl_connectedToCheatServer )
@@ -843,14 +848,15 @@ void CL_InitCGame( void ) {
 	re.EndRegistration();
 
 	// make sure everything is paged in
-	if (!Sys_LowPhysicalMemory()) {
-		Com_TouchMemory();
+    if (!Sys_LowPhysicalMemory())
+    {
+        Com_TouchMemory();
+    }
 
-	CL_ProtocolSpecificCommandsInit();
-	}
+    CL_ProtocolSpecificCommandsInit();
 
 	// clear anything that got printed
-	Con_ClearNotify ();
+	Con_ClearNotify();
 }
 
 
@@ -866,7 +872,7 @@ bool CL_GameCommand( void )
 	if ( !cls.cgame )
 		return false;
 
-	return (bool)VM_Call( cls.cgame, CG_CONSOLE_COMMAND );
+	return (bool)cls.cgame->Call(CG_CONSOLE_COMMAND);
 }
 
 /*
@@ -879,7 +885,7 @@ void CL_GameConsoleText( void )
 	if ( !cls.cgame )
 		return;
 
-	VM_Call( cls.cgame, CG_CONSOLE_TEXT );
+	cls.cgame->Call( CG_CONSOLE_TEXT );
 }
 
 /*
@@ -889,8 +895,7 @@ CL_CGameRendering
 */
 void CL_CGameRendering( stereoFrame_t stereo )
 {
-	VM_Call( cls.cgame, CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying );
-	VM_Debug( 0 );
+	cls.cgame->Call( CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying );
 }
 
 

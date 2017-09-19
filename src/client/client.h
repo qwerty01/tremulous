@@ -424,10 +424,10 @@ struct clientStatic_t {
     qhandle_t whiteShader;
     qhandle_t consoleShader;
 
-    vm_t *cgame;
+    VM* cgame;
     int cgInterface;
 
-    vm_t *ui;
+    VM* ui;
     int uiInterface;
 
     struct {

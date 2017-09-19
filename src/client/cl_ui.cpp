@@ -758,6 +758,8 @@ The ui module is making a system call
 */
 intptr_t CL_UISystemCalls(intptr_t *args)
 {
+#define VMA(x) cls.ui->ArgPtr(args[x])
+
     if (cls.uiInterface == 2)
     {
         if (args[0] >= UI_R_SETCLIPREGION && args[0] < UI_MEMSET)
@@ -1182,13 +1184,13 @@ void CL_ShutdownUI(void)
 {
     Key_SetCatcher(Key_GetCatcher() & ~KEYCATCH_UI);
     cls.uiStarted = false;
+
     if (!cls.ui)
-    {
         return;
-    }
-    VM_Call(cls.ui, UI_SHUTDOWN);
-    VM_Free(cls.ui);
-    cls.ui = NULL;
+
+    cls.ui->Call(UI_SHUTDOWN);
+    delete cls.ui;
+    cls.ui = nullptr;
 }
 
 /*
@@ -1199,14 +1201,14 @@ CL_InitUI
 void CL_InitUI(void)
 {
     // load the dll or bytecode
-    vmInterpret_t interpret = (vmInterpret_t)Cvar_VariableValue("vm_ui");
+    VMType interpret = static_cast<VMType>(Cvar_VariableValue("vm_ui"));
     if (cl_connectedToPureServer)
     {
         // if sv_pure is set we only allow qvms to be loaded
         if (interpret != VMI_COMPILED && interpret != VMI_BYTECODE) interpret = VMI_COMPILED;
     }
 
-    cls.ui = VM_Create("ui", CL_UISystemCalls, interpret);
+    cls.ui = VMFactory::createVM(interpret, "ui", CL_UISystemCalls);
     if (!cls.ui)
     {
         Com_Printf("Failed to find a valid UI vm. The following paths were searched:\n");
@@ -1215,12 +1217,12 @@ void CL_InitUI(void)
     }
 
     // sanity check
-    int v = VM_Call(cls.ui, UI_GETAPIVERSION);
+    int v = cls.ui->Call(UI_GETAPIVERSION);
     if (v != UI_API_VERSION)
     {
         // Free cls.ui now, so UI_SHUTDOWN doesn't get called later.
-        VM_Free(cls.ui);
-        cls.ui = NULL;
+        delete cls.ui;
+        cls.ui = nullptr;
 
         cls.uiStarted = false;
         Com_Error(ERR_DROP, "User Interface is version %d, expected %d", v, UI_API_VERSION);
@@ -1231,7 +1233,7 @@ void CL_InitUI(void)
     probingUI = true;
     if (setjmp(uiProbingJB) == 0)
     {
-        if (VM_Call(cls.ui, UI_CONSOLE_COMMAND, 0) < 0)
+        if (cls.ui->Call(UI_CONSOLE_COMMAND, 0) < 0)
         {
             cls.uiInterface = 2;
         }
@@ -1239,7 +1241,7 @@ void CL_InitUI(void)
     else
     {
         cls.uiInterface = 2;
-        VM_ClearCallLevel(cls.ui);
+        cls.ui->ClearCallLevel();
     }
     probingUI = false;
 
@@ -1253,7 +1255,7 @@ void CL_InitUI(void)
     }
 
     // init for this gamestate
-    VM_Call(cls.ui, UI_INIT, (clc.state >= CA_AUTHORIZING && clc.state < CA_ACTIVE));
+    cls.ui->Call(UI_INIT, (clc.state >= CA_AUTHORIZING && clc.state < CA_ACTIVE));
 
     // show where the ui folder was loaded from
     Cmd_ExecuteString("which ui/\n");
@@ -1272,5 +1274,5 @@ bool UI_GameCommand(void)
 {
     if (!cls.ui) return false;
 
-    return (bool)VM_Call(cls.ui, UI_CONSOLE_COMMAND - (cls.uiInterface == 2 ? 2 : 0), cls.realtime);
+    return (bool)cls.ui->Call(UI_CONSOLE_COMMAND - (cls.uiInterface == 2 ? 2 : 0), cls.realtime);
 }

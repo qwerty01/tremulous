@@ -39,7 +39,6 @@ add_library (
     unzip.h
     vm.c
     vm_interpreted.c
-    vm_local.h
     vm_none.c
     vm_powerpc.c
     vm_powerpc_asm.c

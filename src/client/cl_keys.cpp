@@ -1304,23 +1304,23 @@ static void CL_KeyDownEvent( int key, unsigned time )
 		// escape always gets out of CGAME stuff
 		if (Key_GetCatcher( ) & KEYCATCH_CGAME) {
 			Key_SetCatcher( Key_GetCatcher( ) & ~KEYCATCH_CGAME );
-			VM_Call (cls.cgame, CG_EVENT_HANDLING, CGAME_EVENT_NONE);
+			cls.cgame->Call(CG_EVENT_HANDLING, CGAME_EVENT_NONE);
 			return;
 		}
 
 		if ( !( Key_GetCatcher( ) & KEYCATCH_UI ) ) {
 			if ( clc.state == CA_ACTIVE && !clc.demoplaying ) {
-				VM_Call( cls.ui, UI_SET_ACTIVE_MENU - ( cls.uiInterface == 2 ? 2 : 0 ), UIMENU_INGAME );
+			    cls.ui->Call(UI_SET_ACTIVE_MENU - ( cls.uiInterface == 2 ? 2 : 0 ), UIMENU_INGAME );
 			}
 			else if ( clc.state != CA_DISCONNECTED ) {
 				CL_Disconnect_f();
 				S_StopAllSounds();
-				VM_Call( cls.ui, UI_SET_ACTIVE_MENU - ( cls.uiInterface == 2 ? 2 : 0 ), UIMENU_MAIN );
+				cls.ui->Call(UI_SET_ACTIVE_MENU - ( cls.uiInterface == 2 ? 2 : 0 ), UIMENU_MAIN );
 			}
 			return;
 		}
 
-		VM_Call( cls.ui, UI_KEY_EVENT, key, true );
+		cls.ui->Call( UI_KEY_EVENT, key, true );
 		return;
 	}
 
@@ -1328,20 +1328,26 @@ static void CL_KeyDownEvent( int key, unsigned time )
 	CL_ParseBinding( key, true, time );
 
 	// distribute the key down event to the apropriate handler
-	if ( Key_GetCatcher( ) & KEYCATCH_CONSOLE ) {
+	if ( Key_GetCatcher() & KEYCATCH_CONSOLE )
+    {
 		Console_Key( key );
-	} else if ( Key_GetCatcher( ) & KEYCATCH_UI ) {
-		if ( cls.ui ) {
-			VM_Call( cls.ui, UI_KEY_EVENT, key, true );
-		}
-	} else if ( Key_GetCatcher( ) & KEYCATCH_CGAME ) {
-		if ( cls.cgame ) {
-			VM_Call( cls.cgame, CG_KEY_EVENT, key, true );
-		}
-	} else if ( clc.netchan.alternateProtocol == 2 &&
-			        ( Key_GetCatcher( ) & KEYCATCH_MESSAGE ) ) {
-			Message_Key( key );
-	} else if ( clc.state == CA_DISCONNECTED ) {
+	}
+    else if ( Key_GetCatcher() & KEYCATCH_UI )
+    {
+		if ( cls.ui )
+			cls.ui->Call( UI_KEY_EVENT, key, true );
+	}
+    else if ( Key_GetCatcher() & KEYCATCH_CGAME )
+    {
+		if ( cls.cgame )
+			cls.cgame->Call( CG_KEY_EVENT, key, true );
+	}
+    else if ( clc.netchan.alternateProtocol == 2 && (Key_GetCatcher() & KEYCATCH_MESSAGE) )
+    {
+        Message_Key( key );
+	}
+    else if ( clc.state == CA_DISCONNECTED )
+    {
 		Console_Key( key );
 	}
 }
@@ -1376,9 +1382,9 @@ static void CL_KeyUpEvent( int key, unsigned time )
 	CL_ParseBinding( key, false, time );
 
 	if ( Key_GetCatcher( ) & KEYCATCH_UI && cls.ui ) {
-		VM_Call( cls.ui, UI_KEY_EVENT, key, false );
+		cls.ui->Call( UI_KEY_EVENT, key, false );
 	} else if ( Key_GetCatcher( ) & KEYCATCH_CGAME && cls.cgame ) {
-		VM_Call( cls.cgame, CG_KEY_EVENT, key, false );
+		cls.cgame->Call( CG_KEY_EVENT, key, false );
 	}
 }
 
@@ -1416,7 +1422,7 @@ void CL_CharEvent( int key )
 		Field_CharEvent( &g_consoleField, key );
 
 	else if ( Key_GetCatcher( ) & KEYCATCH_UI )
-		VM_Call( cls.ui, UI_KEY_EVENT, key | K_CHAR_FLAG, true );
+		cls.ui->Call( UI_KEY_EVENT, key | K_CHAR_FLAG, true );
 
 	else if ( clc.netchan.alternateProtocol == 2 &&
 		        ( Key_GetCatcher( ) & KEYCATCH_MESSAGE ) )
