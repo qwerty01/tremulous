@@ -85,6 +85,7 @@ Dlls will call this directly
 
 ============
 */
+__attribute__((no_sanitize_address))
 static intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
 #if !id386 || defined __clang__
@@ -290,6 +291,7 @@ NativeVM::NativeVM(const char *module, SystemCall systemCalls) : VM()
     vm.systemCall = systemCalls;
 }
 
+__attribute__((no_sanitize_address))
 intptr_t NativeVM::Call(int callnum, ...)
 {
     vm_t *oldVM = currentVM;
@@ -359,6 +361,7 @@ BytecodeVM::BytecodeVM(const char *module, SystemCall systemCalls) : VM()
     vm.stackBottom = vm.programStack - PROGRAM_STACK_SIZE;
 }
 
+__attribute__((no_sanitize_address))
 intptr_t BytecodeVM::Call(int callnum, ...)
 {
     vm_t *oldVM = currentVM;
@@ -432,6 +435,7 @@ CompiledVM::CompiledVM(const char *module, SystemCall systemCalls) : VM()
     vm.stackBottom = vm.programStack - PROGRAM_STACK_SIZE;
 }
 
+__attribute__((no_sanitize_address))
 intptr_t CompiledVM::Call(int callnum, ...)
 {
     vm_t *oldVM = currentVM;
