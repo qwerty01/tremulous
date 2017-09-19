@@ -196,7 +196,7 @@ extern vm_t *lastVM;
 class VM {
 public:
     VM() { vm.clear(); }
-    ~VM() { vm.free(); }
+    virtual ~VM() { vm.free(); }
     void ClearCallLevel() { vm.callLevel = 0; }
     virtual intptr_t Call(int callnum, ...) = 0;
     virtual void *ArgPtr(intptr_t intValue) = 0;
@@ -207,7 +207,7 @@ public:
 class NativeVM : public VM {
 public:
     NativeVM(const char *module, SystemCall systemCalls);
-    ~NativeVM();
+    //virtual ~NativeVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
@@ -215,7 +215,7 @@ public:
 class BytecodeVM : public VM {
 public:
     BytecodeVM(const char *module, SystemCall systemCalls);
-    ~BytecodeVM();
+    //virtual ~BytecodeVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
@@ -224,7 +224,7 @@ public:
 class CompiledVM : public VM {
 public:
     CompiledVM(const char *module, SystemCall systemCalls);
-    ~CompiledVM();
+    //virtual ~CompiledVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
