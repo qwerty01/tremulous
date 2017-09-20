@@ -338,7 +338,6 @@ BytecodeVM::BytecodeVM(const char *module, SystemCall systemCalls) : VM()
         char filename[MAX_OSPATH];
 
         retval = FS_FindVM(&startSearch, filename, sizeof(filename), module, false);
-
         if (retval != VMI_COMPILED) continue;
 
         vm.searchPath = startSearch;
@@ -369,7 +368,6 @@ intptr_t BytecodeVM::Call(int callnum, ...)
     lastVM = &vm;
 
     vm.callLevel++;
-    intptr_t r = VM_CallInterpreted(&vm, (int *)&callnum);
 
     struct {
         int callnum;
@@ -383,7 +381,7 @@ intptr_t BytecodeVM::Call(int callnum, ...)
     for (unsigned i = 0; i < ARRAY_LEN(a.args); i++) a.args[i] = va_arg(ap, int);
     va_end(ap);
 
-    r = VM_CallInterpreted(&vm, &a.callnum);
+    intptr_t r = VM_CallInterpreted(&vm, &a.callnum);
     vm.callLevel--;
 
     if (oldVM) currentVM = oldVM;
@@ -418,7 +416,6 @@ CompiledVM::CompiledVM(const char *module, SystemCall systemCalls) : VM()
         header = VM_LoadQVM(&vm, true, false);
         if (header) break;
 
-        // VM_Free overwrites the name on failed load
         Q_strncpyz(vm.name, module, sizeof(vm.name));
     } while (retval >= 0);
 

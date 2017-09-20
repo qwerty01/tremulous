@@ -207,7 +207,6 @@ public:
 class NativeVM : public VM {
 public:
     NativeVM(const char *module, SystemCall systemCalls);
-    //virtual ~NativeVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
@@ -215,7 +214,6 @@ public:
 class BytecodeVM : public VM {
 public:
     BytecodeVM(const char *module, SystemCall systemCalls);
-    //virtual ~BytecodeVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
@@ -224,7 +222,6 @@ public:
 class CompiledVM : public VM {
 public:
     CompiledVM(const char *module, SystemCall systemCalls);
-    //virtual ~CompiledVM();
     intptr_t Call(int callnum, ...) override;
     void *ArgPtr(intptr_t intvalue) override;
 };
@@ -264,7 +261,6 @@ void VM_Init(void);
 // module should be bare: "cgame", not "cgame.dll" or "vm/cgame.qvm"
 void VM_Debug(int level);
 
-#define VMA(x) VM_ArgPtr(args[x])
 static ID_INLINE float _vmf(intptr_t x)
 {
     floatint_t fi;
