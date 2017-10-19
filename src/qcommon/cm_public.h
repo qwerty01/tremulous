@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _CM_PUBLIC_H_
 #define _CM_PUBLIC_H_
 
+#include "q_shared.h"
 #include "qfiles.h"
 
 void		CM_LoadMap( const char *name, bool clientload, int *checksum);
