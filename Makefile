@@ -116,8 +116,6 @@ ifndef BASEGAME
 BASEGAME=gpp
 endif
 
-BASEGAME_CFLAGS=-I../../${MOUNT_DIR}
-
 ifndef COPYDIR
 COPYDIR="/usr/local/games/tremulous"
 endif
@@ -129,6 +127,8 @@ endif
 ifndef MOUNT_DIR
 MOUNT_DIR=src
 endif
+
+BASEGAME_CFLAGS=-I../../${MOUNT_DIR}
 
 ifndef EXTERNAL_DIR
 EXTERNAL_DIR=external
@@ -1044,13 +1044,20 @@ $(Q)$(call LOG_CC,qcommon,${SHLIB_CC_FLAGS},$@,$<)
 $(Q)$(DO_QVM_DEP)
 endef
 
-GAME_CC_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${OPTIMIZEVM}
-define DO_GAME_CC
-$(echo_cmd) "GAME_CC $<"
-$(Q)$(call EXEC_CC,-DGAME ${GAME_CC_FLAGS},'$@','$<')
-$(Q)$(call LOG_CC,game,-DGAME ${GAME_CC_FLAGS},$@,$<)
-$(Q)$(DO_QVM_DEP)
-endef
+#GAME_CC_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${OPTIMIZEVM}
+#define DO_GAME_CC
+#$(echo_cmd) "GAME_CC $<"
+#$(Q)$(call EXEC_CC,-DGAME ${GAME_CC_FLAGS},'$@','$<')
+#$(Q)$(call LOG_CC,game,-DGAME ${GAME_CC_FLAGS},$@,$<)
+#$(Q)$(DO_QVM_DEP)
+#endef
+#
+#define DO_GAME_CXX
+#$(echo_cmd) "GAME_CC $<"
+#$(Q)$(call EXEC_CC,-DGAME ${GAME_CC_FLAGS},'$@','$<')
+#$(Q)$(call LOG_CC,game,-DGAME ${GAME_CC_FLAGS},$@,$<)
+#$(Q)$(DO_QVM_DEP)
+#endef
 
 define DO_CGAME_CC
 $(echo_cmd) "CGAME_CC $<"
@@ -2533,16 +2540,30 @@ GOBJ_ = \
   $(B)/$(BASEGAME)/qcommon/q_shared.o
 
 GOBJ = $(GOBJ_) $(B)/$(BASEGAME)/game/g_syscalls.o
-GVMOBJ = $(GOBJ_:%.o=%.asm)
 
-$(B)/$(BASEGAME)/game$(SHLIBNAME): $(GOBJ)
-	$(echo_cmd) "LD $@"
-	$(Q)$(CC) $(SHLIBLDFLAGS) $(LDFLAGS) -o $@ $(GOBJ)
+GAME_CC_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${OPTIMIZEVM}
+define DO_GAME_CC
+$(echo_cmd) "GAME_CC $<"
+$(Q)$(call EXEC_CC,-DGAME ${GAME_CC_FLAGS},'$@','$<')
+$(Q)$(call LOG_CC,game,-DGAME ${GAME_CC_FLAGS},$@,$<)
+endef
 
-$(B)/$(BASEGAME)/vm/game.qvm: $(GVMOBJ) $(GDIR)/g_syscalls.asm $(Q3ASM)
-	$(echo_cmd) "Q3ASM $@"
-	$(Q)$(Q3ASM) -o $@ $(GVMOBJ) $(GDIR)/g_syscalls.asm
+GAME_CC_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CXXFLAGS} ${OPTIMIZEVM}
+define DO_GAME_CXX
+$(echo_cmd) "GAME_CXX $<"
+$(Q)$(call EXEC_CC,-DGAME ${GAME_CXX_FLAGS},'$@','$<')
+$(Q)$(call LOG_CC,game,-DGAME ${GAME_CXX_FLAGS},$@,$<)
+endef
 
+$(B)/$(BASEGAME)/game/%.o: $(GDIR)/%.c
+	$(DO_GAME_CC)
+
+$(B)/$(BASEGAME)/game/%.o: $(GDIR)/%.cpp
+	$(DO_GAME_CXX)
+
+#$(B)/$(BASEGAME)/game$(SHLIBNAME): $(GOBJ)
+#	$(echo_cmd) "LD $@"
+#	$(Q)$(CC) $(SHLIBLDFLAGS) $(LDFLAGS) -o $@ $(GOBJ)
 
 
 #############################################################################
