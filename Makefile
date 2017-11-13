@@ -1163,12 +1163,6 @@ makedirs:
 	@if [ ! -d $(B)/$(BASEGAME)/game ];then $(MKDIR) $(B)/$(BASEGAME)/game;fi
 	@if [ ! -d $(B)/$(BASEGAME)/ui ];then $(MKDIR) $(B)/$(BASEGAME)/ui;fi
 	@if [ ! -d $(B)/$(BASEGAME)/qcommon ];then $(MKDIR) $(B)/$(BASEGAME)/qcommon;fi
-	@if [ ! -d $(B)/$(BASEGAME)/11 ];then $(MKDIR) $(B)/$(BASEGAME)/11;fi
-	@if [ ! -d $(B)/$(BASEGAME)/11/cgame ];then $(MKDIR) $(B)/$(BASEGAME)/11/cgame;fi
-	@if [ ! -d $(B)/$(BASEGAME)/11/ui ];then $(MKDIR) $(B)/$(BASEGAME)/11/ui;fi
-	@if [ ! -d $(B)/$(BASEGAME)/vm ];then $(MKDIR) $(B)/$(BASEGAME)/vm;fi
-	@if [ ! -d $(B)/$(BASEGAME)_11 ];then $(MKDIR) $(B)/$(BASEGAME)_11;fi
-	@if [ ! -d $(B)/$(BASEGAME)_11/vm ];then $(MKDIR) $(B)/$(BASEGAME)_11/vm;fi
 	@if [ ! -d $(B)/granger.dir ];then $(MKDIR) $(B)/granger.dir;fi
 	@if [ ! -d $(B)/granger.dir/src ];then $(MKDIR) $(B)/granger.dir/src;fi
 	@if [ ! -d $(B)/granger.dir/src/lua ];then $(MKDIR) $(B)/granger.dir/src/lua;fi
@@ -2160,7 +2154,7 @@ $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.cpp
 #############################################################################
 
 GAME_CC_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${OPTIMIZEVM}
-GAME_CXX_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${OPTIMIZEVM}
+GAME_CXX_FLAGS=${BASEGAME_CFLAGS} ${SHLIBCFLAGS} ${CFLAGS} ${CXXFLAGS} ${OPTIMIZEVM}
 
 CGOBJ = \
   $(B)/$(BASEGAME)/cgame/cg_main.o \
@@ -2206,8 +2200,8 @@ endef
 
 define DO_CGAME_CXX
 $(echo_cmd) "CGAME_CXX $<"
-$(Q)$(call EXEC_CC,-DCGAME ${GAME_CXX_FLAGS},'$@','$<')
-$(Q)$(call LOG_CC,cgame,-DCGAME ${GAME_CXX_FLAGS},$@,$<)
+$(Q)$(call EXEC_CXX,-DCGAME ${GAME_CXX_FLAGS},'$@','$<')
+$(Q)$(call LOG_CXX,cgame,-DCGAME ${GAME_CXX_FLAGS},$@,$<)
 endef
 
 $(B)/$(BASEGAME)/cgame/bg_%.o: $(GDIR)/bg_%.cpp
@@ -2233,6 +2227,7 @@ $(B)/$(BASEGAME)/cgame$(SHLIBNAME): $(CGOBJ)
 #############################################################################
 
 GOBJ = \
+  $(B)/$(BASEGAME)/game/g_api.o \
   $(B)/$(BASEGAME)/game/g_main.o \
   $(B)/$(BASEGAME)/game/bg_misc.o \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
@@ -2275,8 +2270,8 @@ endef
 
 define DO_GAME_CXX
 $(echo_cmd) "GAME_CXX $<"
-$(Q)$(call EXEC_CC,-DGAME ${GAME_CXX_FLAGS},'$@','$<')
-$(Q)$(call LOG_CC,game,-DGAME ${GAME_CXX_FLAGS},$@,$<)
+$(Q)$(call EXEC_CXX,-DGAME ${GAME_CXX_FLAGS},'$@','$<')
+$(Q)$(call LOG_CXX,game,-DGAME ${GAME_CXX_FLAGS},$@,$<)
 endef
 
 $(B)/$(BASEGAME)/game/%.o: $(GDIR)/%.c

@@ -16,6 +16,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+namespace sol { class state; };
+extern sol::state *lua;
 #endif
 
 #define MAX_JOYSTICK_AXIS 16
@@ -102,6 +104,8 @@ void IN_Init( void *windowData );
 void IN_Frame( void );
 void IN_Shutdown( void );
 void IN_Restart( void );
+
+void Lua_Init(void);
 
 #ifdef __cplusplus
 }
