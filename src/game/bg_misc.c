@@ -1224,7 +1224,7 @@ static const classAttributes_t bg_classList[ ] =
 
 size_t bg_numClasses = ARRAY_LEN( bg_classList );
 
-static const classAttributes_t nullClass = { 0 };
+static const classAttributes_t nullClass = {};
 
 /*
 ==============
@@ -1249,10 +1249,9 @@ const classAttributes_t *BG_ClassByName( const char *name )
 BG_Class
 ==============
 */
-const classAttributes_t *BG_Class( class_t class )
+const classAttributes_t *BG_Class( class_t klass )
 {
-  return ( class >= PCL_NONE && class < PCL_NUM_CLASSES ) ?
-    &bg_classList[ class ] : &nullClass;
+  return ( klass >= PCL_NONE && klass < PCL_NUM_CLASSES ) ?  &bg_classList[ klass ] : &nullClass;
 }
 
 /*
@@ -1260,12 +1259,11 @@ const classAttributes_t *BG_Class( class_t class )
 BG_ClassAllowedInStage
 ==============
 */
-qboolean BG_ClassAllowedInStage( class_t class,
-                                 stage_t stage )
+qboolean BG_ClassAllowedInStage( class_t klass, stage_t stage )
 {
-  int stages = BG_Class( class )->stages;
+  int stages = BG_Class( klass )->stages;
 
-  return stages & ( 1 << stage );
+  return (qboolean)(stages & ( 1 << stage ));
 }
 
 static classConfig_t bg_classConfigList[ PCL_NUM_CLASSES ];
@@ -1275,9 +1273,9 @@ static classConfig_t bg_classConfigList[ PCL_NUM_CLASSES ];
 BG_ClassConfig
 ==============
 */
-classConfig_t *BG_ClassConfig( class_t class )
+classConfig_t *BG_ClassConfig( class_t klass )
 {
-  return &bg_classConfigList[ class ];
+  return &bg_classConfigList[ klass ];
 }
 
 /*
@@ -1285,11 +1283,11 @@ classConfig_t *BG_ClassConfig( class_t class )
 BG_ClassBoundingBox
 ==============
 */
-void BG_ClassBoundingBox( class_t class,
+void BG_ClassBoundingBox( class_t klass,
                           vec3_t mins, vec3_t maxs,
                           vec3_t cmaxs, vec3_t dmins, vec3_t dmaxs )
 {
-  classConfig_t *classConfig = BG_ClassConfig( class );
+  classConfig_t *classConfig = BG_ClassConfig( klass );
 
   if( mins != NULL )
     VectorCopy( classConfig->mins, mins );
@@ -1312,11 +1310,11 @@ void BG_ClassBoundingBox( class_t class,
 BG_ClassHasAbility
 ==============
 */
-qboolean BG_ClassHasAbility( class_t class, int ability )
+qboolean BG_ClassHasAbility( class_t klass, int ability )
 {
-  int abilities = BG_Class( class )->abilities;
+  int abilities = BG_Class( klass )->abilities;
 
-  return abilities & ability;
+  return (qboolean)(abilities & ability);
 }
 
 /*
@@ -1346,7 +1344,7 @@ int BG_ClassCanEvolveFromTo( class_t fclass,
       int thruClass, evolveCost;
       
       thruClass = bg_classList[ i ].children[ j ];
-      if( thruClass == PCL_NONE || !BG_ClassAllowedInStage( thruClass, stage ) ||
+      if( thruClass == PCL_NONE || !BG_ClassAllowedInStage( (class_t)thruClass, (stage_t)stage ) ||
           !BG_ClassIsAllowed( thruClass ) )
         continue;
 
@@ -1354,7 +1352,7 @@ int BG_ClassCanEvolveFromTo( class_t fclass,
       if( thruClass == tclass )
         value = cost + evolveCost;
       else
-        value = BG_ClassCanEvolveFromTo( thruClass, tclass, credits, stage,
+        value = BG_ClassCanEvolveFromTo( (class_t)thruClass, tclass, credits, (stage_t)stage,
                                          cost + evolveCost );
 
       if( value >= 0 && value < best )
@@ -1373,19 +1371,19 @@ int BG_ClassCanEvolveFromTo( class_t fclass,
 BG_AlienCanEvolve
 ==============
 */
-qboolean BG_AlienCanEvolve( class_t class, int credits, int stage )
+qboolean BG_AlienCanEvolve( class_t klass, int credits, int stage )
 {
   int i, j, tclass;
 
   for( i = 0; i < bg_numClasses; i++ )
   {
-    if( bg_classList[ i ].number != class )
+    if( bg_classList[ i ].number != klass )
       continue;
 
     for( j = 0; j < 3; j++ )
     {
       tclass = bg_classList[ i ].children[ j ];
-      if( tclass != PCL_NONE && BG_ClassAllowedInStage( tclass, stage ) &&
+      if( tclass != PCL_NONE && BG_ClassAllowedInStage( (class_t)tclass, (stage_t)stage ) &&
           BG_ClassIsAllowed( tclass ) &&
           credits >= BG_Class( tclass )->cost * ALIEN_CREDITS_PER_KILL )
         return qtrue;
@@ -1402,7 +1400,7 @@ qboolean BG_AlienCanEvolve( class_t class, int credits, int stage )
 ======================
 BG_ParseClassFile
 
-Parses a configuration file describing a class
+Parses a configuration file describing a klass
 ======================
 */
 static qboolean BG_ParseClassFile( const char *filename, classConfig_t *cc )
@@ -1442,7 +1440,7 @@ static qboolean BG_ParseClassFile( const char *filename, classConfig_t *cc )
   if( len == 0 || len >= sizeof( text ) - 1 )
   {
     trap_FS_FCloseFile( f );
-    Com_Printf( S_COLOR_RED "ERROR: Class file %s is %s\n", filename,
+    Com_Printf( S_COLOR_RED "ERROR: klass file %s is %s\n", filename,
       len == 0 ? "empty" : "too long" );
     return qfalse;
   }
@@ -2946,7 +2944,7 @@ void BG_PlayerStateToEntityState( playerState_t *ps, entityState_t *s, qboolean 
     }
   }
 
-  // use misc field to store team/class info:
+  // use misc field to store team/klass info:
   s->misc = ps->stats[ STAT_TEAM ] | ( ps->stats[ STAT_CLASS ] << 8 );
 
   // have to get the surfNormal through somehow...
@@ -3055,7 +3053,7 @@ void BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s
     }
   }
 
-  // use misc field to store team/class info:
+  // use misc field to store team/klass info:
   s->misc = ps->stats[ STAT_TEAM ] | ( ps->stats[ STAT_CLASS ] << 8 );
 
   // have to get the surfNormal through somehow...
@@ -3654,7 +3652,7 @@ void BG_ParseCSVClassList( const char *string, class_t *classes, int classesSize
     classes[ i ] = BG_ClassByName( q )->number;
 
     if( classes[ i ] == PCL_NONE )
-      Com_Printf( S_COLOR_YELLOW "WARNING: unknown class %s\n", q );
+      Com_Printf( S_COLOR_YELLOW "WARNING: unknown klass %s\n", q );
     else
       i++;
 
@@ -3802,14 +3800,14 @@ qboolean BG_UpgradeIsAllowed( upgrade_t upgrade )
 BG_ClassIsAllowed
 ============
 */
-qboolean BG_ClassIsAllowed( class_t class )
+qboolean BG_ClassIsAllowed( class_t klass )
 {
   int i;
 
   for( i = 0; i < PCL_NUM_CLASSES &&
       bg_disabledGameElements.classes[ i ] != PCL_NONE; i++ )
   {
-    if( bg_disabledGameElements.classes[ i ] == class )
+    if( bg_disabledGameElements.classes[ i ] == klass )
       return qfalse;
   }
 
