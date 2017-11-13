@@ -228,7 +228,9 @@ typedef enum {
 
     G_ADDCOMMAND,
     G_REMOVECOMMAND,
-    G_FS_GETFILTEREDFILES
+    G_FS_GETFILTEREDFILES,
+
+    GAME_COPY_LUA_STATE
 } gameImport_t;
 
 //

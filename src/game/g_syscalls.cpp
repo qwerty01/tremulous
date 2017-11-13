@@ -21,6 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+#include "lua.hpp"
+#include "sol.hpp"
+
+#include "g_api.h"
 #include "g_local.h"
 
 // this file is only included when building a dll
@@ -193,12 +197,12 @@ int trap_PointContents( const vec3_t point, int passEntityNum )
 
 qboolean trap_InPVS( const vec3_t p1, const vec3_t p2 )
 {
-  return syscall( G_IN_PVS, p1, p2 );
+  return (qboolean)syscall( G_IN_PVS, p1, p2 );
 }
 
 qboolean trap_InPVSIgnorePortals( const vec3_t p1, const vec3_t p2 )
 {
-  return syscall( G_IN_PVS_IGNORE_PORTALS, p1, p2 );
+  return (qboolean)syscall( G_IN_PVS_IGNORE_PORTALS, p1, p2 );
 }
 
 void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open )
@@ -208,7 +212,7 @@ void trap_AdjustAreaPortalState( gentity_t *ent, qboolean open )
 
 qboolean trap_AreasConnected( int area1, int area2 )
 {
-  return syscall( G_AREAS_CONNECTED, area1, area2 );
+  return (qboolean)syscall( G_AREAS_CONNECTED, area1, area2 );
 }
 
 void trap_LinkEntity( gentity_t *ent )
@@ -229,12 +233,12 @@ int trap_EntitiesInBox( const vec3_t mins, const vec3_t maxs, int *list, int max
 
 qboolean trap_EntityContact( const vec3_t mins, const vec3_t maxs, const gentity_t *ent )
 {
-  return syscall( G_ENTITY_CONTACT, mins, maxs, ent );
+  return (qboolean)syscall( G_ENTITY_CONTACT, mins, maxs, ent );
 }
 
 qboolean trap_EntityContactCapsule( const vec3_t mins, const vec3_t maxs, const gentity_t *ent )
 {
-  return syscall( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent );
+  return (qboolean)syscall( G_ENTITY_CONTACTCAPSULE, mins, maxs, ent );
 }
 
 void trap_GetUsercmd( int clientNum, usercmd_t *cmd )
@@ -244,7 +248,7 @@ void trap_GetUsercmd( int clientNum, usercmd_t *cmd )
 
 qboolean trap_GetEntityToken( char *buffer, int bufferSize )
 {
-  return syscall( G_GET_ENTITY_TOKEN, buffer, bufferSize );
+  return (qboolean)syscall( G_GET_ENTITY_TOKEN, buffer, bufferSize );
 }
 
 int trap_RealTime( qtime_t *qtime )
@@ -297,3 +301,7 @@ int trap_FS_GetFilteredFiles( const char *path, const char *extension, const cha
   return syscall( G_FS_GETFILTEREDFILES, path, extension, filter, listbuf, bufsize );
 }
 
+void trap_CopyLuaState( void )
+{
+    syscall( GAME_COPY_LUA_STATE, &glua );
+}

@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // sv_game.c -- interface to the game dll
 
+#include "lua.hpp"
+#include "sol.hpp"
+
 #include "server.h"
 
 // these functions must be used instead of pointer arithmetic, because
@@ -446,6 +449,13 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
             Cmd_RemoveCommand( (const char*)VMA(1) );
             return 0;
 
+        case GAME_COPY_LUA_STATE:
+            {
+            void **game_lua = (void**)VMA(1);
+            *game_lua = (void*)lua;
+            }
+            return 0;
+
         case TRAP_MEMSET:
             ::memset( VMA(1), args[2], args[3] );
             return 0;
@@ -536,13 +546,14 @@ static void SV_InitGameVM( bool restart ) {
 	for ( i = 0 ; i < sv_maxclients->integer ; i++ ) {
 		svs.clients[i].gentity = NULL;
 	}
+
+    // A fresh lua state 
+    Lua_Init();
 	
 	// use the current msec count for a random seed
 	// init for this gamestate
-	VM_Call (sv.gvm, GAME_INIT, sv.time, Com_Milliseconds(), restart);
+	VM_Call( sv.gvm, GAME_INIT, sv.time, Com_Milliseconds(), lua, restart );
 }
-
-
 
 /*
 ===================
