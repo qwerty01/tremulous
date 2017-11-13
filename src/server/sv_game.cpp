@@ -552,7 +552,7 @@ static void SV_InitGameVM( bool restart ) {
 	
 	// use the current msec count for a random seed
 	// init for this gamestate
-	VM_Call( sv.gvm, GAME_INIT, sv.time, Com_Milliseconds(), lua, restart );
+	VM_Call( sv.gvm, GAME_INIT, sv.time, Com_Milliseconds(), restart );
 }
 
 /*
