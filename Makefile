@@ -1465,6 +1465,14 @@ $(B)/semver/%.o: $(SEMVERDIR)/src/lib/%.cpp
 	$(DO_SEMVER_CXX)
 
 #############################################################################
+## Assets Package
+#############################################################################
+
+$(B)/$(BASEGAME)/data-$(VERSION).pk3: $(ASSETS_DIR)/ui/main.menu
+	@(cd $(ASSETS_DIR) && zip -r data-$(VERSION).pk3 *)
+	@mv $(ASSETS_DIR)/data-$(VERSION).pk3 $(B)/$(BASEGAME)
+
+#############################################################################
 # CLIENT/SERVER
 #############################################################################
 
@@ -2137,7 +2145,7 @@ $(Q)$(call EXEC_CC,${SHLIB_CC_FLAGS},'$@','$<')
 $(Q)$(call LOG_CC,qcommon,${SHLIB_CC_FLAGS},$@,$<)
 endef
 
-define DO_SHLIB_CC
+define DO_SHLIB_CXX
 $(echo_cmd) "SHLIB_CXX $<"
 $(Q)$(call EXEC_CC,${SHLIB_CXX_FLAGS},'$@','$<')
 $(Q)$(call LOG_CC,qcommon,${SHLIB_CXX_FLAGS},$@,$<)
@@ -2227,40 +2235,42 @@ $(B)/$(BASEGAME)/cgame$(SHLIBNAME): $(CGOBJ)
 #############################################################################
 
 GOBJ = \
-  $(B)/$(BASEGAME)/game/g_api.o \
-  $(B)/$(BASEGAME)/game/g_main.o \
+  $(B)/$(BASEGAME)/game/bg_alloc.o \
+  $(B)/$(BASEGAME)/game/bg_lib.o \
   $(B)/$(BASEGAME)/game/bg_misc.o \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
   $(B)/$(BASEGAME)/game/bg_slidemove.o \
-  $(B)/$(BASEGAME)/game/bg_lib.o \
-  $(B)/$(BASEGAME)/game/bg_alloc.o \
   $(B)/$(BASEGAME)/game/bg_voice.o \
   $(B)/$(BASEGAME)/game/g_active.o \
+  $(B)/$(BASEGAME)/game/g_admin.o \
+  $(B)/$(BASEGAME)/game/g_api.o \
+  $(B)/$(BASEGAME)/game/g_buildable.o \
   $(B)/$(BASEGAME)/game/g_client.o \
   $(B)/$(BASEGAME)/game/g_cmds.o \
   $(B)/$(BASEGAME)/game/g_combat.o \
-  $(B)/$(BASEGAME)/game/g_physics.o \
-  $(B)/$(BASEGAME)/game/g_buildable.o \
+  $(B)/$(BASEGAME)/game/g_main.o \
+  $(B)/$(BASEGAME)/game/g_maprotation.o \
   $(B)/$(BASEGAME)/game/g_misc.o \
   $(B)/$(BASEGAME)/game/g_missile.o \
   $(B)/$(BASEGAME)/game/g_mover.o \
+  $(B)/$(BASEGAME)/game/g_namelog.o \
+  $(B)/$(BASEGAME)/game/g_physics.o \
+  $(B)/$(BASEGAME)/game/g_playermodel.o \
   $(B)/$(BASEGAME)/game/g_session.o \
   $(B)/$(BASEGAME)/game/g_spawn.o \
   $(B)/$(BASEGAME)/game/g_svcmds.o \
+  $(B)/$(BASEGAME)/game/g_syscalls.o \
   $(B)/$(BASEGAME)/game/g_target.o \
   $(B)/$(BASEGAME)/game/g_team.o \
   $(B)/$(BASEGAME)/game/g_trigger.o \
   $(B)/$(BASEGAME)/game/g_utils.o \
-  $(B)/$(BASEGAME)/game/g_maprotation.o \
-  $(B)/$(BASEGAME)/game/g_playermodel.o \
   $(B)/$(BASEGAME)/game/g_weapon.o \
   $(B)/$(BASEGAME)/game/g_weapondrop.o \
-  $(B)/$(BASEGAME)/game/g_admin.o \
-  $(B)/$(BASEGAME)/game/g_namelog.o \
-  \
+  $(B)/$(BASEGAME)/game/game_lauxlib.o \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o \
-  $(B)/$(BASEGAME)/game/g_syscalls.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o
+
+GOBJ += $(LUAOBJ)
 
 define DO_GAME_CC
 $(echo_cmd) "GAME_CC $<"
