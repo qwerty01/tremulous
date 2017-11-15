@@ -8,7 +8,7 @@
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
 
-#include "g_admin.h"
+#include "g_syscalls.h"
 
 size_t qlua_writestring(const char* string, size_t n)
 {
