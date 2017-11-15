@@ -71,22 +71,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "dialog.h"
 #include "sys_loadlib.h"
 
-sol::state *lua = nullptr;
-
 static char binaryPath[ MAX_OSPATH ] = { 0 };
 static char installPath[ MAX_OSPATH ] = { 0 };
 
-void Lua_Init(void)
+//sol::state lua;
+static void Lua_Init(void)
 {
-    if ( lua )
-    {
-        delete lua;
-    }
-
-    lua = new(sol::state);
-
-
-    lua->open_libraries
+#if 0
+    lua.open_libraries
     (
      sol::lib::base,
      sol::lib::package,
@@ -107,15 +99,16 @@ void Lua_Init(void)
 #endif
     );
 
-    script::cvar::init(std::move(*lua));
-    script::cmd::init(std::move(*lua));
-    script::rapidjson::init(std::move(*lua));
-    script::nettle::init(std::move(*lua));
+    script::cvar::init(std::move(lua));
+    script::cmd::init(std::move(lua));
+    script::rapidjson::init(std::move(lua));
+    script::nettle::init(std::move(lua));
 
 #ifndef DEDICATED
-    script::client::init(std::move(*lua));
-    script::keybind::init(std::move(*lua));
-    script::http_client::init(std::move(*lua));
+    script::client::init(std::move(lua));
+    script::keybind::init(std::move(lua));
+    script::http_client::init(std::move(lua));
+#endif
 #endif
 }
 
@@ -355,16 +348,18 @@ cpuFeatures_t Sys_GetProcessorFeatures( void )
 
 void Sys_Script_f( void )
 {
-    if ( !lua ) return;
+#if 0
     std::string args = Cmd_Args();
-    lua->script(args);
+    lua.script(args);
+#endif
 }
 
 void Sys_ScriptFile_f( void )
 {
-    if ( !lua ) return;
+#if 0
     std::string args = Cmd_Args();
-    lua->script_file(args);
+    lua.script_file(args);
+#endif
 }
 /*
 =================

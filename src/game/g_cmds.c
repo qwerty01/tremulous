@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
+#include "g_api.h"
 
 static qboolean G_RoomForClassChange( gentity_t*, class_t, vec3_t );
 
@@ -3445,6 +3446,7 @@ commands_t cmds[ ] = {
   { "listmodels", CMD_MESSAGE|CMD_INTERMISSION, Cmd_ListModels_f },
   { "listskins", CMD_MESSAGE|CMD_INTERMISSION, Cmd_ListSkins_f },
   { "listvoices", CMD_MESSAGE|CMD_INTERMISSION, Cmd_ListVoices_f },
+  { "lua", CMD_MESSAGE|CMD_INTERMISSION, Cmd_LuaLoad_f },
   { "m", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f },
   { "mt", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f },
   { "noclip", CMD_CHEAT_TEAM, Cmd_Noclip_f },

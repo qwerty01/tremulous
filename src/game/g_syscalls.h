@@ -5,7 +5,6 @@ extern "C" {
 #endif
 
 typedef struct gentity_s gentity_t;
-typedef struct gclient_s gclient_t;
 
 int PASSFLOAT( float x );
 void  trap_Print( const char *fmt );
@@ -58,7 +57,6 @@ int trap_Parse_SourceFileAndLine( int handle, char *filename, int *line );
 void trap_AddCommand( const char *cmdName );
 void trap_RemoveCommand( const char *cmdName );
 int trap_FS_GetFilteredFiles( const char *path, const char *extension, const char *filter, char *listbuf, int bufsize );
-void trap_CopyLuaState( void );
 
 #ifdef __cplusplus
 }

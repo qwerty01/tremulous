@@ -489,6 +489,9 @@ void G_FreeEntity( gentity_t *ent )
   if( ent->neverFree )
     return;
 
+  if ( ent->_classname_alloced )
+      free(ent->classname);
+
   memset( ent, 0, sizeof( *ent ) );
   ent->classname = "freent";
   ent->freetime = level.time;

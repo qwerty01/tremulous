@@ -449,13 +449,6 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
             Cmd_RemoveCommand( (const char*)VMA(1) );
             return 0;
 
-        case GAME_COPY_LUA_STATE:
-            {
-            void **game_lua = (void**)VMA(1);
-            *game_lua = (void*)lua;
-            }
-            return 0;
-
         case TRAP_MEMSET:
             ::memset( VMA(1), args[2], args[3] );
             return 0;
@@ -547,9 +540,6 @@ static void SV_InitGameVM( bool restart ) {
 		svs.clients[i].gentity = NULL;
 	}
 
-    // A fresh lua state 
-    Lua_Init();
-	
 	// use the current msec count for a random seed
 	// init for this gamestate
 	VM_Call( sv.gvm, GAME_INIT, sv.time, Com_Milliseconds(), restart );

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+#include "g_api.h"
 #include "g_local.h"
 
 level_locals_t  level;
@@ -694,7 +695,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
     trap_Cvar_Set( "g_lockTeamsAtStart", "0" );
   }
 
-  trap_CopyLuaState();
+  Api_Init();
 }
 
 /*

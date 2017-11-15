@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 static intptr_t (QDECL *syscall)( intptr_t arg, ... ) = (intptr_t (QDECL *)( intptr_t, ...))-1;
 
 
+extern "C"
 Q_EXPORT void dllEntry( intptr_t (QDECL *syscallptr)( intptr_t arg,... ) )
 {
   syscall = syscallptr;
@@ -299,9 +300,4 @@ void trap_RemoveCommand( const char *cmdName )
 int trap_FS_GetFilteredFiles( const char *path, const char *extension, const char *filter, char *listbuf, int bufsize )
 {
   return syscall( G_FS_GETFILTEREDFILES, path, extension, filter, listbuf, bufsize );
-}
-
-void trap_CopyLuaState( void )
-{
-    syscall( GAME_COPY_LUA_STATE, &glua );
 }

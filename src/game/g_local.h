@@ -23,6 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // g_local.h -- local definitions for game module
 
+#ifndef G_LOCAL_H
+#define G_LOCAL_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "qcommon/q_shared.h"
 
 #include "bg_public.h"
@@ -244,6 +251,13 @@ struct gentity_s
 
   int               buildPointZone;                 // index for zone
   int               usesBuildPointZone;             // does it use a zone?
+
+
+  // XXX: With the Lua interface, the classname might be a dynamically
+  // allocated string, and needs to be freed
+  //
+  // This problem will disappear once classname is a std::string
+  qboolean          _classname_alloced; 
 };
 
 typedef enum
@@ -1205,3 +1219,9 @@ extern  vmCvar_t  g_publicAdminMessages;
 extern  vmCvar_t  g_allowTeamOverlay;
 
 extern  vmCvar_t  g_censorship;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
