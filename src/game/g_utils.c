@@ -489,8 +489,23 @@ void G_FreeEntity( gentity_t *ent )
   if( ent->neverFree )
     return;
 
+  // Cleanup dynamically allocated strings from lua land
   if ( ent->_classname_alloced )
       free(ent->classname);
+  if ( ent->_message_alloced )
+      free(ent->message);
+  if ( ent->_model_alloced )
+      free(ent->model);
+  if ( ent->_model2_alloced )
+      free(ent->model2);
+  if ( ent->_target_alloced )
+      free(ent->target);
+  if ( ent->_targetname_alloced )
+      free(ent->targetname);
+  if ( ent->_targetShaderName_alloced )
+      free(ent->targetShaderName);
+  if ( ent->_targetShaderNewName_alloced )
+      free(ent->targetShaderNewName);
 
   memset( ent, 0, sizeof( *ent ) );
   ent->classname = "freent";

@@ -258,6 +258,13 @@ struct gentity_s
   //
   // This problem will disappear once classname is a std::string
   qboolean          _classname_alloced; 
+  qboolean          _message_alloced; 
+  qboolean          _model_alloced; 
+  qboolean          _model2_alloced; 
+  qboolean          _target_alloced; 
+  qboolean          _targetname_alloced;
+  qboolean          _targetShaderName_alloced; 
+  qboolean          _targetShaderNewName_alloced; 
 };
 
 typedef enum
@@ -717,17 +724,6 @@ typedef struct
   int  cmdFlags;
   void ( *cmdHandler )( gentity_t *ent );
 } commands_t;
-
-//
-// g_spawn.c
-//
-qboolean  G_SpawnString( const char *key, const char *defaultString, char **out );
-// spawn string returns a temporary reference, you must CopyString() if you want to keep it
-qboolean  G_SpawnFloat( const char *key, const char *defaultString, float *out );
-qboolean  G_SpawnInt( const char *key, const char *defaultString, int *out );
-qboolean  G_SpawnVector( const char *key, const char *defaultString, float *out );
-void      G_SpawnEntitiesFromString( void );
-char      *G_NewString( const char *string );
 
 //
 // g_cmds.c

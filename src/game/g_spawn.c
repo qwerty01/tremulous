@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+#include "g_spawn.h"
 #include "g_local.h"
 
 qboolean G_SpawnString( const char *key, const char *defaultString, char **out )
@@ -87,8 +88,6 @@ qboolean  G_SpawnVector4( const char *key, const char *defaultString, float *out
   return present;
 }
 
-
-
 //
 // fields are needed for spawning from the entity string
 //
@@ -137,74 +136,11 @@ field_t fields[ ] =
   {"wait", FOFS(wait), F_FLOAT}
 };
 
-
 typedef struct
 {
   char  *name;
   void  (*spawn)(gentity_t *ent);
 } spawn_t;
-
-void SP_info_player_start( gentity_t *ent );
-void SP_info_player_deathmatch( gentity_t *ent );
-void SP_info_player_intermission( gentity_t *ent );
-
-void SP_info_alien_intermission( gentity_t *ent );
-void SP_info_human_intermission( gentity_t *ent );
-
-void SP_func_plat( gentity_t *ent );
-void SP_func_static( gentity_t *ent );
-void SP_func_rotating( gentity_t *ent );
-void SP_func_bobbing( gentity_t *ent );
-void SP_func_pendulum( gentity_t *ent );
-void SP_func_button( gentity_t *ent );
-void SP_func_door( gentity_t *ent );
-void SP_func_door_rotating( gentity_t *ent );
-void SP_func_door_model( gentity_t *ent );
-void SP_func_train( gentity_t *ent );
-void SP_func_timer( gentity_t *self);
-
-void SP_trigger_always( gentity_t *ent );
-void SP_trigger_multiple( gentity_t *ent );
-void SP_trigger_push( gentity_t *ent );
-void SP_trigger_teleport( gentity_t *ent );
-void SP_trigger_hurt( gentity_t *ent );
-void SP_trigger_stage( gentity_t *ent );
-void SP_trigger_win( gentity_t *ent );
-void SP_trigger_buildable( gentity_t *ent );
-void SP_trigger_class( gentity_t *ent );
-void SP_trigger_equipment( gentity_t *ent );
-void SP_trigger_gravity( gentity_t *ent );
-void SP_trigger_heal( gentity_t *ent );
-void SP_trigger_ammo( gentity_t *ent );
-
-void SP_target_delay( gentity_t *ent );
-void SP_target_speaker( gentity_t *ent );
-void SP_target_print( gentity_t *ent );
-void SP_target_score( gentity_t *ent );
-void SP_target_teleporter( gentity_t *ent );
-void SP_target_relay( gentity_t *ent );
-void SP_target_kill( gentity_t *ent );
-void SP_target_position( gentity_t *ent );
-void SP_target_location( gentity_t *ent );
-void SP_target_push( gentity_t *ent );
-void SP_target_rumble( gentity_t *ent );
-void SP_target_alien_win( gentity_t *ent );
-void SP_target_human_win( gentity_t *ent );
-void SP_target_hurt( gentity_t *ent );
-
-void SP_light( gentity_t *self );
-void SP_info_null( gentity_t *self );
-void SP_info_notnull( gentity_t *self );
-void SP_path_corner( gentity_t *self );
-
-void SP_misc_teleporter_dest( gentity_t *self );
-void SP_misc_model( gentity_t *ent );
-void SP_misc_portal_camera( gentity_t *ent );
-void SP_misc_portal_surface( gentity_t *ent );
-
-void SP_misc_particle_system( gentity_t *ent );
-void SP_misc_anim_model( gentity_t *ent );
-void SP_misc_light_flare( gentity_t *ent );
 
 spawn_t spawns[ ] =
 {
@@ -366,9 +302,6 @@ char *G_NewString( const char *string )
   return newb;
 }
 
-
-
-
 /*
 ===============
 G_ParseField
@@ -431,9 +364,6 @@ void G_ParseField( const char *key, const char *value, gentity_t *ent )
   }
 }
 
-
-
-
 /*
 ===================
 G_SpawnGEntityFromSpawnVars
@@ -468,8 +398,6 @@ void G_SpawnGEntityFromSpawnVars( void )
   if( !G_CallSpawn( ent ) )
     G_FreeEntity( ent );
 }
-
-
 
 /*
 ====================
@@ -549,8 +477,6 @@ qboolean G_ParseSpawnVars( void )
   return qtrue;
 }
 
-
-
 /*QUAKED worldspawn (0 0 0) ?
 
 Every map should have exactly one worldspawn.
@@ -628,7 +554,6 @@ void SP_worldspawn( void )
   }
 
 }
-
 
 /*
 ==============
