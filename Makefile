@@ -2241,13 +2241,14 @@ GOBJ = \
   $(B)/$(BASEGAME)/game/bg_pmove.o \
   $(B)/$(BASEGAME)/game/bg_slidemove.o \
   $(B)/$(BASEGAME)/game/bg_voice.o \
+  \
   $(B)/$(BASEGAME)/game/g_active.o \
   $(B)/$(BASEGAME)/game/g_admin.o \
-  $(B)/$(BASEGAME)/game/g_api.o \
   $(B)/$(BASEGAME)/game/g_buildable.o \
   $(B)/$(BASEGAME)/game/g_client.o \
   $(B)/$(BASEGAME)/game/g_cmds.o \
   $(B)/$(BASEGAME)/game/g_combat.o \
+  $(B)/$(BASEGAME)/game/g_lua.o \
   $(B)/$(BASEGAME)/game/g_main.o \
   $(B)/$(BASEGAME)/game/g_maprotation.o \
   $(B)/$(BASEGAME)/game/g_misc.o \

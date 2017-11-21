@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "lua.hpp"
 #include "sol.hpp"
 
-#include "g_api.h"
+#include "g_lua.h"
 #include "g_local.h"
 
 // this file is only included when building a dll

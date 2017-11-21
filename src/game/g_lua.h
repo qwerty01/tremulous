@@ -1,6 +1,6 @@
 
-#ifndef G_API_H
-#define G_API_H
+#ifndef G_LUA_H
+#define G_LUA_H
 
 #ifdef __cplusplus
 extern "C" { 
