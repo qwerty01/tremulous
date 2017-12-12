@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_lua.h"
+#include "g_spawn.h"
 #include "g_local.h"
 
 level_locals_t  level;
@@ -29,8 +30,8 @@ level_locals_t  level;
 typedef struct
 {
   vmCvar_t  *vmCvar;
-  char      *cvarName;
-  char      *defaultString;
+  const char *cvarName;
+  const char *defaultString;
   int       cvarFlags;
   int       modificationCount; // for tracking changes
   qboolean  trackChange;       // track this variable, and announce if changed
@@ -38,7 +39,7 @@ typedef struct
      persist, so keep track of non-worldspawn changes and restore that on map
      end. unfortunately, if the server crashes, the value set in worldspawn may
      persist */
-  char      *explicit;
+  char      *_explicit;
 } cvarTable_t;
 
 gentity_t   g_entities[ MAX_GENTITIES ];
@@ -319,7 +320,7 @@ Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2 )
       return 0;
 
     case GAME_CLIENT_CONNECT:
-      return (intptr_t)ClientConnect( arg0, arg1 );
+      return (intptr_t)ClientConnect( arg0, (qboolean)arg1 );
 
     case GAME_CLIENT_THINK:
       ClientThink( arg0 );
@@ -457,8 +458,8 @@ void G_RegisterCvars( void )
     if( cv->vmCvar )
       cv->modificationCount = cv->vmCvar->modificationCount;
 
-    if( cv->explicit )
-      strcpy( cv->explicit, cv->vmCvar->string );
+    if( cv->_explicit )
+      strcpy( cv->_explicit, cv->vmCvar->string );
   }
 }
 
@@ -486,8 +487,8 @@ void G_UpdateCvars( void )
           trap_SendServerCommand( -1, va( "print \"Server: %s changed to %s\n\"",
             cv->cvarName, cv->vmCvar->string ) );
 
-        if( !level.spawning && cv->explicit )
-          strcpy( cv->explicit, cv->vmCvar->string );
+        if( !level.spawning && cv->_explicit )
+          strcpy( cv->_explicit, cv->vmCvar->string );
       }
     }
   }
@@ -505,8 +506,8 @@ void G_RestoreCvars( void )
 
   for( i = 0, cv = gameCvarTable; i < gameCvarTableSize; i++, cv++ )
   {
-    if( cv->vmCvar && cv->explicit )
-      trap_Cvar_Set( cv->cvarName, cv->explicit );
+    if( cv->vmCvar && cv->_explicit )
+      trap_Cvar_Set( cv->cvarName, cv->_explicit );
   }
 }
 
@@ -649,6 +650,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 
   // this has to be flipped after the first UpdateCvars
   level.spawning = qtrue;
+
   // parse the key/value pairs and spawn gentities
   G_SpawnEntitiesFromString( );
 
@@ -1213,7 +1215,7 @@ void G_CalculateBuildPoints( void )
     }
 
     // Subtract the BP from the appropriate pool
-    buildable = ent->s.modelindex;
+    buildable = static_cast<buildable_t>(ent->s.modelindex);
     cost = BG_Buildable( buildable )->buildPoints;
 
     if( ent->buildableTeam == TEAM_ALIENS )
@@ -1244,7 +1246,7 @@ void G_CalculateBuildPoints( void )
         ent->buildableTeam != TEAM_HUMANS )
       continue;
 
-    buildable = ent->s.modelindex;
+    buildable = static_cast<buildable_t>(ent->s.modelindex);
 
     if( buildable != BA_H_REPEATER )
       continue;
@@ -1343,7 +1345,7 @@ void G_CalculateStages( void )
   if( g_alienStage.modificationCount > lastAlienStageModCount )
   {
     while( alienTriggerStage < MIN( g_alienStage.integer, S3 ) )
-      G_Checktrigger_stages( TEAM_ALIENS, ++alienTriggerStage );
+      G_Checktrigger_stages( TEAM_ALIENS, static_cast<stage_t>(++alienTriggerStage) );
 
     if( g_alienStage.integer == S2 )
       level.alienStage2Time = level.time;
@@ -1356,7 +1358,7 @@ void G_CalculateStages( void )
   if( g_humanStage.modificationCount > lastHumanStageModCount )
   {
     while( humanTriggerStage < MIN( g_humanStage.integer, S3 ) )
-      G_Checktrigger_stages( TEAM_HUMANS, ++humanTriggerStage );
+      G_Checktrigger_stages( TEAM_HUMANS, static_cast<stage_t>(++humanTriggerStage) );
 
     if( g_humanStage.integer == S2 )
       level.humanStage2Time = level.time;
@@ -1926,24 +1928,6 @@ void CheckIntermissionExit( void )
 }
 
 /*
-=============
-ScoreIsTied
-=============
-*/
-qboolean ScoreIsTied( void )
-{
-  int   a, b;
-
-  if( level.numPlayingClients < 2 )
-    return qfalse;
-
-  a = level.clients[ level.sortedClients[ 0 ] ].ps.persistant[ PERS_SCORE ];
-  b = level.clients[ level.sortedClients[ 1 ] ].ps.persistant[ PERS_SCORE ];
-
-  return a == b;
-}
-
-/*
 =================
 CheckExitRules
 
@@ -2108,7 +2092,7 @@ G_CheckVote
 void G_CheckVote( team_t team )
 {
   float    votePassThreshold = (float)level.voteThreshold[ team ] / 100.0f;
-  qboolean pass = qfalse;
+  bool pass = false;
   const char *msg;
   int      i;
 
@@ -2213,11 +2197,10 @@ void CheckCvars( void )
   // If the number of zones changes, we need a new array
   if( g_humanRepeaterMaxZones.integer != lastNumZones )
   {
-    buildPointZone_t  *newZones;
-    size_t            newsize = g_humanRepeaterMaxZones.integer * sizeof( buildPointZone_t );
-    size_t            oldsize = lastNumZones * sizeof( buildPointZone_t );
+    size_t newsize = g_humanRepeaterMaxZones.integer * sizeof( buildPointZone_t );
+    size_t oldsize = lastNumZones * sizeof( buildPointZone_t );
 
-    newZones = BG_Alloc( newsize );
+    buildPointZone_t *newZones = static_cast<buildPointZone_t*>(BG_Alloc( newsize ));
     if( level.buildPointZones )
     {
       Com_Memcpy( newZones, level.buildPointZones, MIN( oldsize, newsize ) );
@@ -2459,8 +2442,9 @@ void G_RunFrame( int levelTime )
   CheckTeamStatus( );
 
   // cancel vote if timed out
-  for( i = 0; i < NUM_TEAMS; i++ )
-    G_CheckVote( i );
+  G_CheckVote( TEAM_NONE );
+  G_CheckVote( TEAM_HUMANS );
+  G_CheckVote( TEAM_ALIENS );
 
   level.frameMsec = trap_Milliseconds();
 }
