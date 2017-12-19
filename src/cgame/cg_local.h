@@ -353,7 +353,7 @@ typedef struct baseParticleSystem_s
 //RUN TIME STRUCTURES
 typedef struct particleSystem_s
 {
-  baseParticleSystem_t  *class;
+  baseParticleSystem_t  *klass;
 
   attachment_t          attachment;
 
@@ -373,7 +373,7 @@ typedef struct particleSystem_s
 
 typedef struct particleEjector_s
 {
-  baseParticleEjector_t *class;
+  baseParticleEjector_t *klass;
   particleSystem_t      *parent;
 
   pLerpValues_t         ejectPeriod;
@@ -390,7 +390,7 @@ typedef struct particleEjector_s
 //used for actual particle evaluation
 typedef struct particle_s
 {
-  baseParticle_t    *class;
+  baseParticle_t    *klass;
   particleEjector_t *parent;
 
   particleSystem_t  *childParticleSystem;
@@ -511,7 +511,7 @@ typedef struct baseTrailSystem_s
 
 typedef struct trailSystem_s
 {
-  baseTrailSystem_t   *class;
+  baseTrailSystem_t   *klass;
 
   attachment_t        frontAttachment;
   attachment_t        backAttachment;
@@ -543,7 +543,7 @@ typedef struct trailBeamNode_s
 
 typedef struct trailBeam_s
 {
-  baseTrailBeam_t   *class;
+  baseTrailBeam_t   *klass;
   trailSystem_t     *parent;
 
   trailBeamNode_t   nodePool[ MAX_TRAIL_BEAM_NODES ];
@@ -587,7 +587,7 @@ typedef struct
   // machinegun spinning
   float       barrelAngle;
   int         barrelTime;
-  qboolean    barrelSpinning;
+  bool    barrelSpinning;
 
   vec3_t      lastNormal;
   vec3_t      lastAxis[ 3 ];
@@ -669,11 +669,11 @@ typedef struct centity_s
 
   lightFlareStatus_t    lfs;
 
-  qboolean              doorState;
+  bool              doorState;
 
-  qboolean              animInit;
-  qboolean              animPlaying;
-  qboolean              animLastState;
+  bool              animInit;
+  bool              animPlaying;
+  bool              animLastState;
 
   particleSystem_t      *muzzlePS;
   qboolean              muzzlePsTrigger;
@@ -742,7 +742,7 @@ typedef struct
   int         location;                   // location index for team mode
   int         health;                     // you only get this info about your teammates
   int         upgrade; 
-  int         curWeaponClass;             // sends current weapon for H, current class for A
+  int         curWeaponClass;             // sends current weapon for H, current klass for A
 
   // when clientinfo is changed, the loading of models/skins/sounds
   // can be deferred until you are dead, to prevent hitches in
@@ -828,7 +828,7 @@ typedef struct weaponInfoMode_s
 typedef struct weaponInfo_s
 {
   qboolean          registered;
-  char              *humanName;
+  const char        *humanName;
 
   qhandle_t         handsModel;       // the hands don't actually draw, they just position the weapon
   qhandle_t         weaponModel;
@@ -860,7 +860,7 @@ typedef struct weaponInfo_s
 typedef struct upgradeInfo_s
 {
   qboolean    registered;
-  char        *humanName;
+  const char  *humanName;
 
   qhandle_t   upgradeIcon;
 } upgradeInfo_t;
@@ -936,7 +936,7 @@ typedef struct
   qboolean      levelShot;                          // taking a level menu screenshot
   int           deferredPlayerLoading;
   qboolean      loading;                            // don't defer players at initial startup
-  qboolean      intermissionStarted;                // don't play voice rewards, because game will end shortly
+  bool      intermissionStarted;                // don't play voice rewards, because game will end shortly
 
   // there are only one or two snapshot_t that are relevent at a time
   int           latestSnapshotNum;                  // the number of snapshots the client system has received
@@ -965,7 +965,7 @@ typedef struct
 
   qboolean      mapRestart;                         // set on a map restart to set back the weapon
 
-  qboolean      renderingThirdPerson;               // during deaths, chasecams, etc
+  bool      renderingThirdPerson;               // during deaths, chasecams, etc
 
   // prediction state
   qboolean      hyperspace;                         // true if prediction has hit a trigger_teleport
@@ -1116,9 +1116,9 @@ typedef struct
   int           weapon1Time;                        // time when BUTTON_ATTACK went t->f f->t
   int           weapon2Time;                        // time when BUTTON_ATTACK2 went t->f f->t
   int           weapon3Time;                        // time when BUTTON_USE_HOLDABLE went t->f f->t
-  qboolean      weapon1Firing;
-  qboolean      weapon2Firing;
-  qboolean      weapon3Firing;
+  bool      weapon1Firing;
+  bool      weapon2Firing;
+  bool      weapon3Firing;
 
   int           poisonedTime;
 
@@ -1361,7 +1361,7 @@ typedef struct
   int           timelimit;
   int           maxclients;
   char          mapname[ MAX_QPATH ];
-  qboolean      markDeconstruct;        // Whether or not buildables are marked
+  bool      markDeconstruct;        // Whether or not buildables are marked
 
   int           voteTime[ NUM_TEAMS ];
   int           voteYes[ NUM_TEAMS ];
@@ -1404,10 +1404,10 @@ typedef struct
 
   int           cursorX;
   int           cursorY;
-  qboolean      eventHandling;
+  int           eventHandling;
   qboolean      mouseCaptured;
   qboolean      sizingHud;
-  void          *capturedItem;
+  menuDef_t     *capturedMenu;
   qhandle_t     activeCursor;
 
   buildStat_t   alienBuildStat;
@@ -1430,13 +1430,13 @@ typedef struct
 
 typedef struct
 {
-  char *cmd;
+  const char *cmd;
   void ( *function )( void );
 } consoleCommand_t;
 
 typedef struct
 {
-  char *cmd;
+  const char *cmd;
   void (*function)( int argNum );
 } consoleCommandCompletions_t;
 
@@ -1614,7 +1614,7 @@ void        CG_SetScoreSelection( void *menu );
 qboolean    CG_ClientIsReady( int clientNum );
 void        CG_BuildSpectatorString( void );
 
-qboolean    CG_FileExists( const char *filename );
+int    CG_FileExists( const char *filename );
 void        CG_RemoveNotifyLine( void );
 void        CG_AddNotifyText( void );
 qboolean    CG_GetRangeMarkerPreferences( qboolean *drawSurface, qboolean *drawIntersection,
@@ -1703,7 +1703,7 @@ void        CG_Player( centity_t *cent );
 void        CG_Corpse( centity_t *cent );
 void        CG_ResetPlayerEntity( centity_t *cent );
 void        CG_NewClientInfo( int clientNum );
-void        CG_PrecacheClientInfo( class_t class, char *model, char *skin );
+void        CG_PrecacheClientInfo( class_t klass, char *model, char *skin );
 sfxHandle_t CG_CustomSound( int clientNum, const char *soundName );
 void        CG_PlayerDisconnect( vec3_t org );
 void        CG_Bleed( vec3_t origin, vec3_t normal, int entityNum );
@@ -1768,9 +1768,9 @@ void        CG_Beam( centity_t *cent );
 void        CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out );
 
 void        CG_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *parent,
-                                    qhandle_t parentModel, char *tagName );
+                                    qhandle_t parentModel, const char *tagName );
 void        CG_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_t *parent,
-                                           qhandle_t parentModel, char *tagName );
+                                           qhandle_t parentModel, const char *tagName );
 void        CG_RangeMarker( centity_t *cent );
 
 
@@ -1868,7 +1868,7 @@ void        CG_AttachToParticle( attachment_t *a );
 void        CG_SetAttachmentPoint( attachment_t *a, vec3_t v );
 void        CG_SetAttachmentCent( attachment_t *a, centity_t *cent );
 void        CG_SetAttachmentTag( attachment_t *a, refEntity_t parent,
-                qhandle_t model, char *tagName );
+                qhandle_t model, const char *tagName );
 void        CG_SetAttachmentParticle( attachment_t *a, particle_t *p );
 
 void        CG_SetAttachmentOffset( attachment_t *a, vec3_t v );
@@ -1877,7 +1877,7 @@ void        CG_SetAttachmentOffset( attachment_t *a, vec3_t v );
 // cg_particles.c
 //
 void                CG_LoadParticleSystems( void );
-qhandle_t           CG_RegisterParticleSystem( char *name );
+qhandle_t           CG_RegisterParticleSystem( const char *name );
 
 particleSystem_t    *CG_SpawnNewParticleSystem( qhandle_t psHandle );
 void                CG_DestroyParticleSystem( particleSystem_t **ps );
@@ -1899,7 +1899,7 @@ void                CG_DestroyTestPS_f( void );
 // cg_trails.c
 //
 void                CG_LoadTrailSystems( void );
-qhandle_t           CG_RegisterTrailSystem( char *name );
+qhandle_t           CG_RegisterTrailSystem( const char *name );
 
 trailSystem_t       *CG_SpawnNewTrailSystem( qhandle_t psHandle );
 void                CG_DestroyTrailSystem( trailSystem_t **ts );
@@ -2036,7 +2036,7 @@ void          trap_S_StopLoopingSound( int entnum );
 
 // a local sound is always played full volume
 void          trap_S_StartLocalSound( sfxHandle_t sfx, int channelNum );
-void          trap_S_ClearLoopingSounds( qboolean killall );
+void          trap_S_ClearLoopingSounds( bool killall );
 void          trap_S_AddLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx );
 void          trap_S_AddRealLoopingSound( int entityNum, const vec3_t origin, const vec3_t velocity, sfxHandle_t sfx );
 void          trap_S_UpdateEntityPosition( int entityNum, const vec3_t origin );
@@ -2044,7 +2044,7 @@ void          trap_S_UpdateEntityPosition( int entityNum, const vec3_t origin );
 // respatialize recalculates the volumes of sound as they should be heard by the
 // given entityNum and position
 void          trap_S_Respatialize( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater );
-sfxHandle_t   trap_S_RegisterSound( const char *sample, qboolean compressed );    // returns buzz if not found
+sfxHandle_t   trap_S_RegisterSound( const char *sample, bool compressed );    // returns buzz if not found
 void          trap_S_StartBackgroundTrack( const char *intro, const char *loop ); // empty name stops music
 void          trap_S_StopBackgroundTrack( void );
 
@@ -2067,7 +2067,7 @@ void          trap_R_AddRefEntityToScene( const refEntity_t *re );
 // significant construction
 void          trap_R_AddPolyToScene( qhandle_t hShader , int numVerts, const polyVert_t *verts );
 void          trap_R_AddPolysToScene( qhandle_t hShader , int numVerts, const polyVert_t *verts, int numPolys );
-qboolean      trap_R_inPVS( const vec3_t p1, const vec3_t p2 );
+bool          trap_R_inPVS( const vec3_t p1, const vec3_t p2 );
 void          trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b );
 void          trap_R_AddAdditiveLightToScene( const vec3_t org, float intensity, float r, float g, float b );
 int           trap_R_LightForPoint( vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir );
@@ -2227,18 +2227,18 @@ typedef struct
   int           serverCommandSequence;                // snapshot becomes current
 } moduleAlternateSnapshot_t;
 
-qboolean      trap_GetSnapshot( int snapshotNumber, moduleAlternateSnapshot_t *snapshot );
+bool      trap_GetSnapshot( int snapshotNumber, moduleAlternateSnapshot_t *snapshot );
 #else
 // a snapshot get can fail if the snapshot (or the entties it holds) is so
 // old that it has fallen out of the client system queue
-qboolean      trap_GetSnapshot( int snapshotNumber, snapshot_t *snapshot );
+bool      trap_GetSnapshot( int snapshotNumber, snapshot_t *snapshot );
 #endif
 
 // retrieve a text command from the server stream
 // the current snapshot will hold the number of the most recent command
 // qfalse can be returned if the client system handled the command
 // argc() / argv() can be used to examine the parameters of the command
-qboolean      trap_GetServerCommand( int serverCommandNumber );
+bool      trap_GetServerCommand( int serverCommandNumber );
 
 // returns the most recent command number that can be passed to GetUserCmd
 // this will always be at least one higher than the number in the current
@@ -2246,7 +2246,7 @@ qboolean      trap_GetServerCommand( int serverCommandNumber );
 // a lagged connection
 int           trap_GetCurrentCmdNumber( void );
 
-qboolean      trap_GetUserCmd( int cmdNumber, usercmd_t *ucmd );
+bool      trap_GetUserCmd( int cmdNumber, usercmd_t *ucmd );
 
 // used for the weapon select and zoom
 void          trap_SetUserCmdValue( int stateValue, float sensitivityScale );
@@ -2257,15 +2257,15 @@ void          testPrintFloat( char *string, float f );
 
 int           trap_MemoryRemaining( void );
 void          trap_R_RegisterFont(const char *fontName, int pointSize, fontInfo_t *font);
-qboolean      trap_Key_IsDown( int keynum );
+bool      trap_Key_IsDown( int keynum );
 int           trap_Key_GetCatcher( void );
 void          trap_Key_SetCatcher( int catcher );
 int           trap_Key_GetKey( const char *binding );
 void          trap_Key_KeynumToStringBuf( int keynum, char *buf, int buflen );
 void          trap_Key_GetBindingBuf( int keynum, char *buf, int buflen );
 void          trap_Key_SetBinding( int keynum, const char *binding );
-void          trap_Key_SetOverstrikeMode( qboolean state );
-qboolean      trap_Key_GetOverstrikeMode( void );
+void          trap_Key_SetOverstrikeMode( bool state );
+bool      trap_Key_GetOverstrikeMode( void );
 
 int           trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int height, int bits );
 e_status      trap_CIN_StopCinematic( int handle );
@@ -2276,16 +2276,16 @@ void          trap_CIN_SetExtents( int handle, int x, int y, int w, int h );
 void          trap_SnapVector( float *v );
 int           trap_RealTime( qtime_t *tm );
 
-qboolean      trap_loadCamera( const char *name );
+bool      trap_loadCamera( const char *name );
 void          trap_startCamera( int time );
-qboolean      trap_getCameraInfo( int time, vec3_t *origin, vec3_t *angles );
+bool      trap_getCameraInfo( int time, vec3_t *origin, vec3_t *angles );
 
-qboolean      trap_GetEntityToken( char *buffer, int bufferSize );
+bool      trap_GetEntityToken( char *buffer, int bufferSize );
 
 int           trap_GetDemoState( void );
 int           trap_GetDemoPos( void );
 void          trap_GetDemoName( char *buffer, int size );
-void          trap_Field_CompleteList( char *listJson  );
+void          trap_Field_CompleteList( const char *listJson  );
 
 // cg_drawCrosshair settings
 #define CROSSHAIR_ALWAYSOFF       0
@@ -2295,7 +2295,7 @@ void          trap_Field_CompleteList( char *listJson  );
 // menu types for cg_disable*Dialogs
 typedef enum
 {
-  DT_INTERACTIVE, // team, class, armoury
+  DT_INTERACTIVE, // team, klass, armoury
   DT_ARMOURYEVOLVE, // Insufficient funds et al
   DT_BUILD, // build errors
   DT_COMMAND, // You must be living/human/spec etc.

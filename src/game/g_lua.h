@@ -18,7 +18,7 @@ typedef struct gentity_s gentity_t;
 typedef struct gclient_s gclient_t;
 
 void Api_Init();
-void Cmd_LuaLoad_f( void );
+void Cmd_LuaLoad_f( gentity_t* );
 
 #ifdef __cplusplus
 }

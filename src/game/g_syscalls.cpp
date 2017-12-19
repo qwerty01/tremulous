@@ -262,27 +262,27 @@ void trap_SnapVector( float *v )
   syscall( G_SNAPVECTOR, v );
 }
 
-int trap_Parse_AddGlobalDefine( char *define )
+bool trap_Parse_AddGlobalDefine( char *define )
 {
   return syscall( G_PARSE_ADD_GLOBAL_DEFINE, define );
 }
 
-int trap_Parse_LoadSource( const char *filename )
+bool trap_Parse_LoadSource( const char *filename )
 {
   return syscall( G_PARSE_LOAD_SOURCE, filename );
 }
 
-int trap_Parse_FreeSource( int handle )
+bool trap_Parse_FreeSource( int handle )
 {
   return syscall( G_PARSE_FREE_SOURCE, handle );
 }
 
-int trap_Parse_ReadToken( int handle, pc_token_t *pc_token )
+bool trap_Parse_ReadToken( int handle, pc_token_t *pc_token )
 {
   return syscall( G_PARSE_READ_TOKEN, handle, pc_token );
 }
 
-int trap_Parse_SourceFileAndLine( int handle, char *filename, int *line )
+bool trap_Parse_SourceFileAndLine( int handle, char *filename, int *line )
 {
   return syscall( G_PARSE_SOURCE_FILE_AND_LINE, handle, filename, line );
 }

@@ -26,10 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef G_LOCAL_H
 #define G_LOCAL_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "qcommon/q_shared.h"
 
 #include "bg_public.h"
@@ -389,9 +385,9 @@ struct gclient_s
   clientPersistant_t  pers;
   clientSession_t     sess;
 
-  qboolean            readyToExit;    // wishes to leave the intermission
+  bool                readyToExit;    // wishes to leave the intermission
 
-  qboolean            noclip;
+  bool                noclip;
   int                 cliprcontents;  // the backup layer of ent->r.contents for when noclipping
 
   int                 lastCmdTime;    // level.time of last usercmd_t, for EF_CONNECTION
@@ -720,7 +716,7 @@ typedef struct
 
 typedef struct
 {
-  char *cmdName;
+  const char *cmdName;
   int  cmdFlags;
   void ( *cmdHandler )( gentity_t *ent );
 } commands_t;
@@ -950,7 +946,7 @@ void G_InitPlayerModel(void);
 qboolean G_IsValidPlayerModel(const char *model);
 void G_FreePlayerModel(void);
 void G_GetPlayerModelSkins( const char *modelname, char skins[][ 64 ], int maxskins, int *numskins );
-char *GetSkin( char *modelname, char *wish );
+const char *GetSkin( const char *modelname, const char *wish );
 
 //
 // g_weapon.c
@@ -1047,7 +1043,7 @@ int  G_TimeTilSuddenDeath( void );
 // g_client.c
 //
 const char *ClientConnect( int clientNum, qboolean firstTime );
-char *ClientUserinfoChanged( int clientNum, qboolean forceName );
+const char *ClientUserinfoChanged( int clientNum, qboolean forceName );
 void ClientDisconnect( int clientNum );
 void ClientBegin( int clientNum );
 void ClientCommand( int clientNum );
@@ -1215,9 +1211,5 @@ extern  vmCvar_t  g_publicAdminMessages;
 extern  vmCvar_t  g_allowTeamOverlay;
 
 extern  vmCvar_t  g_censorship;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -72,12 +72,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef struct
 {
-  char *keyword;
+  const char *keyword;
   qboolean ( * handler ) ( gentity_t *ent );
   qboolean silent;
-  char *flag;
-  char *function;  // used in /adminhelp
-  char *syntax;  // used in /adminhelp
+  const char *flag;
+  const char *function;  // used in /adminhelp
+  const char *syntax;  // used in /adminhelp
 }
 g_admin_cmd_t;
 

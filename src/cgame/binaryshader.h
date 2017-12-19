@@ -4,8 +4,8 @@
 typedef struct
 {
     byte color[ 3 ];
-    qboolean drawIntersection;
-    qboolean drawFrontline;
+    bool drawIntersection;
+    bool drawFrontline;
 } cgBinaryShaderSetting_t;
 
 #define NUM_BINARY_SHADERS 256

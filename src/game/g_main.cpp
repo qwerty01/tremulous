@@ -307,7 +307,7 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .q3vm file
 ================
 */
-Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2 )
+extern "C" Q_EXPORT intptr_t vmMain( int command, int arg0, int arg1, int arg2 )
 {
   switch( command )
   {

@@ -23,26 +23,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifndef G_SPAWN_H
 #define G_SPAWN_H
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "qcommon/q_shared.h"
 
 typedef struct gentity_s gentity_t;
 
-qboolean G_SpawnString( const char *key, const char *defaultString, char **out );
-qboolean G_SpawnFloat( const char *key, const char *defaultString, float *out );
-qboolean G_SpawnInt( const char *key, const char *defaultString, int *out );
-qboolean G_SpawnVector( const char *key, const char *defaultString, float *out );
-qboolean G_SpawnVector4( const char *key, const char *defaultString, float *out );
+bool G_SpawnString( const char *key, const char *defaultString, char **out );
+bool G_SpawnFloat( const char *key, const char *defaultString, float *out );
+bool G_SpawnInt( const char *key, const char *defaultString, int *out );
+bool G_SpawnVector( const char *key, const char *defaultString, float *out );
+bool G_SpawnVector4( const char *key, const char *defaultString, float *out );
 
-qboolean G_CallSpawn( gentity_t *ent );
+bool G_CallSpawn( gentity_t *ent );
 char *G_NewString( const char *string );
 void G_ParseField( const char *key, const char *value, gentity_t *ent );
 void G_SpawnGEntityFromSpawnVars( void );
 char *G_AddSpawnVarToken( const char *string );
-qboolean G_ParseSpawnVars( void );
+bool G_ParseSpawnVars( void );
 void SP_worldspawn( void );
 void G_SpawnEntitiesFromString( void );
 
@@ -113,8 +110,5 @@ void SP_misc_particle_system( gentity_t *ent );
 void SP_misc_anim_model( gentity_t *ent );
 void SP_misc_light_flare( gentity_t *ent );
 
-#ifdef __cplusplus
-}
-#endif
 #endif
 

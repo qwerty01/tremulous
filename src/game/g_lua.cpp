@@ -346,7 +346,7 @@ void Api_Init()
 		);
 }
 
-void Cmd_LuaLoad_f( void )
+void Cmd_LuaLoad_f( gentity_t* )
 {
     if( trap_Argc( ) < 2 )
     {

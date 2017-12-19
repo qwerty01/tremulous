@@ -1,8 +1,5 @@
 #ifndef G_SYSCALLS_H
 #define G_SYSCALLS_H
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef struct gentity_s gentity_t;
 
@@ -49,16 +46,13 @@ void trap_GetUsercmd( int clientNum, usercmd_t *cmd );
 qboolean trap_GetEntityToken( char *buffer, int bufferSize );
 int trap_RealTime( qtime_t *qtime );
 void trap_SnapVector( float *v );
-int trap_Parse_AddGlobalDefine( char *define );
-int trap_Parse_LoadSource( const char *filename );
-int trap_Parse_FreeSource( int handle );
-int trap_Parse_ReadToken( int handle, pc_token_t *pc_token );
-int trap_Parse_SourceFileAndLine( int handle, char *filename, int *line );
+bool trap_Parse_AddGlobalDefine( char *define );
+bool trap_Parse_LoadSource( const char *filename );
+bool trap_Parse_FreeSource( int handle );
+bool trap_Parse_ReadToken( int handle, pc_token_t *pc_token );
+bool trap_Parse_SourceFileAndLine( int handle, char *filename, int *line );
 void trap_AddCommand( const char *cmdName );
 void trap_RemoveCommand( const char *cmdName );
 int trap_FS_GetFilteredFiles( const char *path, const char *extension, const char *filter, char *listbuf, int bufsize );
 
-#ifdef __cplusplus
-}
-#endif
 #endif

@@ -1,7 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 2011 Thilo Schulz <thilo@tjps.eu>
-Copyright (C) 2000-2013 Darklegion Development
+
 
 This file is part of Tremulous.
 
@@ -22,12 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "qasm-inline.h"
-#include "qcommon/q_shared.h"
+//#include "qcommon/mathlib.h"
+//
+//#include <stdbool.h>
+//#include <math.h>
+//#include "qcommon/q_shared.h"
 
 /*
  * GNU inline asm version of qsnapvector
  * See MASM snapvector.asm for commentary
  */
+typedef float vec_t;
+typedef vec_t vec3_t[3];
 
 static unsigned char ssemask[16] __attribute__((aligned(16))) =
 {
