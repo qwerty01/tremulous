@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct gentity_t;
 struct gclient_t;
+struct namelog_t;
 
 #include "g_admin.h"
 
@@ -90,7 +91,7 @@ struct gentity_t {
     // EXPECTS THE FIELDS IN THAT ORDER!
     //================================
 
-    struct gclient_s *client;  // NULL if not a client
+    gclient_t *client;  // NULL if not a client
     gitem_t item;
 
     bool inuse;
@@ -201,7 +202,7 @@ struct gentity_t {
     gentity_t *rangeMarker;
     bool active;  // for power repeater, but could be useful elsewhere
     bool powered;  // for human buildables
-    struct namelog_s *builtBy;  // person who built this
+    namelog_t *builtBy;  // person who built this
     int dcc;  // number of controlling dccs
     bool spawned;  // whether or not this buildable has finished spawning
     int shrunkTime;  // time when a barricade shrunk or zero

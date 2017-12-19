@@ -174,7 +174,7 @@ typedef struct
 } pmoveExt_t;
 
 #define MAXTOUCH  32
-typedef struct pmove_s
+struct pmove_t
 {
   // state (in / out)
   playerState_t *ps;
@@ -211,7 +211,7 @@ typedef struct pmove_s
 
 
   int           (*pointcontents)( const vec3_t point, int passEntityNum );
-} pmove_t;
+};
 
 // if a full pmove isn't done on the client, you can just update the angles
 void PM_UpdateViewAngles( playerState_t *ps, const usercmd_t *cmd );

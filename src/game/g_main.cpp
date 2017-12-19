@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 level_locals_t level;
 
-typedef struct {
+struct cvarTable_t {
     vmCvar_t *vmCvar;
     const char *cvarName;
     const char *defaultString;
@@ -39,7 +39,7 @@ typedef struct {
        end. unfortunately, if the server crashes, the value set in worldspawn may
        persist */
     char *_explicit;
-} cvarTable_t;
+};
 
 gentity_t g_entities[MAX_GENTITIES];
 gclient_t g_clients[MAX_CLIENTS];
@@ -270,7 +270,8 @@ static cvarTable_t gameCvarTable[] = {
 
     {&g_censorship, "g_censorship", "", CVAR_ARCHIVE, 0, false},
 
-    {&g_tag, "g_tag", "main", CVAR_INIT, 0, false}};
+    {&g_tag, "g_tag", "main", CVAR_INIT, 0, false}
+};
 
 static size_t gameCvarTableSize = ARRAY_LEN(gameCvarTable);
 
