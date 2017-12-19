@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct gentity_t;
 struct gclient_t;
-struct namelog_t;
 
 #include "g_admin.h"
 
@@ -47,13 +46,13 @@ struct namelog_t;
 #define INTERMISSION_DELAY_TIME 1000
 
 // gentity->flags
-#define FL_GODMODE      0x00000010
-#define FL_NOTARGET     0x00000020
-#define FL_TEAMSLAVE    0x00000400  // not the first on the team
+#define FL_GODMODE 0x00000010
+#define FL_NOTARGET 0x00000020
+#define FL_TEAMSLAVE 0x00000400  // not the first on the team
 #define FL_NO_KNOCKBACK 0x00000800
 #define FL_DROPPED_ITEM 0x00001000
-#define FL_NO_BOTS      0x00002000  // spawn point not for bot use
-#define FL_NO_HUMANS    0x00004000  // spawn point just for bots
+#define FL_NO_BOTS 0x00002000  // spawn point not for bot use
+#define FL_NO_HUMANS 0x00004000  // spawn point just for bots
 #define FL_FORCE_GESTURE 0x00008000  // spawn point just for bots
 
 // movers are things like doors, plats, buttons, etc
@@ -74,8 +73,9 @@ enum moverState_t {
     MODEL_2TO1
 };
 
-struct gitem_t
-{
+#define SP_PODIUM_MODEL "models/mapobjects/podium/podium4.md3"
+
+struct gitem_t {
     int ammo;  // ammo held
     int clips;  // clips held
 };
@@ -83,8 +83,6 @@ struct gitem_t
 //============================================================================
 
 struct gentity_t {
-
- public:
     entityState_t s;  // communicated by server to clients
     entityShared_t r;  // shared by both the server system and game
 
@@ -92,7 +90,7 @@ struct gentity_t {
     // EXPECTS THE FIELDS IN THAT ORDER!
     //================================
 
-    gclient_t *client;  // NULL if not a client
+    struct gclient_s *client;  // NULL if not a client
     gitem_t item;
 
     bool inuse;
@@ -101,7 +99,7 @@ struct gentity_t {
     int spawnflags;  // set in QuakeEd
 
     bool neverFree;  // if true, FreeEntity will only unlink
-                         // bodyque uses this
+                     // bodyque uses this
 
     int flags;  // FL_* variables
 
@@ -114,7 +112,7 @@ struct gentity_t {
     bool unlinkAfterEvent;
 
     bool physicsObject;  // if true, it can be pushed by movers and fall off edges
-                             // all game items are physicsObjects,
+                         // all game items are physicsObjects,
     float physicsBounce;  // 1.0 = continuous bounce, 0.0 = no bounce
     int clipmask;  // brushes with this content value will be collided against
                    // when moving.  items and corpses do not collide against
@@ -203,7 +201,7 @@ struct gentity_t {
     gentity_t *rangeMarker;
     bool active;  // for power repeater, but could be useful elsewhere
     bool powered;  // for human buildables
-    namelog_t *builtBy;  // person who built this
+    struct namelog_s *builtBy;  // person who built this
     int dcc;  // number of controlling dccs
     bool spawned;  // whether or not this buildable has finished spawning
     int shrunkTime;  // time when a barricade shrunk or zero
@@ -261,23 +259,19 @@ struct gentity_t {
     bool _targetShaderNewName_alloced;
 };
 
-enum clientConnected_t {
-    CON_DISCONNECTED,
-    CON_CONNECTING,
-    CON_CONNECTED
-};
+enum clientConnected_t { CON_DISCONNECTED, CON_CONNECTING, CON_CONNECTED };
 
 // client data that stays across multiple levels or tournament restarts
 // this is achieved by writing all the data to cvar strings at game shutdown
 // time and reading them back at connection time.  Anything added here
 // MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
-struct clientSession_t {
+typedef struct {
     int spectatorTime;  // for determining next-in-line to play
     spectatorState_t spectatorState;
     int spectatorClient;  // for chasecam and follow mode
     team_t restartTeam;  // for !restart keepteams and !restart switchteams
     clientList_t ignoreList;
-};
+} clientSession_t;
 
 // namelog
 #define MAX_NAMELOG_NAMES 5
@@ -408,7 +402,7 @@ struct gclient_t {
     // timers
     int respawnTime;  // can respawn when time > this
     int inactivityTime;  // kick players when time > this
-    bool inactivityWarning;  // true if the five seoond warning has been given
+    bool inactivityWarning;  // qtrue if the five seoond warning has been given
     int rewardTime;  // clear the EF_AWARD_IMPRESSIVE, etc when time > this
     int boostedTime;  // last time we touched a booster
 
@@ -460,9 +454,7 @@ struct gclient_t {
 
 struct spawnQueue_t {
     int clients[MAX_CLIENTS];
-
-    int front;
-    int back;
+    int front, back;
 };
 
 #define QUEUE_PLUS1(x) (((x) + 1) % MAX_CLIENTS)
@@ -499,22 +491,10 @@ struct damageRegion_t {
 };
 
 // status of the warning of certain events
-enum timeWarning_t {
-    TW_NOT = 0,
-    TW_IMMINENT,
-    TW_PASSED
-};
+enum timeWarning_t { TW_NOT = 0, TW_IMMINENT, TW_PASSED };
 
 // fate of a buildable
-enum buildFate_t {
-    BF_CONSTRUCT,
-    BF_DECONSTRUCT,
-    BF_REPLACE,
-    BF_DESTROY,
-    BF_TEAMKILL,
-    BF_UNPOWER,
-    BF_AUTO
-};
+enum buildFate_t { BF_CONSTRUCT, BF_DECONSTRUCT, BF_REPLACE, BF_DESTROY, BF_TEAMKILL, BF_UNPOWER, BF_AUTO };
 
 // data needed to revert a change in layout
 struct buildLog_t {
@@ -566,7 +546,7 @@ struct level_locals_t {
     int lastTeamLocationTime;  // last time of client team location update
 
     bool newSession;  // don't use any old session data, because
-    // we changed gametype
+                      // we changed gametype
 
     bool restarted;  // waiting for a map_restart to fire
 
@@ -600,10 +580,10 @@ struct level_locals_t {
     // intermission state
     bool exited;
     int intermissionQueued;  // intermission was qualified, but
-    // wait INTERMISSION_DELAY_TIME before
-    // actually going there so the last
-    // frag can be watched.  Disable future
-    // kills during this delay
+                             // wait INTERMISSION_DELAY_TIME before
+                             // actually going there so the last
+                             // frag can be watched.  Disable future
+                             // kills during this delay
     int intermissiontime;  // time the intermission was started
     char *changemap;
     bool readyToExit;  // at least one client wants to exit
@@ -690,14 +670,14 @@ struct level_locals_t {
     int numBuildLogs;
 };
 
-#define CMD_CHEAT       0x0001
-#define CMD_CHEAT_TEAM  0x0002  // is a cheat when used on a team
-#define CMD_MESSAGE     0x0004  // sends message to others (skip when muted)
-#define CMD_TEAM        0x0008  // must be on a team
-#define CMD_SPEC        0x0010  // must be a spectator
-#define CMD_ALIEN       0x0020
-#define CMD_HUMAN       0x0040
-#define CMD_ALIVE       0x0080
+#define CMD_CHEAT 0x0001
+#define CMD_CHEAT_TEAM 0x0002  // is a cheat when used on a team
+#define CMD_MESSAGE 0x0004  // sends message to others (skip when muted)
+#define CMD_TEAM 0x0008  // must be on a team
+#define CMD_SPEC 0x0010  // must be a spectator
+#define CMD_ALIEN 0x0020
+#define CMD_HUMAN 0x0040
+#define CMD_ALIVE 0x0080
 #define CMD_INTERMISSION 0x0100  // valid during intermission
 
 struct commands_t {
@@ -877,8 +857,8 @@ void G_LogDestruction(gentity_t *self, gentity_t *actor, int mod);
 void G_InitDamageLocations(void);
 
 // damage flags
-#define DAMAGE_RADIUS       0x00000001  // damage was indirect
-#define DAMAGE_NO_ARMOR     0x00000002  // armour does not protect from this damage
+#define DAMAGE_RADIUS 0x00000001  // damage was indirect
+#define DAMAGE_NO_ARMOR 0x00000002  // armour does not protect from this damage
 #define DAMAGE_NO_KNOCKBACK 0x00000004  // do not affect velocity, just view angles
 #define DAMAGE_NO_PROTECTION 0x00000008  // kills everything except godmode
 #define DAMAGE_NO_LOCDAMAGE 0x00000010  // do not apply locational damage
