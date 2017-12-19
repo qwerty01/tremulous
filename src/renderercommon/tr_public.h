@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 typedef struct {
 	// called before the library is unloaded
-	// if the system is just reconfiguring, pass destroyWindow = qfalse,
+	// if the system is just reconfiguring, pass destroyWindow = false,
 	// which will keep the screen from flashing to the desktop.
 	void	(*Shutdown)( bool destroyWindow );
 

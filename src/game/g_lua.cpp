@@ -13,8 +13,18 @@ sol::state lua;
 class Vec3 {
 public:
     Vec3() {}
-    Vec3(float x, float y, float z) { vec[0] = x; vec[1] = y; vec[2] = z; }
-    Vec3(vec3_t v) { vec[0] = v[0]; vec[1] = v[1]; vec[2] = v[2]; }
+    Vec3(float x, float y, float z)
+    {
+        vec[0] = x;
+        vec[1] = y;
+        vec[2] = z;
+    }
+    Vec3(vec3_t v)
+    {
+        vec[0] = v[0];
+        vec[1] = v[1];
+        vec[2] = v[2];
+    }
     float get_x() { return vec[0]; }
     float get_y() { return vec[1]; }
     float get_z() { return vec[2]; }
@@ -27,8 +37,20 @@ public:
 class Vec4 {
 public:
     Vec4() {}
-    Vec4(float a, float b, float c, float d) { vec[0] = a; vec[1] = b; vec[2] = c; vec[3] = d; }
-    Vec4(vec4_t v) { vec[0] = v[0]; vec[1] = v[1]; vec[2] = v[2]; vec[3] = v[3]; }
+    Vec4(float a, float b, float c, float d)
+    {
+        vec[0] = a;
+        vec[1] = b;
+        vec[2] = c;
+        vec[3] = d;
+    }
+    Vec4(vec4_t v)
+    {
+        vec[0] = v[0];
+        vec[1] = v[1];
+        vec[2] = v[2];
+        vec[3] = v[3];
+    }
     float get_a() { return vec[0]; }
     float get_b() { return vec[1]; }
     float get_c() { return vec[2]; }
@@ -45,9 +67,9 @@ public:
     GEntity() { ent = G_Spawn(); }
     GEntity(gentity_t* _ent) : ent(_ent) {}
 
-    static GEntity* find( GEntity* _from,  std::string match )
+    static GEntity* find(GEntity* _from, std::string match)
     {
-        gentity_t *from = _from ? _from->ent :  nullptr;
+        gentity_t* from = _from ? _from->ent : nullptr;
         gentity_t* ent = G_Find(from, FOFS(classname), match.c_str());
         if (ent)
         {
@@ -57,8 +79,11 @@ public:
         return nullptr;
     }
 
-    static void call_spawn( GEntity* me )
-    { if ( me ) G_CallSpawn(me->ent); }
+    static void call_spawn(GEntity* me)
+    {
+        if (me)
+            G_CallSpawn(me->ent);
+    }
 
     // Member functions
     void die(GEntity* _inflictor, GEntity* _attacker, int damage, int mod)
@@ -77,8 +102,8 @@ public:
     //
     // Properties
     //
-    
-    // acceleration 
+
+    // acceleration
     void set_acceleration(Vec3 vec)
     {
         ent->acceleration[0] = vec.vec[0];
@@ -91,7 +116,7 @@ public:
         return r;
     }
 
-    // alpha 
+    // alpha
     void set_alpha(Vec3 vec)
     {
         ent->pos1[0] = vec.vec[0];
@@ -111,9 +136,8 @@ public:
         ent->s.pos.trBase[1] = f;
         ent->s.pos.trBase[2] = 0;
     }
-    float get_angle()
-    { return ent->s.pos.trBase[1]; }
- 
+    float get_angle() { return ent->s.pos.trBase[1]; }
+
     // angles
     void set_angles(Vec3 vec)
     {
@@ -149,7 +173,7 @@ public:
     void set_classname(std::string name)
     {
         ent->classname = strdup(name.c_str());
-        ent->_classname_alloced = qtrue;
+        ent->_classname_alloced = true;
     }
     std::string get_classname() { return ent->classname; }
 
@@ -169,7 +193,7 @@ public:
     void set_message(std::string name)
     {
         ent->message = strdup(name.c_str());
-        ent->_message_alloced = qtrue;
+        ent->_message_alloced = true;
     }
     std::string get_message() { return ent->message; }
 
@@ -177,11 +201,11 @@ public:
     void set_model(std::string name)
     {
         ent->model = strdup(name.c_str());
-        ent->_model_alloced = qtrue;
+        ent->_model_alloced = true;
     }
-    std::string get_model() 
+    std::string get_model()
     {
-        if ( ent->model )
+        if (ent->model)
             return ent->model;
         return "";
     }
@@ -190,11 +214,11 @@ public:
     void set_model2(std::string name)
     {
         ent->model2 = strdup(name.c_str());
-        ent->_model2_alloced = qtrue;
+        ent->_model2_alloced = true;
     }
     std::string get_model2()
-     {
-        if ( ent->model2 )
+    {
+        if (ent->model2)
             return ent->model2;
         return "";
     }
@@ -214,9 +238,9 @@ public:
     // radius
     void set_radius(Vec3 vec)
     {
-        ent->pos2[0] = vec.vec[0]; 
-        ent->pos2[0] = vec.vec[1]; 
-        ent->pos2[0] = vec.vec[2]; 
+        ent->pos2[0] = vec.vec[0];
+        ent->pos2[0] = vec.vec[1];
+        ent->pos2[0] = vec.vec[2];
     }
     Vec3 get_radius()
     {
@@ -235,16 +259,16 @@ public:
     // spawnflags
     void set_spawnflags(int spawnflags) { ent->spawnflags = spawnflags; }
     int get_spawnflags() { return ent->spawnflags; }
- 
+
     // speed
     void set_speed(float f) { ent->speed = f; }
     float get_speed() { return ent->speed; }
 
-    // target 
+    // target
     void set_target(std::string name)
     {
         ent->target = strdup(name.c_str());
-        ent->_target_alloced = qtrue;
+        ent->_target_alloced = true;
     }
     std::string get_target() { return ent->target; }
 
@@ -252,7 +276,7 @@ public:
     void set_targetname(std::string name)
     {
         ent->targetname = strdup(name.c_str());
-        ent->_targetname_alloced = qtrue;
+        ent->_targetname_alloced = true;
     }
     std::string get_targetname() { return ent->targetname; }
 
@@ -260,7 +284,7 @@ public:
     void set_targetShaderName(std::string name)
     {
         ent->targetShaderName = strdup(name.c_str());
-        ent->_targetShaderName_alloced = qtrue;
+        ent->_targetShaderName_alloced = true;
     }
     std::string get_targetShaderName() { return ent->targetShaderName; }
 
@@ -268,7 +292,7 @@ public:
     void set_targetShaderNewName(std::string name)
     {
         ent->targetShaderNewName = strdup(name.c_str());
-        ent->_targetShaderNewName_alloced = qtrue;
+        ent->_targetShaderNewName_alloced = true;
     }
     std::string get_targetShaderNewName() { return ent->targetShaderNewName; }
 
@@ -277,88 +301,74 @@ public:
     float get_wait() { return ent->wait; }
 
 private:
-    gentity_t *ent = nullptr;
+    gentity_t* ent = nullptr;
 };
 
 void Api_Init()
 {
     lua.open_libraries(sol::lib::base, sol::lib::package);
 
-	lua.new_usertype<Vec3>
-        (
-        "vec3_t", sol::constructors<sol::types<>, sol::types<float, float, float>>(),
-            "x", sol::property(&Vec3::get_x, &Vec3::set_x),
-            "y", sol::property(&Vec3::get_y, &Vec3::set_y),
-            "z", sol::property(&Vec3::get_z, &Vec3::set_z)
-		);
+    lua.new_usertype<Vec3>("vec3_t", sol::constructors<sol::types<>, sol::types<float, float, float>>(), "x",
+        sol::property(&Vec3::get_x, &Vec3::set_x), "y", sol::property(&Vec3::get_y, &Vec3::set_y), "z",
+        sol::property(&Vec3::get_z, &Vec3::set_z));
 
-
-	lua.new_usertype<Vec4>
-        (
-        "vec4_t", sol::constructors<sol::types<>, sol::types<float, float, float, float>>(),
-            "a", sol::property(&Vec4::get_a, &Vec4::set_a),
-            "b", sol::property(&Vec4::get_b, &Vec4::set_b),
-            "c", sol::property(&Vec4::get_c, &Vec4::set_c),
-            "d", sol::property(&Vec4::get_d, &Vec4::set_d)
-		);
+    lua.new_usertype<Vec4>("vec4_t", sol::constructors<sol::types<>, sol::types<float, float, float, float>>(), "a",
+        sol::property(&Vec4::get_a, &Vec4::set_a), "b", sol::property(&Vec4::get_b, &Vec4::set_b), "c",
+        sol::property(&Vec4::get_c, &Vec4::set_c), "d", sol::property(&Vec4::get_d, &Vec4::set_d));
 
     // Provide accessors to all the fields available in g_spawn.c
-	lua.new_usertype<GEntity>
-        (
-        "gentity_t", sol::constructors<sol::types<>>(),
-            // Static routine
-            "find", &GEntity::find,
-            "call_spawn", &GEntity::call_spawn,
+    lua.new_usertype<GEntity>("gentity_t", sol::constructors<sol::types<>>(),
+        // Static routine
+        "find", &GEntity::find, "call_spawn", &GEntity::call_spawn,
 
-            // Member function
-            // think
-            // reached
-            // blocked
-            // touch
-            // use
-            // pain
-            "die", &GEntity::die,
+        // Member function
+        // think
+        // reached
+        // blocked
+        // touch
+        // use
+        // pain
+        "die", &GEntity::die,
 
-            // Properties available in g_spawn.c
-            "acceleration", sol::property(&GEntity::get_acceleration, &GEntity::set_acceleration),
-            "alpha", sol::property(&GEntity::get_alpha, &GEntity::set_alpha),
-            "angle", sol::property(&GEntity::get_angle, &GEntity::set_angle),
-            "angles", sol::property(&GEntity::get_angles, &GEntity::set_angles),
-            "animation", sol::property(&GEntity::get_animation, &GEntity::set_animation),
-            "bounce", sol::property(&GEntity::get_bounce, &GEntity::set_bounce),
-            "classname", sol::property(&GEntity::get_classname, &GEntity::set_classname),
-            "count", sol::property(&GEntity::get_count, &GEntity::set_count),
-            "damage", sol::property(&GEntity::get_damage, &GEntity::set_damage),
-            "health", sol::property(&GEntity::get_health, &GEntity::set_health),
-            "model", sol::property(&GEntity::get_model, &GEntity::set_model),
-            "model2", sol::property(&GEntity::get_model2, &GEntity::set_model2),
-            "origin", sol::property(&GEntity::get_origin, &GEntity::set_origin),
-            "radius", sol::property(&GEntity::get_radius, &GEntity::set_radius),
-            "random", sol::property(&GEntity::get_random, &GEntity::set_random),
-            "rotatorAngle", sol::property(&GEntity::get_rotatorAngle, &GEntity::set_rotatorAngle),
-            "spawnflags", sol::property(&GEntity::get_spawnflags, &GEntity::set_spawnflags),
-            "speed", sol::property(&GEntity::get_speed, &GEntity::set_speed),
-            "target", sol::property(&GEntity::get_target, &GEntity::set_target),
-            "targetname", sol::property(&GEntity::get_targetname, &GEntity::set_targetname),
-            "targetShaderName", sol::property(&GEntity::get_targetShaderName, &GEntity::set_targetShaderName),
-            "targetShaderNewName", sol::property(&GEntity::get_targetShaderNewName, &GEntity::set_targetShaderNewName),
-            "wait", sol::property(&GEntity::get_wait, &GEntity::set_wait)
-		);
+        // Properties available in g_spawn.c
+        "acceleration", sol::property(&GEntity::get_acceleration, &GEntity::set_acceleration), "alpha",
+        sol::property(&GEntity::get_alpha, &GEntity::set_alpha), "angle",
+        sol::property(&GEntity::get_angle, &GEntity::set_angle), "angles",
+        sol::property(&GEntity::get_angles, &GEntity::set_angles), "animation",
+        sol::property(&GEntity::get_animation, &GEntity::set_animation), "bounce",
+        sol::property(&GEntity::get_bounce, &GEntity::set_bounce), "classname",
+        sol::property(&GEntity::get_classname, &GEntity::set_classname), "count",
+        sol::property(&GEntity::get_count, &GEntity::set_count), "damage",
+        sol::property(&GEntity::get_damage, &GEntity::set_damage), "health",
+        sol::property(&GEntity::get_health, &GEntity::set_health), "model",
+        sol::property(&GEntity::get_model, &GEntity::set_model), "model2",
+        sol::property(&GEntity::get_model2, &GEntity::set_model2), "origin",
+        sol::property(&GEntity::get_origin, &GEntity::set_origin), "radius",
+        sol::property(&GEntity::get_radius, &GEntity::set_radius), "random",
+        sol::property(&GEntity::get_random, &GEntity::set_random), "rotatorAngle",
+        sol::property(&GEntity::get_rotatorAngle, &GEntity::set_rotatorAngle), "spawnflags",
+        sol::property(&GEntity::get_spawnflags, &GEntity::set_spawnflags), "speed",
+        sol::property(&GEntity::get_speed, &GEntity::set_speed), "target",
+        sol::property(&GEntity::get_target, &GEntity::set_target), "targetname",
+        sol::property(&GEntity::get_targetname, &GEntity::set_targetname), "targetShaderName",
+        sol::property(&GEntity::get_targetShaderName, &GEntity::set_targetShaderName), "targetShaderNewName",
+        sol::property(&GEntity::get_targetShaderNewName, &GEntity::set_targetShaderNewName), "wait",
+        sol::property(&GEntity::get_wait, &GEntity::set_wait));
 }
 
-void Cmd_LuaLoad_f( gentity_t* )
+void Cmd_LuaLoad_f(gentity_t*)
 {
-    if( trap_Argc( ) < 2 )
+    if (trap_Argc() < 2)
     {
-        G_Printf( "usage: lua <name>\n" );
+        G_Printf("usage: lua <name>\n");
         return;
     }
 
     try
-    { 
-        std::string s = ConcatArgs( 1 );
+    {
+        std::string s = ConcatArgs(1);
         lua.script_file(s);
-    } 
+    }
     catch (sol::error& e)
     {
         trap_Print(va(S_COLOR_YELLOW "%s\n", e.what()));

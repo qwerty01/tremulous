@@ -117,23 +117,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SLIDER_THUMB_HEIGHT 20.0f
 #define NUM_CROSSHAIRS 10
 
-typedef struct {
+struct scriptDef_t {
     const char *command;
     const char *args[MAX_SCRIPT_ARGS];
-} scriptDef_t;
+};
 
-typedef struct {
+struct Rectangle {
     float x;  // horiz position
     float y;  // vert position
     float w;  // width
     float h;  // height;
-} rectDef_t;
-
-typedef rectDef_t Rectangle;
+};
 
 // FIXME: do something to separate text vs window stuff
 
-typedef struct {
+struct Window {
     Rectangle rect;  // client coord rectangle
     int aspectBias;  // direction in which to aspect compensate
     Rectangle rectClient;  // screen coord rectangle
@@ -156,13 +154,13 @@ typedef struct {
     vec4_t borderColor;  // border color
     vec4_t outlineColor;  // border color
     qhandle_t background;  // background asset
-} Window;
+};
 
-typedef struct {
+struct colorRangeDef_t {
     vec4_t color;
     float low;
     float high;
-} colorRangeDef_t;
+};
 
 // FIXME: combine flags into bitfields to save space
 // FIXME: consolidate all of the common stuff in one structure for menus and items
@@ -176,13 +174,13 @@ typedef struct {
 //
 #define MAX_LB_COLUMNS 16
 
-typedef struct columnInfo_s {
+struct columnInfo_t {
     int pos;
     int width;
     int align;
-} columnInfo_t;
+};
 
-typedef struct listBoxDef_s {
+struct listBoxDef_t {
     int startPos;
     int endPos;
     int cursorPos;
@@ -202,13 +200,13 @@ typedef struct listBoxDef_s {
 
     bool resetonfeederchange;
     int lastFeederCount;
-} listBoxDef_t;
+};
 
-typedef struct cycleDef_s {
+struct cycleDef_t {
     int cursorPos;
-} cycleDef_t;
+};
 
-typedef struct editFieldDef_s {
+struct editFieldDef_t {
     float minVal;  //  edit field limits
     float maxVal;  //
     float defVal;  //
@@ -217,25 +215,25 @@ typedef struct editFieldDef_s {
     int maxPaintChars;  // for edit fields
     int maxFieldWidth;  // for edit fields
     int paintOffset;  //
-} editFieldDef_t;
+};
 
 #define MAX_MULTI_CVARS 32
 
-typedef struct multiDef_s {
+struct multiDef_t {
     const char *cvarList[MAX_MULTI_CVARS];
     const char *cvarStr[MAX_MULTI_CVARS];
     float cvarValue[MAX_MULTI_CVARS];
     int count;
     bool strDef;
-} multiDef_t;
+};
 
-typedef struct modelDef_s {
+struct modelDef_t {
     int angle;
     vec3_t origin;
     float fov_x;
     float fov_y;
     int rotationSpeed;
-} modelDef_t;
+};
 
 #define CVAR_ENABLE 0x00000001
 #define CVAR_DISABLE 0x00000002
@@ -244,8 +242,8 @@ typedef struct modelDef_s {
 
 typedef enum { TYPE_ANY = -1, TYPE_NONE, TYPE_LIST, TYPE_EDIT, TYPE_MULTI, TYPE_COMBO, TYPE_MODEL } itemDataType_t;
 
-struct itemDef_s;
-typedef struct {
+struct itemDef_t;
+typedef struct menuDef_t {
 
     Window window;
     const char *font;  // font
@@ -263,10 +261,10 @@ typedef struct {
 
     vec4_t focusColor;  // focus color for items
     vec4_t disableColor;  // focus color for items
-    itemDef_s *items[MAX_MENUITEMS];  // items this menu contains
+    itemDef_t *items[MAX_MENUITEMS];  // items this menu contains
 } menuDef_t;
 
-typedef struct itemDef_s {
+struct itemDef_t {
     Window window;  // common positional, border, style, layout info
     Rectangle textRect;  // rectangle the text ( if any ) consumes
     int type;  // text, button, radiobutton, checkbox, textfield, listbox, combo
@@ -307,9 +305,9 @@ typedef struct itemDef_s {
         cycleDef_t *cycle;
         modelDef_t *model;
     } typeData;  // type specific data pointers
-} itemDef_t;
+};
 
-typedef struct {
+struct cachedAssets_t {
     const char *fontStr;
     const char *cursorStr;
     const char *gradientStr;
@@ -343,14 +341,14 @@ typedef struct {
     bool fontRegistered;
     emoticon_t emoticons[MAX_EMOTICONS];
     int emoticonCount;
-} cachedAssets_t;
+};
 
-typedef struct {
+struct commandDef_t {
     const char *name;
     void (*handler)(itemDef_t *item, char **args);
-} commandDef_t;
+};
 
-typedef struct {
+struct displayContextDef_t {
     qhandle_t (*registerShaderNoMip)(const char *p);
     void (*setColor)(const vec4_t v);
     void (*drawHandlePic)(float x, float y, float w, float h, qhandle_t asset);
@@ -422,7 +420,7 @@ typedef struct {
     qhandle_t cursor;
     float FPS;
 
-} displayContextDef_t;
+};
 
 const char *String_Alloc(const char *p);
 void String_Init(void);
@@ -439,13 +437,13 @@ void Menu_ScrollFeeder(menuDef_t *menu, int feeder, bool down);
 bool Float_Parse(char **p, float *f);
 bool Color_Parse(char **p, vec4_t *c);
 bool Int_Parse(char **p, int *i);
-bool Rect_Parse(char **p, rectDef_t *r);
+bool Rect_Parse(char **p, Rectangle *r);
 bool String_Parse(char **p, const char **out);
 bool Script_Parse(char **p, const char **out);
 bool PC_Float_Parse(int handle, float *f);
 bool PC_Color_Parse(int handle, vec4_t *c);
 bool PC_Int_Parse(int handle, int *i);
-bool PC_Rect_Parse(int handle, rectDef_t *r);
+bool PC_Rect_Parse(int handle, Rectangle *r);
 bool PC_String_Parse(int handle, const char **out);
 bool PC_Script_Parse(int handle, const char **out);
 int Menu_Count(void);
@@ -492,7 +490,7 @@ void trap_R_SetClipRegion(const float *region);
 // for cg_draw.c
 void Item_Text_Wrapped_Paint(itemDef_t *item);
 const char *Item_Text_Wrap(const char *text, float scale, float width);
-void UI_DrawTextBlock(rectDef_t *rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
+void UI_DrawTextBlock(Rectangle *rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
     int textvalign, int textStyle, const char *text);
 void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
 void UI_Text_Paint_Limit(

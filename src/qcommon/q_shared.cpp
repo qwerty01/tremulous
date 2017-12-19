@@ -91,7 +91,7 @@ void COM_StripExtension( const char *in, char *out, int destsize )
 ============
 COM_CompareExtension
 
-string compare the end of the strings and return qtrue if strings match
+string compare the end of the strings and return true if strings match
 ============
 */
 bool COM_CompareExtension(const char *in, const char *ext)
@@ -106,10 +106,10 @@ bool COM_CompareExtension(const char *in, const char *ext)
 		in += inlen - extlen;
 		
 		if(!Q_stricmp(in, ext))
-			return qtrue;
+			return true;
 	}
 	
-	return qfalse;
+	return false;
 }
 
 /*
@@ -289,7 +289,7 @@ int COM_GetCurrentParseLine( void )
 
 char *COM_Parse( char **data_p )
 {
-	return COM_ParseExt( data_p, qtrue );
+	return COM_ParseExt( data_p, true );
 }
 
 void COM_ParseError( const char *format, ... )
@@ -323,7 +323,7 @@ COM_Parse
 Parse a token out of a string
 Will never return NULL, just empty strings
 
-If "allowLineBreaks" is qtrue then an empty
+If "allowLineBreaks" is true then an empty
 string will be returned if the next token is
 a newline.
 ==============
@@ -337,7 +337,7 @@ static char *SkipWhitespace( char *data, bool *hasNewLines ) {
 		}
 		if( c == '\n' ) {
 			com_lines++;
-			*hasNewLines = qtrue;
+			*hasNewLines = true;
 		}
 		data++;
 	}
@@ -348,7 +348,7 @@ static char *SkipWhitespace( char *data, bool *hasNewLines ) {
 int COM_Compress( char *data_p ) {
 	char *in, *out;
 	int c;
-	bool newline = qfalse, whitespace = qfalse;
+	bool newline = false, whitespace = false;
 
 	in = out = data_p;
 	if (in) {
@@ -366,22 +366,22 @@ int COM_Compress( char *data_p ) {
 					in += 2;
 				// record when we hit a newline
 			} else if ( c == '\n' || c == '\r' ) {
-				newline = qtrue;
+				newline = true;
 				in++;
 				// record when we hit whitespace
 			} else if ( c == ' ' || c == '\t') {
-				whitespace = qtrue;
+				whitespace = true;
 				in++;
 				// an actual token
 			} else {
 				// if we have a pending newline, emit it (and it counts as whitespace)
 				if (newline) {
 					*out++ = '\n';
-					newline = qfalse;
-					whitespace = qfalse;
+					newline = false;
+					whitespace = false;
 				} if (whitespace) {
 					*out++ = ' ';
-					whitespace = qfalse;
+					whitespace = false;
 				}
 
 				// copy quoted strings unmolested
@@ -417,7 +417,7 @@ int COM_Compress( char *data_p ) {
 char *COM_ParseExt( char **data_p, bool allowLineBreaks )
 {
 	int c = 0, len;
-	bool hasNewLines = qfalse;
+	bool hasNewLines = false;
 	char *data;
 
 	data = *data_p;
@@ -554,7 +554,7 @@ bool SkipBracedSection (char **program, int depth) {
 	char			*token;
 
 	do {
-		token = COM_ParseExt( program, qtrue );
+		token = COM_ParseExt( program, true );
 		if( token[1] == 0 ) {
 			if( token[0] == '{' ) {
 				depth++;
@@ -713,7 +713,7 @@ bool Q_isanumber( const char *s )
 	double UNUSED_VAR d;
 
 	if( *s == '\0' )
-		return qfalse;
+		return false;
 
 	d = strtod( s, &p );
 
@@ -1281,18 +1281,18 @@ bool Info_Validate( const char *s ) {
 	while ( *ch != '\0' )
 	{
 		if( !Q_isprint( *ch ) )
-			return qfalse;
+			return false;
 
 		if( *ch == '\"' )
-			return qfalse;
+			return false;
 
 		if( *ch == ';' )
-			return qfalse;
+			return false;
 
 		++ch;
 	}
 
-	return qtrue;
+	return true;
 }
 
 /*
@@ -1393,10 +1393,10 @@ static bool Com_CharIsOneOfCharset( char c, const char *set )
 	for( i = 0; i < strlen( set ); i++ )
 	{
 		if( set[ i ] == c )
-			return qtrue;
+			return true;
 	}
 
-	return qfalse;
+	return false;
 }
 
 /*
@@ -1455,7 +1455,7 @@ Com_ClientListContains
 bool Com_ClientListContains( const clientList_t *list, int clientNum )
 {
   if( clientNum < 0 || clientNum >= MAX_CLIENTS || !list )
-    return qfalse;
+    return false;
   if( clientNum < 32 )
     return ( ( list->lo & ( 1 << clientNum ) ) != 0 );
   else

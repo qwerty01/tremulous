@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "qcommon/q_shared.h"
 
-typedef struct gentity_s gentity_t;
+struct gentity_t;
 
 bool G_SpawnString( const char *key, const char *defaultString, char **out );
 bool G_SpawnFloat( const char *key, const char *defaultString, float *out );

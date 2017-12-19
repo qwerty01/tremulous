@@ -165,12 +165,7 @@ typedef int intptr_t;
 
 //=============================================================
 
-typedef unsigned char 		byte;
-
-
-#define qtrue true
-#define qfalse false
-typedef bool qboolean;
+typedef unsigned char byte;
 
 typedef union {
 	float f;

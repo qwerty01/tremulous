@@ -70,43 +70,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_ADMIN_LISTITEMS 20
 #define MAX_ADMIN_SHOWBANS 10
 
-typedef struct
-{
+struct g_admin_cmd_t {
   const char *keyword;
-  qboolean ( * handler ) ( gentity_t *ent );
-  qboolean silent;
+  bool (*handler)( gentity_t *ent );
+  bool silent;
   const char *flag;
   const char *function;  // used in /adminhelp
   const char *syntax;  // used in /adminhelp
-}
-g_admin_cmd_t;
+};
 
-typedef struct g_admin_level
-{
-  struct g_admin_level *next;
+struct g_admin_level_t {
+  g_admin_level_t *next;
   int level;
   char name[ MAX_NAME_LENGTH ];
   char flags[ MAX_ADMIN_FLAGS ];
-}
-g_admin_level_t;
+};
 
-typedef struct g_admin_admin
-{
-  struct g_admin_admin *next;
+struct g_admin_admin_t {
+  g_admin_admin_t *next;
   int level;
   char guid[ 33 ];
   char name[ MAX_NAME_LENGTH ];
   char flags[ MAX_ADMIN_FLAGS ];
-}
-g_admin_admin_t;
+};
 
 #define ADDRLEN 16
 /*
 addr_ts are passed as "arg" to admin_search for IP address matching
 admin_search prints (char *)arg, so the stringified address needs to be first
 */
-typedef struct
-{
+struct addr_t {
   char str[ 44 ];
   enum
   {
@@ -115,11 +108,11 @@ typedef struct
   } type;
   byte addr[ ADDRLEN ];
   int mask;
-} addr_t;
+};
 
-typedef struct g_admin_ban
+struct g_admin_ban_t
 {
-  struct g_admin_ban *next;
+  g_admin_ban_t *next;
   char name[ MAX_NAME_LENGTH ];
   char guid[ 33 ];
   addr_t ip;
@@ -128,65 +121,63 @@ typedef struct g_admin_ban
   int expires;
   char banner[ MAX_NAME_LENGTH ];
   int warnCount;
-}
-g_admin_ban_t;
+};
 
-typedef struct g_admin_command
+struct g_admin_command_t
 {
-  struct g_admin_command *next;
+  g_admin_command_t *next;
   char command[ MAX_ADMIN_CMD_LEN ];
   char exec[ MAX_QPATH ];
   char desc[ 50 ];
   char flag[ MAX_ADMIN_FLAG_LEN ];
-}
-g_admin_command_t;
+};
 
 void G_admin_register_cmds( void );
 void G_admin_unregister_cmds( void );
 void G_admin_cmdlist( gentity_t *ent );
 
-qboolean G_admin_ban_check( gentity_t *ent, char *reason, int rlen );
-qboolean G_admin_cmd_check( gentity_t *ent );
-qboolean G_admin_readconfig( gentity_t *ent );
-qboolean G_admin_permission( gentity_t *ent, const char *flag );
-qboolean G_admin_name_check( gentity_t *ent, char *name, char *err, int len );
+bool G_admin_ban_check( gentity_t *ent, char *reason, int rlen );
+bool G_admin_cmd_check( gentity_t *ent );
+bool G_admin_readconfig( gentity_t *ent );
+bool G_admin_permission( gentity_t *ent, const char *flag );
+bool G_admin_name_check( gentity_t *ent, char *name, char *err, int len );
 g_admin_admin_t *G_admin_admin( const char *guid );
 void G_admin_authlog( gentity_t *ent );
 
 // admin command functions
-qboolean G_admin_time( gentity_t *ent );
-qboolean G_admin_setlevel( gentity_t *ent );
-qboolean G_admin_kick( gentity_t *ent );
-qboolean G_admin_addlayout( gentity_t *ent );
-qboolean G_admin_setivo( gentity_t *ent );
-qboolean G_admin_adjustban( gentity_t *ent );
-qboolean G_admin_ban( gentity_t *ent );
-qboolean G_admin_unban( gentity_t *ent );
-qboolean G_admin_putteam( gentity_t *ent );
-qboolean G_admin_listadmins( gentity_t *ent );
-qboolean G_admin_listlayouts( gentity_t *ent );
-qboolean G_admin_listplayers( gentity_t *ent );
-qboolean G_admin_changemap( gentity_t *ent );
-qboolean G_admin_mute( gentity_t *ent );
-qboolean G_admin_denybuild( gentity_t *ent );
-qboolean G_admin_showbans( gentity_t *ent );
-qboolean G_admin_adminhelp( gentity_t *ent );
-qboolean G_admin_admintest( gentity_t *ent );
-qboolean G_admin_allready( gentity_t *ent );
-qboolean G_admin_endvote( gentity_t *ent );
-qboolean G_admin_spec999( gentity_t *ent );
-qboolean G_admin_transform( gentity_t *ent );
-qboolean G_admin_rename( gentity_t *ent );
-qboolean G_admin_restart( gentity_t *ent );
-qboolean G_admin_nextmap( gentity_t *ent );
-qboolean G_admin_setnextmap( gentity_t *ent );
-qboolean G_admin_namelog( gentity_t *ent );
-qboolean G_admin_lock( gentity_t *ent );
-qboolean G_admin_pause( gentity_t *ent );
-qboolean G_admin_builder( gentity_t *ent );
-qboolean G_admin_buildlog( gentity_t *ent );
-qboolean G_admin_revert( gentity_t *ent );
-qboolean G_admin_setdevmode( gentity_t *ent );
+bool G_admin_time( gentity_t *ent );
+bool G_admin_setlevel( gentity_t *ent );
+bool G_admin_kick( gentity_t *ent );
+bool G_admin_addlayout( gentity_t *ent );
+bool G_admin_setivo( gentity_t *ent );
+bool G_admin_adjustban( gentity_t *ent );
+bool G_admin_ban( gentity_t *ent );
+bool G_admin_unban( gentity_t *ent );
+bool G_admin_putteam( gentity_t *ent );
+bool G_admin_listadmins( gentity_t *ent );
+bool G_admin_listlayouts( gentity_t *ent );
+bool G_admin_listplayers( gentity_t *ent );
+bool G_admin_changemap( gentity_t *ent );
+bool G_admin_mute( gentity_t *ent );
+bool G_admin_denybuild( gentity_t *ent );
+bool G_admin_showbans( gentity_t *ent );
+bool G_admin_adminhelp( gentity_t *ent );
+bool G_admin_admintest( gentity_t *ent );
+bool G_admin_allready( gentity_t *ent );
+bool G_admin_endvote( gentity_t *ent );
+bool G_admin_spec999( gentity_t *ent );
+bool G_admin_transform( gentity_t *ent );
+bool G_admin_rename( gentity_t *ent );
+bool G_admin_restart( gentity_t *ent );
+bool G_admin_nextmap( gentity_t *ent );
+bool G_admin_setnextmap( gentity_t *ent );
+bool G_admin_namelog( gentity_t *ent );
+bool G_admin_lock( gentity_t *ent );
+bool G_admin_pause( gentity_t *ent );
+bool G_admin_builder( gentity_t *ent );
+bool G_admin_buildlog( gentity_t *ent );
+bool G_admin_revert( gentity_t *ent );
+bool G_admin_setdevmode( gentity_t *ent );
 
 void G_admin_print( gentity_t *ent, const char *m );
 void G_admin_buffer_print( gentity_t *ent, const char *m );

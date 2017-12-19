@@ -52,17 +52,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //===============================================================
 
-typedef struct {
+struct entityShared_t {
     entityState_t hack;  // exists (as padding) to retain ABI compatibility
                          //  with GPP, but can be used for extension hacks
 
-    qboolean linked;  // qfalse if not in any good cluster
+    bool linked;  // false if not in any good cluster
     int linkcount;
 
     int svFlags;  // SVF_NOCLIENT, SVF_BROADCAST, etc.
     int singleClient;  // only send to this client when SVF_SINGLECLIENT is set
 
-    qboolean bmodel;  // if false, assume an explicit mins / maxs bounding box
+    bool bmodel;  // if false, assume an explicit mins / maxs bounding box
                       // only set by trap_SetBrushModel
     vec3_t mins, maxs;
     int contents;  // CONTENTS_TRIGGER, CONTENTS_SOLID, CONTENTS_BODY, etc
@@ -83,20 +83,20 @@ typedef struct {
     // ent->r.ownerNum == passEntityNum (don't interact with your own missiles)
     // entity[ent->r.ownerNum].r.ownerNum == passEntityNum (don't interact with other missiles from owner)
     int ownerNum;
-} entityShared_t;
+};
 
 // the server looks at a sharedEntity, which is the start of the game's gentity_t structure
-typedef struct {
+struct sharedEntity_t {
     entityState_t s;  // communicated by server to clients
     entityShared_t r;  // shared by both the server system and game
-} sharedEntity_t;
+};
 
 //===============================================================
 
 //
 // system traps provided by the main engine
 //
-typedef enum {
+enum gameImport_t {
     //============== general Quake services ==================
 
     G_PRINT,  // ( const char *string );
@@ -181,7 +181,7 @@ typedef enum {
 
     G_IN_PVS_IGNORE_PORTALS,  // ( const vec3_t p1, const vec3_t p2 );
 
-    G_ADJUST_AREA_PORTAL_STATE,  // ( gentity_t *ent, qboolean open );
+    G_ADJUST_AREA_PORTAL_STATE,  // ( gentity_t *ent, bool open );
 
     G_AREAS_CONNECTED,  // ( int area1, int area2 );
 
@@ -202,7 +202,7 @@ typedef enum {
 
     G_GET_USERCMD,  // ( int clientNum, usercmd_t *cmd )
 
-    G_GET_ENTITY_TOKEN,  // qboolean ( char *buffer, int bufferSize )
+    G_GET_ENTITY_TOKEN,  // bool ( char *buffer, int bufferSize )
     // Retrieves the next string token from the entity spawn text, returning
     // false when all tokens have been parsed.
     // This should only be done at GAME_INIT time.
@@ -231,12 +231,12 @@ typedef enum {
     G_FS_GETFILTEREDFILES,
 
     GAME_COPY_LUA_STATE
-} gameImport_t;
+};
 
 //
 // functions exported by the game subsystem
 //
-typedef enum {
+enum gameExport_t {
     GAME_INIT,  // ( int levelTime, int randomSeed, int restart );
     // init and shutdown will be called every single level
     // The game should call G_GET_ENTITY_TOKEN to parse through all the
@@ -244,7 +244,7 @@ typedef enum {
 
     GAME_SHUTDOWN,  // (void);
 
-    GAME_CLIENT_CONNECT,  // ( int clientNum, qboolean firstTime );
+    GAME_CLIENT_CONNECT,  // ( int clientNum, bool firstTime );
     // return NULL if the client is allowed to connect, otherwise return
     // a text string with the reason for denial
 
@@ -264,7 +264,7 @@ typedef enum {
     // ConsoleCommand will be called when a command has been issued
     // that is not recognized as a builtin function.
     // The game can issue trap_argc() / trap_argv() commands to get the command
-    // and parameters.  Return qfalse if the game doesn't recognize it as a command.
-} gameExport_t;
+    // and parameters.  Return false if the game doesn't recognize it as a command.
+};
 
 #endif

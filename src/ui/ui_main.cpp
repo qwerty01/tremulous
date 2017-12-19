@@ -121,14 +121,14 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .qvm file
 ================
 */
-void UI_Init(qboolean);
+void UI_Init(bool);
 void UI_Shutdown(void);
-void UI_KeyEvent(int key, qboolean down);
+void UI_KeyEvent(int key, bool down);
 void UI_MouseEvent(int dx, int dy);
 int UI_MousePosition(void);
 void UI_SetMousePosition(int x, int y);
 void UI_Refresh(int realtime);
-qboolean UI_IsFullscreen(void);
+bool UI_IsFullscreen(void);
 void UI_SetActiveMenu(uiMenuCommand_t menu);
 
 extern "C" Q_EXPORT intptr_t vmMain(int command, int arg0, int arg1, int arg2)
@@ -258,7 +258,7 @@ Return false if the infostring contains nonprinting characters,
  or if the hostname is blank/undefined
 ==================
 */
-static qboolean UI_ServerInfoIsValid(char *info)
+static bool UI_ServerInfoIsValid(char *info)
 {
     const char *c;
     int len = 0;
@@ -266,7 +266,7 @@ static qboolean UI_ServerInfoIsValid(char *info)
     for (c = info; *c; c++)
     {
         if (!isprint(*c))
-            return qfalse;
+            return false;
     }
 
     for (c = Info_ValueForKey(info, "hostname"); *c; c++)
@@ -276,9 +276,9 @@ static qboolean UI_ServerInfoIsValid(char *info)
     }
 
     if (len)
-        return qtrue;
+        return true;
     else
-        return qfalse;
+        return false;
 }
 
 /*
@@ -453,7 +453,7 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
     if (!info)
     {
         trap_LAN_ServerStatus(serverAddress, NULL, 0);
-        return qfalse;
+        return false;
     }
 
     memset(info, 0, sizeof(*info));
@@ -575,10 +575,10 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
             }
         }
 
-        return qtrue;
+        return true;
     }
 
-    return qfalse;
+    return false;
 }
 
 /*
@@ -612,14 +612,14 @@ UI_BuildFindPlayerList
 */
 static void UI_FeederSelection(int feederID, int index);
 
-static void UI_BuildFindPlayerList(qboolean force)
+static void UI_BuildFindPlayerList(bool force)
 {
     static int numFound, numTimeOuts;
     int i, j, k, resend;
     serverStatusInfo_t info;
     char name[MAX_NAME_LENGTH + 2];
     char infoString[MAX_STRING_CHARS];
-    qboolean duplicate;
+    bool duplicate;
 
     if (!force)
     {
@@ -685,13 +685,13 @@ static void UI_BuildFindPlayerList(qboolean force)
 
                     Q_CleanStr(name);
 
-                    duplicate = qfalse;
+                    duplicate = false;
 
                     for (k = 0; k < uiInfo.numFoundPlayerServers - 1; k++)
                     {
                         if (Q_strncmp(uiInfo.foundPlayerServerAddresses[k], uiInfo.pendingServerStatus.server[i].adrstr,
                                 MAX_ADDRESSLENGTH) == 0)
-                            duplicate = qtrue;
+                            duplicate = true;
                     }
 
                     // if the player name is a substring
@@ -722,7 +722,7 @@ static void UI_BuildFindPlayerList(qboolean force)
                     sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]), "searching %d/%d...",
                     numFound, uiInfo.pendingServerStatus.num);
                 // retrieved the server status so reuse this spot
-                uiInfo.pendingServerStatus.server[i].valid = qfalse;
+                uiInfo.pendingServerStatus.server[i].valid = false;
             }
         }
 
@@ -737,7 +737,7 @@ static void UI_BuildFindPlayerList(qboolean force)
             UI_GetServerStatusInfo(uiInfo.pendingServerStatus.server[i].adrstr, NULL);
 
             // reuse pending slot
-            uiInfo.pendingServerStatus.server[i].valid = qfalse;
+            uiInfo.pendingServerStatus.server[i].valid = false;
 
             // if we didn't try to get the status of all servers in the main browser yet
             if (uiInfo.pendingServerStatus.num < uiInfo.serverStatus.numDisplayServers)
@@ -753,7 +753,7 @@ static void UI_BuildFindPlayerList(qboolean force)
                 Q_strncpyz(uiInfo.pendingServerStatus.server[i].name, Info_ValueForKey(infoString, "hostname"),
                     sizeof(uiInfo.pendingServerStatus.server[0].name));
 
-                uiInfo.pendingServerStatus.server[i].valid = qtrue;
+                uiInfo.pendingServerStatus.server[i].valid = true;
                 uiInfo.pendingServerStatus.num++;
                 Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
                     sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]), "searching %d/%d...",
@@ -798,7 +798,7 @@ static void UI_BuildFindPlayerList(qboolean force)
 UI_BuildServerStatus
 ==================
 */
-static void UI_BuildServerStatus(qboolean force)
+static void UI_BuildServerStatus(bool force)
 {
     if (uiInfo.nextFindPlayerRefresh)
         return;
@@ -868,7 +868,7 @@ static void UI_BuildServerDisplayList(int force)
         // set list box index to zero
         Menu_SetFeederSelection(NULL, FEEDER_SERVERS, 0, NULL);
         // mark all servers as visible so we store ping updates for them
-        trap_LAN_MarkServerVisible(ui_netSource.integer, -1, qtrue);
+        trap_LAN_MarkServerVisible(ui_netSource.integer, -1, true);
     }
 
     // get the server count (comes from the master)
@@ -883,7 +883,7 @@ static void UI_BuildServerDisplayList(int force)
         return;
     }
 
-    visible = qfalse;
+    visible = false;
 
     for (i = 0; i < count; i++)
     {
@@ -892,7 +892,7 @@ static void UI_BuildServerDisplayList(int force)
         if (!trap_LAN_ServerIsVisible(ui_netSource.integer, i))
             continue;
 
-        visible = qtrue;
+        visible = true;
         // get the ping for this server
         ping = trap_LAN_GetServerPing(ui_netSource.integer, i);
 
@@ -907,7 +907,7 @@ static void UI_BuildServerDisplayList(int force)
             {
                 if (clients == 0)
                 {
-                    trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                    trap_LAN_MarkServerVisible(ui_netSource.integer, i, false);
                     continue;
                 }
             }
@@ -918,7 +918,7 @@ static void UI_BuildServerDisplayList(int force)
 
                 if (clients == maxClients)
                 {
-                    trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                    trap_LAN_MarkServerVisible(ui_netSource.integer, i, false);
                     continue;
                 }
             }
@@ -933,7 +933,7 @@ static void UI_BuildServerDisplayList(int force)
             // done with this server
             if (ping > 0)
             {
-                trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                trap_LAN_MarkServerVisible(ui_netSource.integer, i, false);
                 numinvisible++;
             }
         }
@@ -965,7 +965,7 @@ static void UI_StopServerRefresh(void)
         return;
     }
 
-    uiInfo.serverStatus.refreshActive = qfalse;
+    uiInfo.serverStatus.refreshActive = false;
     Com_Printf("%d servers listed in browser with %d players.\n", uiInfo.serverStatus.numDisplayServers,
         uiInfo.serverStatus.numPlayersOnServers);
     count = trap_LAN_GetServerCount(ui_netSource.integer);
@@ -986,7 +986,7 @@ UI_DoServerRefresh
 */
 static void UI_DoServerRefresh(void)
 {
-    qboolean wait = qfalse;
+    bool wait = false;
 
     if (!uiInfo.serverStatus.refreshActive)
         return;
@@ -996,12 +996,12 @@ static void UI_DoServerRefresh(void)
         if (ui_netSource.integer == AS_LOCAL)
         {
             if (!trap_LAN_GetServerCount(ui_netSource.integer))
-                wait = qtrue;
+                wait = true;
         }
         else
         {
             if (trap_LAN_GetServerCount(ui_netSource.integer) < 0)
-                wait = qtrue;
+                wait = true;
         }
     }
 
@@ -1023,7 +1023,7 @@ static void UI_DoServerRefresh(void)
     }
 
     //
-    UI_BuildServerDisplayList(qfalse);
+    UI_BuildServerDisplayList(false);
 }
 
 /*
@@ -1034,7 +1034,7 @@ UI_UpdatePendingPings
 static void UI_UpdatePendingPings(void)
 {
     trap_LAN_ResetPings(ui_netSource.integer);
-    uiInfo.serverStatus.refreshActive = qtrue;
+    uiInfo.serverStatus.refreshActive = true;
     uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime + 1000;
 }
 
@@ -1043,7 +1043,7 @@ static void UI_UpdatePendingPings(void)
 UI_StartServerRefresh
 =================
 */
-static void UI_StartServerRefresh(qboolean full)
+static void UI_StartServerRefresh(bool full)
 {
     int time;
     qtime_t q;
@@ -1059,13 +1059,13 @@ static void UI_StartServerRefresh(qboolean full)
         return;
     }
 
-    uiInfo.serverStatus.refreshActive = qtrue;
+    uiInfo.serverStatus.refreshActive = true;
     uiInfo.serverStatus.nextDisplayRefresh = uiInfo.uiDC.realTime + 1000;
     // clear number of displayed servers
     uiInfo.serverStatus.numDisplayServers = 0;
     uiInfo.serverStatus.numPlayersOnServers = 0;
     // mark all servers as visible so we store ping updates for them
-    trap_LAN_MarkServerVisible(ui_netSource.integer, -1, qtrue);
+    trap_LAN_MarkServerVisible(ui_netSource.integer, -1, true);
     // reset all the pings
     trap_LAN_ResetPings(ui_netSource.integer);
     //
@@ -1081,7 +1081,7 @@ static void UI_StartServerRefresh(qboolean full)
 
     if (ui_netSource.integer == AS_GLOBAL || ui_netSource.integer == AS_MPLAYER)
     {
-        qboolean global = ui_netSource.integer == AS_GLOBAL;
+        bool global = ui_netSource.integer == AS_GLOBAL;
 
 #ifdef MODULE_INTERFACE_11
         trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d 69 full empty\n",
@@ -1133,9 +1133,9 @@ void UI_Refresh(int realtime)
         Menu_UpdateAll();
         Menu_PaintAll();
         UI_DoServerRefresh();
-        UI_BuildServerStatus(qfalse);
-        UI_BuildFindPlayerList(qfalse);
-        UI_UpdateNews(qfalse);
+        UI_BuildServerStatus(false);
+        UI_BuildFindPlayerList(false);
+        UI_UpdateNews(false);
         // FIXME: CHECK FOR "AUTOMATICALLLY CHECK FOR UPDATES == true"
         // UI_UpdateGithubRelease( );
     }
@@ -1157,26 +1157,26 @@ UI_Shutdown
 */
 void UI_Shutdown(void) { trap_LAN_SaveCachedServers(); }
 
-qboolean Asset_Parse(int handle)
+bool Asset_Parse(int handle)
 {
     pc_token_t token;
     const char *tempStr;
 
     if (!trap_Parse_ReadToken(handle, &token))
-        return qfalse;
+        return false;
 
     if (Q_stricmp(token.string, "{") != 0)
-        return qfalse;
+        return false;
 
     while (1)
     {
         memset(&token, 0, sizeof(pc_token_t));
 
         if (!trap_Parse_ReadToken(handle, &token))
-            return qfalse;
+            return false;
 
         if (Q_stricmp(token.string, "}") == 0)
-            return qtrue;
+            return true;
 
         // font
         if (Q_stricmp(token.string, "font") == 0)
@@ -1184,10 +1184,10 @@ qboolean Asset_Parse(int handle)
             int pointSize;
 
             if (!PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
-                return qfalse;
+                return false;
 
             trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.textFont);
-            uiInfo.uiDC.Assets.fontRegistered = qtrue;
+            uiInfo.uiDC.Assets.fontRegistered = true;
             continue;
         }
 
@@ -1196,7 +1196,7 @@ qboolean Asset_Parse(int handle)
             int pointSize;
 
             if (!PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
-                return qfalse;
+                return false;
 
             trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.smallFont);
             continue;
@@ -1207,7 +1207,7 @@ qboolean Asset_Parse(int handle)
             int pointSize;
 
             if (!PC_String_Parse(handle, &tempStr) || !PC_Int_Parse(handle, &pointSize))
-                return qfalse;
+                return false;
 
             trap_R_RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.bigFont);
             continue;
@@ -1217,7 +1217,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "gradientbar") == 0)
         {
             if (!PC_String_Parse(handle, &tempStr))
-                return qfalse;
+                return false;
 
             uiInfo.uiDC.Assets.gradientBar = trap_R_RegisterShaderNoMip(tempStr);
             continue;
@@ -1227,9 +1227,9 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "menuEnterSound") == 0)
         {
             if (!PC_String_Parse(handle, &tempStr))
-                return qfalse;
+                return false;
 
-            uiInfo.uiDC.Assets.menuEnterSound = trap_S_RegisterSound(tempStr, qfalse);
+            uiInfo.uiDC.Assets.menuEnterSound = trap_S_RegisterSound(tempStr, false);
             continue;
         }
 
@@ -1237,9 +1237,9 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "menuExitSound") == 0)
         {
             if (!PC_String_Parse(handle, &tempStr))
-                return qfalse;
+                return false;
 
-            uiInfo.uiDC.Assets.menuExitSound = trap_S_RegisterSound(tempStr, qfalse);
+            uiInfo.uiDC.Assets.menuExitSound = trap_S_RegisterSound(tempStr, false);
             continue;
         }
 
@@ -1247,9 +1247,9 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "itemFocusSound") == 0)
         {
             if (!PC_String_Parse(handle, &tempStr))
-                return qfalse;
+                return false;
 
-            uiInfo.uiDC.Assets.itemFocusSound = trap_S_RegisterSound(tempStr, qfalse);
+            uiInfo.uiDC.Assets.itemFocusSound = trap_S_RegisterSound(tempStr, false);
             continue;
         }
 
@@ -1257,16 +1257,16 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "menuBuzzSound") == 0)
         {
             if (!PC_String_Parse(handle, &tempStr))
-                return qfalse;
+                return false;
 
-            uiInfo.uiDC.Assets.menuBuzzSound = trap_S_RegisterSound(tempStr, qfalse);
+            uiInfo.uiDC.Assets.menuBuzzSound = trap_S_RegisterSound(tempStr, false);
             continue;
         }
 
         if (Q_stricmp(token.string, "cursor") == 0)
         {
             if (!PC_String_Parse(handle, &uiInfo.uiDC.Assets.cursorStr))
-                return qfalse;
+                return false;
 
             uiInfo.uiDC.Assets.cursor = trap_R_RegisterShaderNoMip(uiInfo.uiDC.Assets.cursorStr);
             continue;
@@ -1275,7 +1275,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "fadeClamp") == 0)
         {
             if (!PC_Float_Parse(handle, &uiInfo.uiDC.Assets.fadeClamp))
-                return qfalse;
+                return false;
 
             continue;
         }
@@ -1283,7 +1283,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "fadeCycle") == 0)
         {
             if (!PC_Int_Parse(handle, &uiInfo.uiDC.Assets.fadeCycle))
-                return qfalse;
+                return false;
 
             continue;
         }
@@ -1291,7 +1291,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "fadeAmount") == 0)
         {
             if (!PC_Float_Parse(handle, &uiInfo.uiDC.Assets.fadeAmount))
-                return qfalse;
+                return false;
 
             continue;
         }
@@ -1299,7 +1299,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "shadowX") == 0)
         {
             if (!PC_Float_Parse(handle, &uiInfo.uiDC.Assets.shadowX))
-                return qfalse;
+                return false;
 
             continue;
         }
@@ -1307,7 +1307,7 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "shadowY") == 0)
         {
             if (!PC_Float_Parse(handle, &uiInfo.uiDC.Assets.shadowY))
-                return qfalse;
+                return false;
 
             continue;
         }
@@ -1315,14 +1315,14 @@ qboolean Asset_Parse(int handle)
         if (Q_stricmp(token.string, "shadowColor") == 0)
         {
             if (!PC_Color_Parse(handle, &uiInfo.uiDC.Assets.shadowColor))
-                return qfalse;
+                return false;
 
             uiInfo.uiDC.Assets.shadowFadeClamp = uiInfo.uiDC.Assets.shadowColor[3];
             continue;
         }
     }
 
-    return qfalse;
+    return false;
 }
 
 void UI_Report(void) { String_Report(); }
@@ -1378,34 +1378,34 @@ void UI_ParseMenu(const char *menuFile)
     trap_Parse_FreeSource(handle);
 }
 
-qboolean Load_Menu(int handle)
+bool Load_Menu(int handle)
 {
     pc_token_t token;
 
     if (!trap_Parse_ReadToken(handle, &token))
-        return qfalse;
+        return false;
 
     if (token.string[0] != '{')
-        return qfalse;
+        return false;
 
     while (1)
     {
         if (!trap_Parse_ReadToken(handle, &token))
-            return qfalse;
+            return false;
 
         if (token.string[0] == 0)
-            return qfalse;
+            return false;
 
         if (token.string[0] == '}')
-            return qtrue;
+            return true;
 
         UI_ParseMenu(token.string);
     }
 
-    return qfalse;
+    return false;
 }
 
-void UI_LoadMenus(const char *menuFile, qboolean reset)
+void UI_LoadMenus(const char *menuFile, bool reset)
 {
     pc_token_t token;
     int handle;
@@ -1513,9 +1513,9 @@ void UI_Load(void)
 
     String_Init();
 
-    UI_LoadMenus("ui/menus.txt", qtrue);
-    UI_LoadMenus("ui/ingame.txt", qfalse);
-    UI_LoadMenus("ui/tremulous.txt", qfalse);
+    UI_LoadMenus("ui/menus.txt", true);
+    UI_LoadMenus("ui/ingame.txt", false);
+    UI_LoadMenus("ui/tremulous.txt", false);
     UI_LoadHelp("ui/help.txt");
     Menus_CloseAll();
     Menus_ActivateByName(lastName);
@@ -1558,7 +1558,7 @@ static stage_t UI_GetCurrentHumanStage(void)
 UI_DrawInfoPane
 ===============
 */
-static void UI_DrawInfoPane(menuItem_t *item, rectDef_t *rect, float text_x, float text_y, float scale, int textalign,
+static void UI_DrawInfoPane(menuItem_t *item, Rectangle *rect, float text_x, float text_y, float scale, int textalign,
     int textvalign, vec4_t color, int textStyle)
 {
     int value = 0;
@@ -1661,7 +1661,7 @@ static void UI_DrawInfoPane(menuItem_t *item, rectDef_t *rect, float text_x, flo
     UI_DrawTextBlock(rect, text_x, text_y, color, scale, textalign, textvalign, textStyle, s);
 }
 
-static void UI_DrawServerMapPreview(rectDef_t *rect, float scale, vec4_t color)
+static void UI_DrawServerMapPreview(Rectangle *rect, float scale, vec4_t color)
 {
     if (uiInfo.serverStatus.currentServerCinematic >= 0)
     {
@@ -1675,7 +1675,7 @@ static void UI_DrawServerMapPreview(rectDef_t *rect, float scale, vec4_t color)
         UI_DrawHandlePic(rect->x, rect->y, rect->w, rect->h, trap_R_RegisterShaderNoMip("gfx/2d/load_screen"));
 }
 
-static void UI_DrawSelectedMapPreview(rectDef_t *rect, float scale, vec4_t color)
+static void UI_DrawSelectedMapPreview(Rectangle *rect, float scale, vec4_t color)
 {
     int map = ui_selectedMap.integer;
 
@@ -1713,7 +1713,7 @@ static void UI_DrawSelectedMapPreview(rectDef_t *rect, float scale, vec4_t color
     }
 }
 
-static void UI_DrawSelectedMapName(rectDef_t *rect, float scale, vec4_t color, int textStyle)
+static void UI_DrawSelectedMapName(Rectangle *rect, float scale, vec4_t color, int textStyle)
 {
     int map = ui_selectedMap.integer;
 
@@ -1851,7 +1851,7 @@ static void UI_BuildPlayerList(void)
     }
 }
 
-static void UI_DrawGLInfo(rectDef_t *rect, float scale, int textalign, int textvalign, vec4_t color, int textStyle,
+static void UI_DrawGLInfo(Rectangle *rect, float scale, int textalign, int textvalign, vec4_t color, int textStyle,
     float text_x, float text_y)
 {
     char buffer[4096];
@@ -1871,7 +1871,7 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
     int ownerDrawFlags, int align, int textalign, int textvalign, float borderSize, float scale, vec4_t foreColor,
     vec4_t backColor, qhandle_t shader, int textStyle)
 {
-    rectDef_t rect;
+    Rectangle rect;
 
     rect.x = x;
     rect.y = y;
@@ -1951,9 +1951,9 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
     }
 }
 
-static qboolean UI_OwnerDrawVisible(int flags)
+static bool UI_OwnerDrawVisible(int flags)
 {
-    qboolean vis = qtrue;
+    bool vis = true;
     uiClientState_t cs;
     team_t team;
     char info[MAX_INFO_STRING];
@@ -1967,7 +1967,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
         if (flags & UI_SHOW_NOTSPECTATING)
         {
             if (team == TEAM_NONE)
-                vis = qfalse;
+                vis = false;
 
             flags &= ~UI_SHOW_NOTSPECTATING;
         }
@@ -1975,7 +1975,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
         if (flags & UI_SHOW_VOTEACTIVE)
         {
             if (!trap_Cvar_VariableValue("ui_voteActive"))
-                vis = qfalse;
+                vis = false;
 
             flags &= ~UI_SHOW_VOTEACTIVE;
         }
@@ -1983,7 +1983,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
         if (flags & UI_SHOW_CANVOTE)
         {
             if (trap_Cvar_VariableValue("ui_voteActive"))
-                vis = qfalse;
+                vis = false;
 
             flags &= ~UI_SHOW_CANVOTE;
         }
@@ -1993,12 +1993,12 @@ static qboolean UI_OwnerDrawVisible(int flags)
             if (team == TEAM_ALIENS)
             {
                 if (!trap_Cvar_VariableValue("ui_alienTeamVoteActive"))
-                    vis = qfalse;
+                    vis = false;
             }
             else if (team == TEAM_HUMANS)
             {
                 if (!trap_Cvar_VariableValue("ui_humanTeamVoteActive"))
-                    vis = qfalse;
+                    vis = false;
             }
 
             flags &= ~UI_SHOW_TEAMVOTEACTIVE;
@@ -2009,12 +2009,12 @@ static qboolean UI_OwnerDrawVisible(int flags)
             if (team == TEAM_ALIENS)
             {
                 if (trap_Cvar_VariableValue("ui_alienTeamVoteActive"))
-                    vis = qfalse;
+                    vis = false;
             }
             else if (team == TEAM_HUMANS)
             {
                 if (trap_Cvar_VariableValue("ui_humanTeamVoteActive"))
-                    vis = qfalse;
+                    vis = false;
             }
 
             flags &= ~UI_SHOW_CANTEAMVOTE;
@@ -2025,7 +2025,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
             // this assumes you only put this type of display flag on something showing in the proper context
 
             if (ui_netSource.integer != AS_FAVORITES)
-                vis = qfalse;
+                vis = false;
 
             flags &= ~UI_SHOW_FAVORITESERVERS;
         }
@@ -2035,7 +2035,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
             // this assumes you only put this type of display flag on something showing in the proper context
 
             if (ui_netSource.integer == AS_FAVORITES)
-                vis = qfalse;
+                vis = false;
 
             flags &= ~UI_SHOW_NOTFAVORITESERVERS;
         }
@@ -2046,7 +2046,7 @@ static qboolean UI_OwnerDrawVisible(int flags)
     return vis;
 }
 
-static qboolean UI_NetSource_HandleKey(int key)
+static bool UI_NetSource_HandleKey(int key)
 {
     if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
     {
@@ -2070,19 +2070,19 @@ static qboolean UI_NetSource_HandleKey(int key)
         else if (ui_netSource.integer >= numNetSources)
             ui_netSource.integer = 0;
 
-        UI_BuildServerDisplayList(qtrue);
+        UI_BuildServerDisplayList(true);
 
         if (ui_netSource.integer != AS_GLOBAL)
-            UI_StartServerRefresh(qtrue);
+            UI_StartServerRefresh(true);
 
         trap_Cvar_Set("ui_netSource", va("%d", ui_netSource.integer));
-        return qtrue;
+        return true;
     }
 
-    return qfalse;
+    return false;
 }
 
-static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int key)
+static bool UI_OwnerDrawHandleKey(int ownerDraw, int key)
 {
     switch (ownerDraw)
     {
@@ -2094,7 +2094,7 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int key)
             break;
     }
 
-    return qfalse;
+    return false;
 }
 
 /*
@@ -2113,7 +2113,7 @@ static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2)
 UI_ServersSort
 =================
 */
-void UI_ServersSort(int column, qboolean force)
+void UI_ServersSort(int column, bool force)
 {
     if (!force)
     {
@@ -2831,7 +2831,7 @@ static void UI_RunMenuScript(char **args)
         else if (Q_stricmp(name, "loadServerInfo") == 0)
             UI_ServerInfo();
         else if (Q_stricmp(name, "getNews") == 0)
-            UI_UpdateNews(qtrue);
+            UI_UpdateNews(true);
         else if (Q_stricmp(name, "checkForUpdate") == 0)
             UI_UpdateGithubRelease();
         else if (Q_stricmp(name, "downloadUpdate") == 0)
@@ -2839,7 +2839,7 @@ static void UI_RunMenuScript(char **args)
         else if (Q_stricmp(name, "installUpdate") == 0)
             trap_Cmd_ExecuteText(EXEC_APPEND, "installUpdate");
         else if (Q_stricmp(name, "saveControls") == 0)
-            Controls_SetConfig(qtrue);
+            Controls_SetConfig(true);
         else if (Q_stricmp(name, "loadControls") == 0)
             Controls_GetConfig();
         else if (Q_stricmp(name, "clearError") == 0)
@@ -2860,8 +2860,8 @@ static void UI_RunMenuScript(char **args)
         }
         else if (Q_stricmp(name, "RefreshServers") == 0)
         {
-            UI_StartServerRefresh(qtrue);
-            UI_BuildServerDisplayList(qtrue);
+            UI_StartServerRefresh(true);
+            UI_BuildServerDisplayList(true);
         }
         else if (Q_stricmp(name, "InitServerList") == 0)
         {
@@ -2882,14 +2882,14 @@ static void UI_RunMenuScript(char **args)
 
             if (trap_LAN_GetServerCount(ui_netSource.integer) < 1 || (time - last) > 3600)
             {
-                UI_StartServerRefresh(qtrue);
-                UI_BuildServerDisplayList(qtrue);
+                UI_StartServerRefresh(true);
+                UI_BuildServerDisplayList(true);
             }
         }
         else if (Q_stricmp(name, "RefreshFilter") == 0)
         {
-            UI_StartServerRefresh(qfalse);
-            UI_BuildServerDisplayList(qtrue);
+            UI_StartServerRefresh(false);
+            UI_BuildServerDisplayList(true);
         }
         else if (Q_stricmp(name, "LoadDemos") == 0)
             UI_LoadDemos();
@@ -3026,7 +3026,7 @@ static void UI_RunMenuScript(char **args)
                 uiInfo.serverStatus.nextDisplayRefresh = 0;
                 uiInfo.nextServerStatusRefresh = 0;
                 uiInfo.nextFindPlayerRefresh = 0;
-                UI_BuildServerDisplayList(qtrue);
+                UI_BuildServerDisplayList(true);
             }
             else
             {
@@ -3044,9 +3044,9 @@ static void UI_RunMenuScript(char **args)
         else if (Q_stricmp(name, "UpdateFilter") == 0)
         {
             if (ui_netSource.integer == AS_LOCAL)
-                UI_StartServerRefresh(qtrue);
+                UI_StartServerRefresh(true);
 
-            UI_BuildServerDisplayList(qtrue);
+            UI_BuildServerDisplayList(true);
             UI_FeederSelection(FEEDER_SERVERS, 0);
         }
         else if (Q_stricmp(name, "ServerStatus") == 0)
@@ -3054,18 +3054,18 @@ static void UI_RunMenuScript(char **args)
             trap_LAN_GetServerAddressString(ui_netSource.integer,
                 uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], uiInfo.serverStatusAddress,
                 sizeof(uiInfo.serverStatusAddress));
-            UI_BuildServerStatus(qtrue);
+            UI_BuildServerStatus(true);
         }
         else if (Q_stricmp(name, "FoundPlayerServerStatus") == 0)
         {
             Q_strncpyz(uiInfo.serverStatusAddress, uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer],
                 sizeof(uiInfo.serverStatusAddress));
-            UI_BuildServerStatus(qtrue);
+            UI_BuildServerStatus(true);
             Menu_SetFeederSelection(NULL, FEEDER_FINDPLAYER, 0, NULL);
         }
         else if (Q_stricmp(name, "FindPlayer") == 0)
         {
-            UI_BuildFindPlayerList(qtrue);
+            UI_BuildFindPlayerList(true);
             // clear the displayed server status info
             uiInfo.serverStatusInfo.numLines = 0;
             Menu_SetFeederSelection(NULL, FEEDER_FINDPLAYER, 0, NULL);
@@ -3109,9 +3109,9 @@ static void UI_RunMenuScript(char **args)
                     uiInfo.serverStatus.sortDir = !uiInfo.serverStatus.sortDir;
 
                 // make sure we sort again
-                UI_ServersSort(sortColumn, qtrue);
+                UI_ServersSort(sortColumn, true);
 
-                uiInfo.serverStatus.sorted = qtrue;
+                uiInfo.serverStatus.sorted = true;
             }
         }
         else if (Q_stricmp(name, "closeingame") == 0)
@@ -3797,7 +3797,7 @@ static void UI_FeederSelection(int feederID, int index)
             Q_strncpyz(uiInfo.serverStatusAddress, uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer],
                 sizeof(uiInfo.serverStatusAddress));
             Menu_SetFeederSelection(NULL, FEEDER_SERVERSTATUS, 0, NULL);
-            UI_BuildServerStatus(qtrue);
+            UI_BuildServerStatus(true);
         }
     }
     else if (feederID == FEEDER_PLAYER_LIST)
@@ -3871,7 +3871,7 @@ static int UI_FeederInitialise(int feederID)
     return 0;
 }
 
-static void UI_Pause(qboolean b)
+static void UI_Pause(bool b)
 {
     if (b)
     {
@@ -3960,7 +3960,7 @@ void UI_ParseResolutions(void)
 UI_Init
 =================
 */
-void UI_Init(qboolean inGameLoad)
+void UI_Init(bool inGameLoad)
 {
     BG_InitClassConfigs();
     BG_InitAllowedGameElements();
@@ -4039,9 +4039,9 @@ void UI_Init(qboolean inGameLoad)
 
     AssetCache();
 
-    UI_LoadMenus("ui/menus.txt", qtrue);
-    UI_LoadMenus("ui/ingame.txt", qfalse);
-    UI_LoadMenus("ui/tremulous.txt", qfalse);
+    UI_LoadMenus("ui/menus.txt", true);
+    UI_LoadMenus("ui/ingame.txt", false);
+    UI_LoadMenus("ui/tremulous.txt", false);
     UI_LoadHelp("ui/help.txt");
 
     Menus_CloseAll();
@@ -4063,7 +4063,7 @@ void UI_Init(qboolean inGameLoad)
 UI_KeyEvent
 =================
 */
-void UI_KeyEvent(int key, qboolean down)
+void UI_KeyEvent(int key, bool down)
 {
     if (Menu_Count() > 0)
     {
@@ -4180,7 +4180,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
     }
 }
 
-qboolean UI_IsFullscreen(void) { return Menus_AnyFullScreenVisible(); }
+bool UI_IsFullscreen(void) { return Menus_AnyFullScreenVisible(); }
 
 static connstate_t lastConnState;
 static char lastLoadingText[MAX_INFO_VALUE];
@@ -4400,8 +4400,8 @@ void UI_DrawConnectScreen()
 
     menuDef_t *menu = Menus_FindByName("Connect");
 
-    if ( menu )
-        Menu_Paint(menu, qtrue);
+    if (menu)
+        Menu_Paint(menu, true);
 
     // see what information we should display
     trap_GetClientState(&cstate);
@@ -4515,19 +4515,19 @@ void UI_UpdateCvars(void)
 UI_UpdateNews
 =================
 */
-void UI_UpdateNews(qboolean begin)
+void UI_UpdateNews(bool begin)
 {
     char newsString[MAX_NEWS_STRING];
     const char *c;
     const char *wrapped;
     int line = 0;
     int linePos = 0;
-    qboolean finished;
+    bool finished;
 
     if (begin && !uiInfo.newsInfo.refreshActive)
     {
         uiInfo.newsInfo.refreshtime = uiInfo.uiDC.realTime + 10000;
-        uiInfo.newsInfo.refreshActive = qtrue;
+        uiInfo.newsInfo.refreshActive = true;
     }
     else if (!uiInfo.newsInfo.refreshActive)  // do nothing
     {
@@ -4578,7 +4578,7 @@ void UI_UpdateNews(qboolean begin)
     uiInfo.newsInfo.numLines = line + 1;
 
     if (finished)
-        uiInfo.newsInfo.refreshActive = qfalse;
+        uiInfo.newsInfo.refreshActive = false;
 }
 
 void UI_UpdateGithubRelease()
@@ -4634,5 +4634,5 @@ void UI_UpdateGithubRelease()
 #ifdef MODULE_INTERFACE_11
 void trap_R_SetClipRegion(const float *region) {}
 
-qboolean trap_GetNews(qboolean force) { return qtrue; }
+bool trap_GetNews(bool force) { return true; }
 #endif

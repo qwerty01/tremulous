@@ -28,10 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static intptr_t(QDECL *syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
-extern "C" Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
-{
-    syscall = syscallptr;
-}
+extern "C" Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...)) { syscall = syscallptr; }
 
 int PASSFLOAT(float x)
 {
@@ -161,7 +158,7 @@ int trap_CM_LerpTag(orientation_t *tag, clipHandle_t mod, int startFrame, int en
 
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum) { syscall(UI_S_STARTLOCALSOUND, sfx, channelNum); }
 
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
+sfxHandle_t trap_S_RegisterSound(const char *sample, bool compressed)
 {
     return syscall(UI_S_REGISTERSOUND, sample, compressed);
 }
@@ -175,11 +172,11 @@ void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen) { syscall(UI_KEY_
 
 void trap_Key_SetBinding(int keynum, const char *binding) { syscall(UI_KEY_SETBINDING, keynum, binding); }
 
-qboolean trap_Key_IsDown(int keynum) { return syscall(UI_KEY_ISDOWN, keynum); }
+bool trap_Key_IsDown(int keynum) { return syscall(UI_KEY_ISDOWN, keynum); }
 
-qboolean trap_Key_GetOverstrikeMode(void) { return syscall(UI_KEY_GETOVERSTRIKEMODE); }
+bool trap_Key_GetOverstrikeMode(void) { return syscall(UI_KEY_GETOVERSTRIKEMODE); }
 
-void trap_Key_SetOverstrikeMode(qboolean state) { syscall(UI_KEY_SETOVERSTRIKEMODE, state); }
+void trap_Key_SetOverstrikeMode(bool state) { syscall(UI_KEY_SETOVERSTRIKEMODE, state); }
 
 void trap_Key_ClearStates(void) { syscall(UI_KEY_CLEARSTATES); }
 
@@ -220,7 +217,7 @@ int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int max
 }
 
 #ifndef MODULE_INTERFACE_11
-qboolean trap_GetNews(qboolean force) { return syscall(UI_GETNEWS, force); }
+bool trap_GetNews(bool force) { return syscall(UI_GETNEWS, force); }
 #endif
 
 void trap_LAN_SaveCachedServers(void) { syscall(UI_LAN_SAVECACHEDSERVERS); }
@@ -238,14 +235,14 @@ void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
 
 void trap_LAN_GetPingInfo(int n, char *buf, int buflen) { syscall(UI_LAN_GETPINGINFO, n, buf, buflen); }
 
-void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
+void trap_LAN_MarkServerVisible(int source, int n, bool visible)
 {
     syscall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
 }
 
 int trap_LAN_ServerIsVisible(int source, int n) { return syscall(UI_LAN_SERVERISVISIBLE, source, n); }
 
-qboolean trap_LAN_UpdateVisiblePings(int source) { return syscall(UI_LAN_UPDATEVISIBLEPINGS, source); }
+bool trap_LAN_UpdateVisiblePings(int source) { return syscall(UI_LAN_UPDATEVISIBLEPINGS, source); }
 
 int trap_LAN_AddServer(int source, const char *name, const char *addr)
 {
@@ -283,7 +280,7 @@ void trap_S_StartBackgroundTrack(const char *intro, const char *loop)
 
 int trap_RealTime(qtime_t *qtime) { return syscall(UI_REAL_TIME, qtime); }
 
-// this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do
+// this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to false (do
 // not alter gamestate)
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits)
 {

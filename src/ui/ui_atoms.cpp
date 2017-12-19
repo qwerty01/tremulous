@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **********************************************************************/
 #include "ui_local.h"
 
-qboolean m_entersound;  // after a frame, so caching won't disrupt the sound
+bool m_entersound;  // after a frame, so caching won't disrupt the sound
 
 void QDECL Com_Error(int level, const char *error, ...)
 {
@@ -157,12 +157,12 @@ static void UI_MessageMode_f(void)
         default:
         case '\0':
             // Global
-            uiInfo.chatTeam = qfalse;
+            uiInfo.chatTeam = false;
             break;
 
         case '2':
             // Team
-            uiInfo.chatTeam = qtrue;
+            uiInfo.chatTeam = true;
             break;
     }
 
@@ -188,26 +188,19 @@ static void UI_Me_f(void)
 struct uicmd {
     const char *cmd;
     void (*function)(void);
-} commands[] = 
-{
-    {"closemenus", UI_CloseMenus_f},
-    {"me", UI_Me_f},
-    {"menu", UI_Menu_f},
-    {"messagemode", UI_MessageMode_f},
-    {"messagemode2", UI_MessageMode_f},
-    {"ui_cache", UI_Cache_f},
-    {"ui_load", UI_Load},
-    {"ui_report", UI_Report}
-};
+} commands[] = {{"closemenus", UI_CloseMenus_f}, {"me", UI_Me_f}, {"menu", UI_Menu_f},
+    {"messagemode", UI_MessageMode_f}, {"messagemode2", UI_MessageMode_f}, {"ui_cache", UI_Cache_f},
+    {"ui_load", UI_Load}, {"ui_report", UI_Report}};
 
 /*
 =================
 UI_ConsoleCommand
 =================
 */
-qboolean UI_ConsoleCommand(int realTime)
+bool UI_ConsoleCommand(int realTime)
 {
-    struct uicmd *cmd = static_cast<uicmd*>(bsearch(UI_Argv(0), commands, ARRAY_LEN(commands), sizeof(commands[0]), cmdcmp));
+    struct uicmd *cmd =
+        static_cast<uicmd *>(bsearch(UI_Argv(0), commands, ARRAY_LEN(commands), sizeof(commands[0]), cmdcmp));
 
     uiInfo.uiDC.frameTime = realTime - uiInfo.uiDC.realTime;
     uiInfo.uiDC.realTime = realTime;
@@ -215,10 +208,10 @@ qboolean UI_ConsoleCommand(int realTime)
     if (cmd)
     {
         cmd->function();
-        return qtrue;
+        return true;
     }
 
-    return qfalse;
+    return false;
 }
 
 void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname)
@@ -238,7 +231,7 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
     float t1;
 
     if (w < 0)
-    {  
+    {
         // flip about vertical
         w = -w;
         s0 = 1;
@@ -251,7 +244,7 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
     }
 
     if (h < 0)
-    {  
+    {
         // flip about horizontal
         h = -h;
         t0 = 1;

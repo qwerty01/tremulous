@@ -36,12 +36,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 void UI_Report(void);
 void UI_Load(void);
-void UI_LoadMenus(const char *menuFile, qboolean reset);
+void UI_LoadMenus(const char *menuFile, bool reset);
 int UI_AdjustTimeByGame(int time);
 void UI_ClearScores(void);
 void UI_LoadArenas(void);
 void UI_ServerInfo(void);
-void UI_UpdateNews(qboolean);
+void UI_UpdateNews(bool);
 void UI_UpdateGithubRelease(void);
 
 void UI_RegisterCvars(void);
@@ -64,25 +64,25 @@ void UI_DrawConnectScreen(void);
 #define MAX_HELP_INFOPANES 32
 #define MAX_RESOLUTIONS 32
 
-typedef struct {
+struct mapInfo {
     const char *mapName;
     const char *mapLoadName;
     const char *imageName;
     int cinematic;
     qhandle_t levelShot;
-} mapInfo;
+};
 
-typedef struct serverFilter_s {
+struct serverFilter_t {
     const char *description;
     const char *basedir;
-} serverFilter_t;
+};
 
-typedef struct {
+struct pinglist_t {
     char adrstr[MAX_ADDRESSLENGTH];
     int start;
-} pinglist_t;
+};
 
-typedef struct serverStatus_s {
+struct serverStatus_t {
     pinglist_t pingList[MAX_PINGREQUESTS];
     int numqueriedservers;
     int currentping;
@@ -92,9 +92,9 @@ typedef struct serverStatus_s {
     int numServers;
     int sortKey;
     int sortDir;
-    qboolean sorted;
+    bool sorted;
     int lastCount;
-    qboolean refreshActive;
+    bool refreshActive;
     int currentServer;
     int displayServers[MAX_DISPLAY_SERVERS];
     int numDisplayServers;
@@ -110,58 +110,58 @@ typedef struct serverStatus_s {
     int motdOffset;
     int motdTime;
     char motd[MAX_STRING_CHARS];
-} serverStatus_t;
+};
 
-typedef struct {
+struct pendingServer_t {
     char adrstr[MAX_ADDRESSLENGTH];
     char name[MAX_ADDRESSLENGTH];
     int startTime;
     int serverNum;
-    qboolean valid;
-} pendingServer_t;
+    bool valid;
+};
 
-typedef struct {
+struct pendingServerStatus_t {
     int num;
     pendingServer_t server[MAX_SERVERSTATUSREQUESTS];
-} pendingServerStatus_t;
+};
 
-typedef struct {
+struct serverStatusInfo_t {
     char address[MAX_ADDRESSLENGTH];
     const char *lines[MAX_SERVERSTATUS_LINES][4];
     char text[MAX_SERVERSTATUS_TEXT];
     char pings[MAX_CLIENTS * 3];
     int numLines;
-} serverStatusInfo_t;
+};
 
-typedef struct {
+struct newsInfo_t {
     char text[MAX_NEWS_LINES][MAX_NEWS_LINEWIDTH];
     int numLines;
-    qboolean refreshActive;
+    bool refreshActive;
     int refreshtime;
-} newsInfo_t;
+};
 
-typedef struct {
+struct githubRelease_t {
     char text[MAX_NEWS_LINES][MAX_NEWS_LINEWIDTH];
     int numLines;
-    qboolean refreshActive;
+    bool refreshActive;
     int nextTime;
-} githubRelease_t;
+};
 
-typedef struct {
+struct modInfo_t {
     const char *modName;
     const char *modDescr;
-} modInfo_t;
+};
 
-typedef enum {
+enum infoType_t {
     INFOTYPE_TEXT,
     INFOTYPE_BUILDABLE,
     INFOTYPE_CLASS,
     INFOTYPE_WEAPON,
     INFOTYPE_UPGRADE,
     INFOTYPE_VOICECMD
-} infoType_t;
+};
 
-typedef struct {
+struct menuItem_t {
     const char *text;
     const char *cmd;
     infoType_t type;
@@ -172,14 +172,14 @@ typedef struct {
         weapon_t weapon;
         upgrade_t upgrade;
     } v;
-} menuItem_t;
+};
 
-typedef struct {
+struct resolution_t {
     int w;
     int h;
-} resolution_t;
+};
 
-typedef struct {
+struct uiInfo_t {
     displayContextDef_t uiDC;
 
     int playerCount;
@@ -284,15 +284,15 @@ typedef struct {
 
     voice_t *voices;
 
-    qboolean inGameLoad;
+    bool inGameLoad;
 
-    qboolean chatTeam;
-    qboolean voiceCmd;
-} uiInfo_t;
+    bool chatTeam;
+    bool voiceCmd;
+};
 
 extern uiInfo_t uiInfo;
 
-qboolean UI_ConsoleCommand(int realTime);
+bool UI_ConsoleCommand(int realTime);
 char *UI_Cvar_VariableString(const char *var_name);
 void UI_SetColor(const float *rgba);
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h);
@@ -341,13 +341,13 @@ void trap_UpdateScreen(void);
 int trap_CM_LerpTag(
     orientation_t *tag, clipHandle_t mod, int startFrame, int endFrame, float frac, const char *tagName);
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum);
-sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed);
+sfxHandle_t trap_S_RegisterSound(const char *sample, bool compressed);
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void trap_Key_SetBinding(int keynum, const char *binding);
-qboolean trap_Key_IsDown(int keynum);
-qboolean trap_Key_GetOverstrikeMode(void);
-void trap_Key_SetOverstrikeMode(qboolean state);
+bool trap_Key_IsDown(int keynum);
+bool trap_Key_GetOverstrikeMode(void);
+void trap_Key_SetOverstrikeMode(bool state);
 void trap_Key_ClearStates(void);
 int trap_Key_GetCatcher(void);
 void trap_Key_SetCatcher(int catcher);
@@ -365,14 +365,14 @@ void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime);
 void trap_LAN_GetPingInfo(int n, char *buf, int buflen);
 void trap_LAN_LoadCachedServers(void);
 void trap_LAN_SaveCachedServers(void);
-void trap_LAN_MarkServerVisible(int source, int n, qboolean visible);
+void trap_LAN_MarkServerVisible(int source, int n, bool visible);
 int trap_LAN_ServerIsVisible(int source, int n);
-qboolean trap_LAN_UpdateVisiblePings(int source);
+bool trap_LAN_UpdateVisiblePings(int source);
 int trap_LAN_AddServer(int source, const char *name, const char *addr);
 void trap_LAN_RemoveServer(int source, const char *addr);
 void trap_LAN_ResetPings(int n);
 int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int maxLen);
-qboolean trap_GetNews(qboolean force);
+bool trap_GetNews(bool force);
 int trap_LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2);
 int trap_MemoryRemaining(void);
 void trap_R_RegisterFont(const char *pFontname, int pointSize, fontInfo_t *font);

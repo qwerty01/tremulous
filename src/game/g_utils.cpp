@@ -26,59 +26,57 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstdlib>
 #include "g_local.h"
 
-typedef struct
-{
-  char oldShader[ MAX_QPATH ];
-  char newShader[ MAX_QPATH ];
-  float timeOffset;
-} shaderRemap_t;
+struct shaderRemap_t {
+    char oldShader[MAX_QPATH];
+    char newShader[MAX_QPATH];
+    float timeOffset;
+};
 
 #define MAX_SHADER_REMAPS 128
 
 int remapCount = 0;
-shaderRemap_t remappedShaders[ MAX_SHADER_REMAPS ];
+shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 
-void AddRemap( const char *oldShader, const char *newShader, float timeOffset )
+void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 {
-  int i;
+    int i;
 
-  for( i = 0; i < remapCount; i++ )
-  {
-    if( Q_stricmp( oldShader, remappedShaders[ i ].oldShader ) == 0 )
+    for (i = 0; i < remapCount; i++)
     {
-      // found it, just update this one
-      strcpy( remappedShaders[ i ].newShader,newShader );
-      remappedShaders[ i ].timeOffset = timeOffset;
-      return;
+        if (Q_stricmp(oldShader, remappedShaders[i].oldShader) == 0)
+        {
+            // found it, just update this one
+            strcpy(remappedShaders[i].newShader, newShader);
+            remappedShaders[i].timeOffset = timeOffset;
+            return;
+        }
     }
-  }
 
-  if( remapCount < MAX_SHADER_REMAPS )
-  {
-    strcpy( remappedShaders[ remapCount ].newShader,newShader );
-    strcpy( remappedShaders[ remapCount ].oldShader,oldShader );
-    remappedShaders[ remapCount ].timeOffset = timeOffset;
-    remapCount++;
-  }
+    if (remapCount < MAX_SHADER_REMAPS)
+    {
+        strcpy(remappedShaders[remapCount].newShader, newShader);
+        strcpy(remappedShaders[remapCount].oldShader, oldShader);
+        remappedShaders[remapCount].timeOffset = timeOffset;
+        remapCount++;
+    }
 }
 
-const char *BuildShaderStateConfig( void )
+const char *BuildShaderStateConfig(void)
 {
-  static char buff[ MAX_STRING_CHARS * 4 ];
-  char        out[ ( MAX_QPATH * 2 ) + 5 ];
-  int         i;
+    static char buff[MAX_STRING_CHARS * 4];
+    char out[(MAX_QPATH * 2) + 5];
+    int i;
 
-  memset( buff, 0, MAX_STRING_CHARS );
+    memset(buff, 0, MAX_STRING_CHARS);
 
-  for( i = 0; i < remapCount; i++ )
-  {
-    Com_sprintf( out, ( MAX_QPATH * 2 ) + 5, "%s=%s:%5.2f@", remappedShaders[ i ].oldShader,
-                 remappedShaders[ i ].newShader, remappedShaders[ i ].timeOffset );
-    Q_strcat( buff, sizeof( buff ), out );
-  }
-  return buff;
+    for (i = 0; i < remapCount; i++)
+    {
+        Com_sprintf(out, (MAX_QPATH * 2) + 5, "%s=%s:%5.2f@", remappedShaders[i].oldShader,
+            remappedShaders[i].newShader, remappedShaders[i].timeOffset);
+        Q_strcat(buff, sizeof(buff), out);
+    }
+    return buff;
 }
-
 
 /*
 =========================================================================
@@ -94,54 +92,45 @@ G_FindConfigstringIndex
 
 ================
 */
-int G_FindConfigstringIndex( const char *name, int start, int max, qboolean create )
+int G_FindConfigstringIndex(const char *name, int start, int max, bool create)
 {
-  int   i;
-  char  s[ MAX_STRING_CHARS ];
+    int i;
+    char s[MAX_STRING_CHARS];
 
-  if( !name || !name[ 0 ] )
-    return 0;
+    if (!name || !name[0])
+        return 0;
 
-  for( i = 1; i < max; i++ )
-  {
-    trap_GetConfigstring( start + i, s, sizeof( s ) );
-    if( !s[ 0 ] )
-      break;
+    for (i = 1; i < max; i++)
+    {
+        trap_GetConfigstring(start + i, s, sizeof(s));
+        if (!s[0])
+            break;
 
-    if( !strcmp( s, name ) )
-      return i;
-  }
+        if (!strcmp(s, name))
+            return i;
+    }
 
-  if( !create )
-    return 0;
+    if (!create)
+        return 0;
 
-  if( i == max )
-    G_Error( "G_FindConfigstringIndex: overflow" );
+    if (i == max)
+        G_Error("G_FindConfigstringIndex: overflow");
 
-  trap_SetConfigstring( start + i, name );
+    trap_SetConfigstring(start + i, name);
 
-  return i;
+    return i;
 }
 
-int G_ParticleSystemIndex( const char *name )
+int G_ParticleSystemIndex(const char *name)
 {
-  return G_FindConfigstringIndex( name, CS_PARTICLE_SYSTEMS, MAX_GAME_PARTICLE_SYSTEMS, qtrue );
+    return G_FindConfigstringIndex(name, CS_PARTICLE_SYSTEMS, MAX_GAME_PARTICLE_SYSTEMS, true);
 }
 
-int G_ShaderIndex( const char *name )
-{
-  return G_FindConfigstringIndex( name, CS_SHADERS, MAX_GAME_SHADERS, qtrue );
-}
+int G_ShaderIndex(const char *name) { return G_FindConfigstringIndex(name, CS_SHADERS, MAX_GAME_SHADERS, true); }
 
-int G_ModelIndex( const char *name )
-{
-  return G_FindConfigstringIndex( name, CS_MODELS, MAX_MODELS, qtrue );
-}
+int G_ModelIndex(const char *name) { return G_FindConfigstringIndex(name, CS_MODELS, MAX_MODELS, true); }
 
-int G_SoundIndex( const char *name )
-{
-  return G_FindConfigstringIndex( name, CS_SOUNDS, MAX_SOUNDS, qtrue );
-}
+int G_SoundIndex(const char *name) { return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, true); }
 
 //=====================================================================
 
@@ -157,31 +146,30 @@ NULL will be returned if the end of the list is reached.
 
 =============
 */
-gentity_t *G_Find( gentity_t *from, int fieldofs, const char *match )
+gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 {
-  char  *s;
+    char *s;
 
-  if( !from )
-    from = g_entities;
-  else
-    from++;
+    if (!from)
+        from = g_entities;
+    else
+        from++;
 
-  for( ; from < &g_entities[ level.num_entities ]; from++ )
-  {
-    if( !from->inuse )
-      continue;
-    s = *(char **)( (byte *)from + fieldofs );
+    for (; from < &g_entities[level.num_entities]; from++)
+    {
+        if (!from->inuse)
+            continue;
+        s = *(char **)((byte *)from + fieldofs);
 
-    if( !s )
-      continue;
+        if (!s)
+            continue;
 
-    if( !Q_stricmp( s, match ) )
-      return from;
-  }
+        if (!Q_stricmp(s, match))
+            return from;
+    }
 
-  return NULL;
+    return NULL;
 }
-
 
 /*
 =============
@@ -190,42 +178,41 @@ G_PickTarget
 Selects a random entity from among the targets
 =============
 */
-#define MAXCHOICES  32
+#define MAXCHOICES 32
 
-gentity_t *G_PickTarget( char *targetname )
+gentity_t *G_PickTarget(char *targetname)
 {
-  gentity_t *ent = NULL;
-  int       num_choices = 0;
-  gentity_t *choice[ MAXCHOICES ];
+    gentity_t *ent = NULL;
+    int num_choices = 0;
+    gentity_t *choice[MAXCHOICES];
 
-  if( !targetname )
-  {
-    G_Printf("G_PickTarget called with NULL targetname\n");
-    return NULL;
-  }
+    if (!targetname)
+    {
+        G_Printf("G_PickTarget called with NULL targetname\n");
+        return NULL;
+    }
 
-  while( 1 )
-  {
-    ent = G_Find( ent, FOFS( targetname ), targetname );
+    while (1)
+    {
+        ent = G_Find(ent, FOFS(targetname), targetname);
 
-    if( !ent )
-      break;
+        if (!ent)
+            break;
 
-    choice[ num_choices++ ] = ent;
+        choice[num_choices++] = ent;
 
-    if( num_choices == MAXCHOICES )
-      break;
-  }
+        if (num_choices == MAXCHOICES)
+            break;
+    }
 
-  if( !num_choices )
-  {
-    G_Printf( "G_PickTarget: target %s not found\n", targetname );
-    return NULL;
-  }
+    if (!num_choices)
+    {
+        G_Printf("G_PickTarget: target %s not found\n", targetname);
+        return NULL;
+    }
 
-  return choice[ rand( ) / ( RAND_MAX / num_choices + 1 ) ];
+    return choice[rand() / (RAND_MAX / num_choices + 1)];
 }
-
 
 /*
 ==============================
@@ -238,39 +225,38 @@ match (string)self.target and call their .use function
 
 ==============================
 */
-void G_UseTargets( gentity_t *ent, gentity_t *activator )
+void G_UseTargets(gentity_t *ent, gentity_t *activator)
 {
-  gentity_t   *t;
+    gentity_t *t;
 
-  if( ent->targetShaderName && ent->targetShaderNewName )
-  {
-    float f = level.time * 0.001;
-    AddRemap( ent->targetShaderName, ent->targetShaderNewName, f );
-    trap_SetConfigstring( CS_SHADERSTATE, BuildShaderStateConfig( ) );
-  }
-
-  if( !ent->target )
-    return;
-
-  t = NULL;
-  while( ( t = G_Find( t, FOFS( targetname ), ent->target ) ) != NULL )
-  {
-    if( t == ent )
-      G_Printf( "WARNING: Entity used itself.\n" );
-    else
+    if (ent->targetShaderName && ent->targetShaderNewName)
     {
-      if( t->use )
-        t->use( t, ent, activator );
+        float f = level.time * 0.001;
+        AddRemap(ent->targetShaderName, ent->targetShaderNewName, f);
+        trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
     }
 
-    if( !ent->inuse )
+    if (!ent->target)
+        return;
+
+    t = NULL;
+    while ((t = G_Find(t, FOFS(targetname), ent->target)) != NULL)
     {
-      G_Printf( "entity was removed while using targets\n" );
-      return;
+        if (t == ent)
+            G_Printf("WARNING: Entity used itself.\n");
+        else
+        {
+            if (t->use)
+                t->use(t, ent, activator);
+        }
+
+        if (!ent->inuse)
+        {
+            G_Printf("entity was removed while using targets\n");
+            return;
+        }
     }
-  }
 }
-
 
 /*
 =============
@@ -280,24 +266,23 @@ This is just a convenience function
 for making temporary vectors for function calls
 =============
 */
-float *tv( float x, float y, float z )
+float *tv(float x, float y, float z)
 {
-  static  int     index;
-  static  vec3_t  vecs[ 8 ];
-  float           *v;
+    static int index;
+    static vec3_t vecs[8];
+    float *v;
 
-  // use an array so that multiple tempvectors won't collide
-  // for a while
-  v = vecs[ index ];
-  index = ( index + 1 ) & 7;
+    // use an array so that multiple tempvectors won't collide
+    // for a while
+    v = vecs[index];
+    index = (index + 1) & 7;
 
-  v[ 0 ] = x;
-  v[ 1 ] = y;
-  v[ 2 ] = z;
+    v[0] = x;
+    v[1] = y;
+    v[2] = z;
 
-  return v;
+    return v;
 }
-
 
 /*
 =============
@@ -307,21 +292,20 @@ This is just a convenience function
 for printing vectors
 =============
 */
-char *vtos( const vec3_t v )
+char *vtos(const vec3_t v)
 {
-  static  int   index;
-  static  char  str[ 8 ][ 32 ];
-  char          *s;
+    static int index;
+    static char str[8][32];
+    char *s;
 
-  // use an array so that multiple vtos won't collide
-  s = str[ index ];
-  index = ( index + 1 ) & 7;
+    // use an array so that multiple vtos won't collide
+    s = str[index];
+    index = (index + 1) & 7;
 
-  Com_sprintf( s, 32, "(%i %i %i)", (int)v[ 0 ], (int)v[ 1 ], (int)v[ 2 ] );
+    Com_sprintf(s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
 
-  return s;
+    return s;
 }
-
 
 /*
 ===============
@@ -333,55 +317,53 @@ Angles will be cleared, because it is being used to represent a direction
 instead of an orientation.
 ===============
 */
-void G_SetMovedir( vec3_t angles, vec3_t movedir )
+void G_SetMovedir(vec3_t angles, vec3_t movedir)
 {
-  static vec3_t VEC_UP        = { 0, -1, 0 };
-  static vec3_t MOVEDIR_UP    = { 0, 0, 1 };
-  static vec3_t VEC_DOWN      = { 0, -2, 0 };
-  static vec3_t MOVEDIR_DOWN  = { 0, 0, -1 };
+    static vec3_t VEC_UP = {0, -1, 0};
+    static vec3_t MOVEDIR_UP = {0, 0, 1};
+    static vec3_t VEC_DOWN = {0, -2, 0};
+    static vec3_t MOVEDIR_DOWN = {0, 0, -1};
 
-  if( VectorCompare( angles, VEC_UP ) )
-    VectorCopy( MOVEDIR_UP, movedir );
-  else if( VectorCompare( angles, VEC_DOWN ) )
-    VectorCopy( MOVEDIR_DOWN, movedir );
-  else
-    AngleVectors( angles, movedir, NULL, NULL );
-
-  VectorClear( angles );
-}
-
-
-float vectoyaw( const vec3_t vec )
-{
-  float yaw;
-
-  if( vec[ YAW ] == 0 && vec[ PITCH ] == 0 )
-  {
-    yaw = 0;
-  }
-  else
-  {
-    if( vec[ PITCH ] )
-      yaw = ( atan2( vec[ YAW ], vec[ PITCH ] ) * 180 / M_PI );
-    else if( vec[ YAW ] > 0 )
-      yaw = 90;
+    if (VectorCompare(angles, VEC_UP))
+        VectorCopy(MOVEDIR_UP, movedir);
+    else if (VectorCompare(angles, VEC_DOWN))
+        VectorCopy(MOVEDIR_DOWN, movedir);
     else
-      yaw = 270;
+        AngleVectors(angles, movedir, NULL, NULL);
 
-    if( yaw < 0 )
-      yaw += 360;
-  }
-
-  return yaw;
+    VectorClear(angles);
 }
 
-
-void G_InitGentity( gentity_t *e )
+float vectoyaw(const vec3_t vec)
 {
-  e->inuse = qtrue;
-  e->classname = "noclass";
-  e->s.number = e - g_entities;
-  e->r.ownerNum = ENTITYNUM_NONE;
+    float yaw;
+
+    if (vec[YAW] == 0 && vec[PITCH] == 0)
+    {
+        yaw = 0;
+    }
+    else
+    {
+        if (vec[PITCH])
+            yaw = (atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
+        else if (vec[YAW] > 0)
+            yaw = 90;
+        else
+            yaw = 270;
+
+        if (yaw < 0)
+            yaw += 360;
+    }
+
+    return yaw;
+}
+
+void G_InitGentity(gentity_t *e)
+{
+    e->inuse = true;
+    e->classname = "noclass";
+    e->s.number = e - g_entities;
+    e->r.ownerNum = ENTITYNUM_NONE;
 }
 
 /*
@@ -399,81 +381,80 @@ instead of being removed and recreated, which can cause interpolated
 angles and bad trails.
 =================
 */
-gentity_t *G_Spawn( void )
+gentity_t *G_Spawn(void)
 {
-  int       i, force;
-  gentity_t *e;
+    int i, force;
+    gentity_t *e;
 
-  e = NULL; // shut up warning
-  i = 0;    // shut up warning
+    e = NULL;  // shut up warning
+    i = 0;  // shut up warning
 
-  for( force = 0; force < 2; force++ )
-  {
-    // if we go through all entities and can't find one to free,
-    // override the normal minimum times before use
-    e = &g_entities[ MAX_CLIENTS ];
-
-    for( i = MAX_CLIENTS; i < level.num_entities; i++, e++ )
+    for (force = 0; force < 2; force++)
     {
-      if( e->inuse )
-        continue;
+        // if we go through all entities and can't find one to free,
+        // override the normal minimum times before use
+        e = &g_entities[MAX_CLIENTS];
 
-      // the first couple seconds of server time can involve a lot of
-      // freeing and allocating, so relax the replacement policy
-      if( !force && e->freetime > level.startTime + 2000 && level.time - e->freetime < 1000 )
-        continue;
+        for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+        {
+            if (e->inuse)
+                continue;
 
-      // reuse this slot
-      G_InitGentity( e );
-      return e;
+            // the first couple seconds of server time can involve a lot of
+            // freeing and allocating, so relax the replacement policy
+            if (!force && e->freetime > level.startTime + 2000 && level.time - e->freetime < 1000)
+                continue;
+
+            // reuse this slot
+            G_InitGentity(e);
+            return e;
+        }
+
+        if (i != MAX_GENTITIES)
+            break;
     }
 
-    if( i != MAX_GENTITIES )
-      break;
-  }
+    if (i == ENTITYNUM_MAX_NORMAL)
+    {
+        for (i = 0; i < MAX_GENTITIES; i++)
+            G_Printf("%4i: %s\n", i, g_entities[i].classname);
 
-  if( i == ENTITYNUM_MAX_NORMAL )
-  {
-    for( i = 0; i < MAX_GENTITIES; i++ )
-      G_Printf( "%4i: %s\n", i, g_entities[ i ].classname );
+        G_Error("G_Spawn: no free entities");
+    }
 
-    G_Error( "G_Spawn: no free entities" );
-  }
+    // open up a new slot
+    level.num_entities++;
 
-  // open up a new slot
-  level.num_entities++;
+    // let the server system know that there are more entities
+    trap_LocateGameData(
+        level.gentities, level.num_entities, sizeof(gentity_t), &level.clients[0].ps, sizeof(level.clients[0]));
 
-  // let the server system know that there are more entities
-  trap_LocateGameData( level.gentities, level.num_entities, sizeof( gentity_t ),
-    &level.clients[ 0 ].ps, sizeof( level.clients[ 0 ] ) );
-
-  G_InitGentity( e );
-  return e;
+    G_InitGentity(e);
+    return e;
 }
-
 
 /*
 =================
 G_EntitiesFree
 =================
 */
-qboolean G_EntitiesFree( void )
+bool G_EntitiesFree(void)
 {
-  int     i;
-  gentity_t *e;
+    int i;
+    gentity_t *e;
 
-  e = &g_entities[ MAX_CLIENTS ];
+    e = &g_entities[MAX_CLIENTS];
 
-  for( i = MAX_CLIENTS; i < level.num_entities; i++, e++ )
-  {
-    if( e->inuse )
-      continue;
+    for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+    {
+        if (e->inuse)
+            continue;
 
-    // slot available
-    return qtrue;
-  }
+        // slot available
+        return true;
+    }
 
-  return qfalse;
+    return false;
 }
 
 /*
@@ -483,35 +464,35 @@ G_FreeEntity
 Marks the entity as free
 =================
 */
-void G_FreeEntity( gentity_t *ent )
+void G_FreeEntity(gentity_t *ent)
 {
-  trap_UnlinkEntity( ent );   // unlink from world
+    trap_UnlinkEntity(ent);  // unlink from world
 
-  if( ent->neverFree )
-    return;
+    if (ent->neverFree)
+        return;
 
-  // Cleanup dynamically allocated strings from lua land
-  if ( ent->_classname_alloced )
-      free(&ent->classname);
-  if ( ent->_message_alloced )
-      free(&ent->message);
-  if ( ent->_model_alloced )
-      free(&ent->model);
-  if ( ent->_model2_alloced )
-      free(&ent->model2);
-  if ( ent->_target_alloced )
-      free(&ent->target);
-  if ( ent->_targetname_alloced )
-      free(&ent->targetname);
-  if ( ent->_targetShaderName_alloced )
-      free(&ent->targetShaderName);
-  if ( ent->_targetShaderNewName_alloced )
-      free(&ent->targetShaderNewName);
+    // Cleanup dynamically allocated strings from lua land
+    if (ent->_classname_alloced)
+        free(&ent->classname);
+    if (ent->_message_alloced)
+        free(&ent->message);
+    if (ent->_model_alloced)
+        free(&ent->model);
+    if (ent->_model2_alloced)
+        free(&ent->model2);
+    if (ent->_target_alloced)
+        free(&ent->target);
+    if (ent->_targetname_alloced)
+        free(&ent->targetname);
+    if (ent->_targetShaderName_alloced)
+        free(&ent->targetShaderName);
+    if (ent->_targetShaderNewName_alloced)
+        free(&ent->targetShaderNewName);
 
-  memset( ent, 0, sizeof( *ent ) );
-  ent->classname = "freent";
-  ent->freetime = level.time;
-  ent->inuse = qfalse;
+    memset(ent, 0, sizeof(*ent));
+    ent->classname = "freent";
+    ent->freetime = level.time;
+    ent->inuse = false;
 }
 
 /*
@@ -521,172 +502,168 @@ G_RemoveEntity
 Safely remove an entity, perform reasonable cleanup logic
 =================
 */
-void G_RemoveEntity( gentity_t *ent )
+void G_RemoveEntity(gentity_t *ent)
 {
-  gentity_t *e;
+    gentity_t *e;
 
-  if( ent->client )
-  {
-    // removing a player causes the player to "unspawn"
-    class_t klass = ent->client->pers.classSelection; // back up the spawn queue choice
-    weapon_t weapon = ent->client->pers.humanItemSelection; // back up
-    ent->client->pers.classSelection = PCL_NONE;
-    ent->client->pers.humanItemSelection = WP_NONE;
-    ent->suicideTime = 0; // cancel any timed suicides
-    ClientSpawn( ent, NULL, NULL, NULL );
-    ent->client->pers.classSelection = klass; // restore the spawn queue choice
-    ent->client->pers.humanItemSelection = weapon; // restore
-    return;
-  }
-  else if( ent->s.eType == ET_RANGE_MARKER )
-  {
-    for( e = &g_entities[ MAX_CLIENTS ]; e < &g_entities[ level.num_entities ]; ++e )
+    if (ent->client)
     {
-      if( e->rangeMarker == ent )
-      {
-        // clear the buildable's reference to this range marker
-        e->rangeMarker = NULL;
-        break;
-      }
+        // removing a player causes the player to "unspawn"
+        class_t klass = ent->client->pers.classSelection;  // back up the spawn queue choice
+        weapon_t weapon = ent->client->pers.humanItemSelection;  // back up
+        ent->client->pers.classSelection = PCL_NONE;
+        ent->client->pers.humanItemSelection = WP_NONE;
+        ent->suicideTime = 0;  // cancel any timed suicides
+        ClientSpawn(ent, NULL, NULL, NULL);
+        ent->client->pers.classSelection = klass;  // restore the spawn queue choice
+        ent->client->pers.humanItemSelection = weapon;  // restore
+        return;
     }
-  }
-  else if( ent->s.eType == ET_BUILDABLE )
-  {
-    // the range marker (if any) goes away with the buildable
-    G_RemoveRangeMarkerFrom( ent );
-  }
-  else if( !strcmp( ent->classname, "lev2zapchain" ) )
-  {
-    zap_t *z;
-    for( z = &zaps[ 0 ]; z < &zaps[ MAX_ZAPS ]; ++z )
+    else if (ent->s.eType == ET_RANGE_MARKER)
     {
-      if( z->used && z->effectChannel == ent )
-      {
-        // free the zap slot occupied by this zap effect
-        z->used = qfalse;
-        break;
-      }
-    }
-  }
-  else if( ent->s.eType == ET_MOVER )
-  {
-    if( !strcmp( ent->classname, "func_door" ) ||
-        !strcmp( ent->classname, "func_door_rotating" ) ||
-        !strcmp( ent->classname, "func_door_model" ) ||
-        !strcmp( ent->classname, "func_door_model_clip_brush" ) ||
-        !strcmp( ent->classname, "func_plat" ) )
-    {
-      // each func_door_model entity is paired with a clip brush, remove the other
-      if( ent->clipBrush != NULL )
-        G_FreeEntity( ent->clipBrush );
-      for( e = &g_entities[ MAX_CLIENTS ]; e < &g_entities[ level.num_entities ]; ++e )
-      {
-        if( e->parent == ent )
+        for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
         {
-          // this mover has a trigger area brush
-          if( ent->teammaster != NULL && ent->teammaster->teamchain != NULL )
-          {
-            // the mover is part of a team of at least 2
-            e->parent = ent->teammaster->teamchain; // hand the brush over to the next mover in command
-          }
-          else
-            G_FreeEntity( e ); // remove the teamless or to-be-orphaned brush
-          break;
+            if (e->rangeMarker == ent)
+            {
+                // clear the buildable's reference to this range marker
+                e->rangeMarker = NULL;
+                break;
+            }
         }
-      }
     }
-    // removing a mover opens the relevant portal
-    trap_AdjustAreaPortalState( ent, qtrue );
-  }
-  else if( !strcmp( ent->classname, "path_corner" ) )
-  {
-    for( e = &g_entities[ MAX_CLIENTS ]; e < &g_entities[ level.num_entities ]; ++e )
+    else if (ent->s.eType == ET_BUILDABLE)
     {
-      if( e->nextTrain == ent )
-        e->nextTrain = ent->nextTrain; // redirect func_train and path_corner entities
+        // the range marker (if any) goes away with the buildable
+        G_RemoveRangeMarkerFrom(ent);
     }
-  }
-  else if( !strcmp( ent->classname, "info_player_intermission" ) ||
-           !strcmp( ent->classname, "info_player_deathmatch" ) )
-  {
-    for( e = &g_entities[ MAX_CLIENTS ]; e < &g_entities[ level.num_entities ]; ++e )
+    else if (!strcmp(ent->classname, "lev2zapchain"))
     {
-      if( e->inuse && e != ent &&
-          ( !strcmp( e->classname, "info_player_intermission" ) ||
-            !strcmp( e->classname, "info_player_deathmatch" ) ) )
-      {
-        break;
-      }
-    }
-    // refuse to remove the last info_player_intermission/info_player_deathmatch entity
-    //  (because it is required for initial camera placement)
-    if( e >= &g_entities[ level.num_entities ] )
-      return;
-  }
-  else if( !strcmp( ent->classname, "target_location" ) )
-  {
-    if( ent == level.locationHead )
-      level.locationHead = ent->nextTrain;
-    else
-    {
-      for( e = level.locationHead; e != NULL; e = e->nextTrain )
-      {
-        if( e->nextTrain == ent )
+        zap_t *z;
+        for (z = &zaps[0]; z < &zaps[MAX_ZAPS]; ++z)
         {
-          e->nextTrain = ent->nextTrain;
-          break;
+            if (z->used && z->effectChannel == ent)
+            {
+                // free the zap slot occupied by this zap effect
+                z->used = false;
+                break;
+            }
         }
-      }
     }
-  }
-  else if( !Q_stricmp( ent->classname, "misc_portal_camera" ) )
-  {
-    for( e = &g_entities[ MAX_CLIENTS ]; e < &g_entities[ level.num_entities ]; ++e )
+    else if (ent->s.eType == ET_MOVER)
     {
-      if( e->r.ownerNum == ent - g_entities )
-      {
-        // disown the surface
-        e->r.ownerNum = ENTITYNUM_NONE;
-      }
+        if (!strcmp(ent->classname, "func_door") || !strcmp(ent->classname, "func_door_rotating") ||
+            !strcmp(ent->classname, "func_door_model") || !strcmp(ent->classname, "func_door_model_clip_brush") ||
+            !strcmp(ent->classname, "func_plat"))
+        {
+            // each func_door_model entity is paired with a clip brush, remove the other
+            if (ent->clipBrush != NULL)
+                G_FreeEntity(ent->clipBrush);
+            for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
+            {
+                if (e->parent == ent)
+                {
+                    // this mover has a trigger area brush
+                    if (ent->teammaster != NULL && ent->teammaster->teamchain != NULL)
+                    {
+                        // the mover is part of a team of at least 2
+                        e->parent = ent->teammaster->teamchain;  // hand the brush over to the next mover in command
+                    }
+                    else
+                        G_FreeEntity(e);  // remove the teamless or to-be-orphaned brush
+                    break;
+                }
+            }
+        }
+        // removing a mover opens the relevant portal
+        trap_AdjustAreaPortalState(ent, true);
     }
-  }
+    else if (!strcmp(ent->classname, "path_corner"))
+    {
+        for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
+        {
+            if (e->nextTrain == ent)
+                e->nextTrain = ent->nextTrain;  // redirect func_train and path_corner entities
+        }
+    }
+    else if (!strcmp(ent->classname, "info_player_intermission") || !strcmp(ent->classname, "info_player_deathmatch"))
+    {
+        for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
+        {
+            if (e->inuse && e != ent &&
+                (!strcmp(e->classname, "info_player_intermission") || !strcmp(e->classname, "info_player_deathmatch")))
+            {
+                break;
+            }
+        }
+        // refuse to remove the last info_player_intermission/info_player_deathmatch entity
+        //  (because it is required for initial camera placement)
+        if (e >= &g_entities[level.num_entities])
+            return;
+    }
+    else if (!strcmp(ent->classname, "target_location"))
+    {
+        if (ent == level.locationHead)
+            level.locationHead = ent->nextTrain;
+        else
+        {
+            for (e = level.locationHead; e != NULL; e = e->nextTrain)
+            {
+                if (e->nextTrain == ent)
+                {
+                    e->nextTrain = ent->nextTrain;
+                    break;
+                }
+            }
+        }
+    }
+    else if (!Q_stricmp(ent->classname, "misc_portal_camera"))
+    {
+        for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
+        {
+            if (e->r.ownerNum == ent - g_entities)
+            {
+                // disown the surface
+                e->r.ownerNum = ENTITYNUM_NONE;
+            }
+        }
+    }
 
-  if( ent->teammaster != NULL )
-  {
-    // this entity is part of a mover team
-    if( ent == ent->teammaster )
+    if (ent->teammaster != NULL)
     {
-      // the entity is the master
-      gentity_t *snd = ent->teamchain;
-      for( e = snd; e != NULL; e = e->teamchain )
-        e->teammaster = snd; // put the 2nd entity (if any) in command
-      if( snd )
-      {
-        if( !strcmp( ent->classname, snd->classname ) )
+        // this entity is part of a mover team
+        if (ent == ent->teammaster)
         {
-          // transfer certain activity properties
-          snd->think = ent->think;
-          snd->nextthink = ent->nextthink;
+            // the entity is the master
+            gentity_t *snd = ent->teamchain;
+            for (e = snd; e != NULL; e = e->teamchain)
+                e->teammaster = snd;  // put the 2nd entity (if any) in command
+            if (snd)
+            {
+                if (!strcmp(ent->classname, snd->classname))
+                {
+                    // transfer certain activity properties
+                    snd->think = ent->think;
+                    snd->nextthink = ent->nextthink;
+                }
+                snd->flags &= ~FL_TEAMSLAVE;  // put the 2nd entity (if any) in command
+            }
         }
-        snd->flags &= ~FL_TEAMSLAVE; // put the 2nd entity (if any) in command
-      }
-    }
-    else
-    {
-      // the entity is a slave
-      for( e = ent->teammaster; e != NULL; e = e->teamchain )
-      {
-        if( e->teamchain == ent )
+        else
         {
-          // unlink it from the chain
-          e->teamchain = ent->teamchain;
-          break;
+            // the entity is a slave
+            for (e = ent->teammaster; e != NULL; e = e->teamchain)
+            {
+                if (e->teamchain == ent)
+                {
+                    // unlink it from the chain
+                    e->teamchain = ent->teamchain;
+                    break;
+                }
+            }
         }
-      }
     }
-  }
 
-  G_FreeEntity( ent );
+    G_FreeEntity(ent);
 }
 
 /*
@@ -698,29 +675,27 @@ The origin will be snapped to save net bandwidth, so care
 must be taken if the origin is right on a surface (snap towards start vector first)
 =================
 */
-gentity_t *G_TempEntity( const vec3_t origin, int event )
+gentity_t *G_TempEntity(const vec3_t origin, int event)
 {
-  gentity_t *e;
-  vec3_t    snapped;
+    gentity_t *e;
+    vec3_t snapped;
 
-  e = G_Spawn( );
-  e->s.eType = ET_EVENTS + event;
+    e = G_Spawn();
+    e->s.eType = ET_EVENTS + event;
 
-  e->classname = "tempEntity";
-  e->eventTime = level.time;
-  e->freeAfterEvent = qtrue;
+    e->classname = "tempEntity";
+    e->eventTime = level.time;
+    e->freeAfterEvent = true;
 
-  VectorCopy( origin, snapped );
-  SnapVector( snapped );    // save network bandwidth
-  G_SetOrigin( e, snapped );
+    VectorCopy(origin, snapped);
+    SnapVector(snapped);  // save network bandwidth
+    G_SetOrigin(e, snapped);
 
-  // find cluster for PVS
-  trap_LinkEntity( e );
+    // find cluster for PVS
+    trap_LinkEntity(e);
 
-  return e;
+    return e;
 }
-
-
 
 /*
 ==============================================================================
@@ -738,33 +713,31 @@ Kills all entities that would touch the proposed new positioning
 of ent.  Ent should be unlinked before calling this!
 =================
 */
-void G_KillBox( gentity_t *ent )
+void G_KillBox(gentity_t *ent)
 {
-  int       i, num;
-  int       touch[ MAX_GENTITIES ];
-  gentity_t *hit;
-  vec3_t    mins, maxs;
+    int i, num;
+    int touch[MAX_GENTITIES];
+    gentity_t *hit;
+    vec3_t mins, maxs;
 
-  VectorAdd( ent->r.currentOrigin, ent->r.mins, mins );
-  VectorAdd( ent->r.currentOrigin, ent->r.maxs, maxs );
-  num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
+    VectorAdd(ent->r.currentOrigin, ent->r.mins, mins);
+    VectorAdd(ent->r.currentOrigin, ent->r.maxs, maxs);
+    num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
-  for( i = 0; i < num; i++ )
-  {
-    hit = &g_entities[ touch[ i ] ];
+    for (i = 0; i < num; i++)
+    {
+        hit = &g_entities[touch[i]];
 
-    if( ent->client && !hit->client ) // players can telefrag only other players
-      continue;
+        if (ent->client && !hit->client)  // players can telefrag only other players
+            continue;
 
-    // impossible to telefrag self
-    if( ent == hit )
-      continue;
+        // impossible to telefrag self
+        if (ent == hit)
+            continue;
 
-    // nail it
-    G_Damage( hit, ent, ent, NULL, NULL,
-      100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG );
-  }
-
+        // nail it
+        G_Damage(hit, ent, ent, NULL, NULL, 100000, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+    }
 }
 
 //==============================================================================
@@ -778,14 +751,13 @@ client side: jumppads and item pickups
 Adds an event+parm and twiddles the event counter
 ===============
 */
-void G_AddPredictableEvent( gentity_t *ent, int event, int eventParm )
+void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 {
-  if( !ent->client )
-    return;
+    if (!ent->client)
+        return;
 
-  BG_AddPredictableEventToPlayerstate( event, eventParm, &ent->client->ps );
+    BG_AddPredictableEventToPlayerstate(event, eventParm, &ent->client->ps);
 }
-
 
 /*
 ===============
@@ -794,43 +766,44 @@ G_AddEvent
 Adds an event+parm and twiddles the event counter
 ===============
 */
-void G_AddEvent( gentity_t *ent, int event, int eventParm )
+void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
-  int bits;
+    int bits;
 
-  if( !event )
-  {
-    G_Printf( "G_AddEvent: zero event added for entity %i\n", ent->s.number );
-    return;
-  }
+    if (!event)
+    {
+        G_Printf("G_AddEvent: zero event added for entity %i\n", ent->s.number);
+        return;
+    }
 
-  // eventParm is converted to uint8_t (0 - 255) in msg.c 
-  if( eventParm & ~0xFF )
-  {
-    G_Printf( S_COLOR_YELLOW "WARNING: G_AddEvent( %s ) has eventParm %d, "
-              "which will overflow\n", BG_EventName( event ), eventParm );
-  }
+    // eventParm is converted to uint8_t (0 - 255) in msg.c
+    if (eventParm & ~0xFF)
+    {
+        G_Printf(S_COLOR_YELLOW
+            "WARNING: G_AddEvent( %s ) has eventParm %d, "
+            "which will overflow\n",
+            BG_EventName(event), eventParm);
+    }
 
-  // clients need to add the event in playerState_t instead of entityState_t
-  if( ent->client )
-  {
-    bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
-    bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-    ent->client->ps.externalEvent = event | bits;
-    ent->client->ps.externalEventParm = eventParm;
-    ent->client->ps.externalEventTime = level.time;
-  }
-  else
-  {
-    bits = ent->s.event & EV_EVENT_BITS;
-    bits = ( bits + EV_EVENT_BIT1 ) & EV_EVENT_BITS;
-    ent->s.event = event | bits;
-    ent->s.eventParm = eventParm;
-  }
+    // clients need to add the event in playerState_t instead of entityState_t
+    if (ent->client)
+    {
+        bits = ent->client->ps.externalEvent & EV_EVENT_BITS;
+        bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
+        ent->client->ps.externalEvent = event | bits;
+        ent->client->ps.externalEventParm = eventParm;
+        ent->client->ps.externalEventTime = level.time;
+    }
+    else
+    {
+        bits = ent->s.event & EV_EVENT_BITS;
+        bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
+        ent->s.event = event | bits;
+        ent->s.eventParm = eventParm;
+    }
 
-  ent->eventTime = level.time;
+    ent->eventTime = level.time;
 }
-
 
 /*
 ===============
@@ -839,50 +812,47 @@ G_BroadcastEvent
 Sends an event to every client
 ===============
 */
-void G_BroadcastEvent( int event, int eventParm )
+void G_BroadcastEvent(int event, int eventParm)
 {
-  gentity_t *ent;
+    gentity_t *ent;
 
-  ent = G_TempEntity( vec3_origin, event );
-  ent->s.eventParm = eventParm;
-  ent->r.svFlags = SVF_BROADCAST; // send to everyone
+    ent = G_TempEntity(vec3_origin, event);
+    ent->s.eventParm = eventParm;
+    ent->r.svFlags = SVF_BROADCAST;  // send to everyone
 }
-
 
 /*
 =============
 G_Sound
 =============
 */
-void G_Sound( gentity_t *ent, int channel, int soundIndex )
+void G_Sound(gentity_t *ent, int channel, int soundIndex)
 {
-  gentity_t *te;
+    gentity_t *te;
 
-  te = G_TempEntity( ent->r.currentOrigin, EV_GENERAL_SOUND );
-  te->s.eventParm = soundIndex;
+    te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
+    te->s.eventParm = soundIndex;
 }
-
 
 /*
 =============
 G_ClientIsLagging
 =============
 */
-qboolean G_ClientIsLagging( gclient_t *client )
+bool G_ClientIsLagging(gclient_t *client)
 {
-  if( client )
-  {
-    if( client->ps.ping >= 999 )
-      return qtrue;
-    else
-      return qfalse;
-  }
+    if (client)
+    {
+        if (client->ps.ping >= 999)
+            return true;
+        else
+            return false;
+    }
 
-  return qfalse; //is a non-existant client lagging? woooo zen
+    return false;  // is a non-existant client lagging? woooo zen
 }
 
 //==============================================================================
-
 
 /*
 ================
@@ -891,45 +861,45 @@ G_SetOrigin
 Sets the pos trajectory for a fixed position
 ================
 */
-void G_SetOrigin( gentity_t *ent, const vec3_t origin )
+void G_SetOrigin(gentity_t *ent, const vec3_t origin)
 {
-  VectorCopy( origin, ent->s.pos.trBase );
-  ent->s.pos.trType = TR_STATIONARY;
-  ent->s.pos.trTime = 0;
-  ent->s.pos.trDuration = 0;
-  VectorClear( ent->s.pos.trDelta );
+    VectorCopy(origin, ent->s.pos.trBase);
+    ent->s.pos.trType = TR_STATIONARY;
+    ent->s.pos.trTime = 0;
+    ent->s.pos.trDuration = 0;
+    VectorClear(ent->s.pos.trDelta);
 
-  VectorCopy( origin, ent->r.currentOrigin );
+    VectorCopy(origin, ent->r.currentOrigin);
 }
 
 // from quakestyle.telefragged.com
 // (NOBODY): Code helper function
 //
-gentity_t *G_FindRadius( gentity_t *from, vec3_t org, float rad )
+gentity_t *G_FindRadius(gentity_t *from, vec3_t org, float rad)
 {
-  vec3_t  eorg;
-  int j;
+    vec3_t eorg;
+    int j;
 
-  if( !from )
-    from = g_entities;
-  else
-    from++;
+    if (!from)
+        from = g_entities;
+    else
+        from++;
 
-  for( ; from < &g_entities[ level.num_entities ]; from++ )
-  {
-    if( !from->inuse )
-      continue;
+    for (; from < &g_entities[level.num_entities]; from++)
+    {
+        if (!from->inuse)
+            continue;
 
-    for( j = 0; j < 3; j++ )
-      eorg[ j ] = org[ j ] - ( from->r.currentOrigin[ j ] + ( from->r.mins[ j ] + from->r.maxs[ j ] ) * 0.5 );
+        for (j = 0; j < 3; j++)
+            eorg[j] = org[j] - (from->r.currentOrigin[j] + (from->r.mins[j] + from->r.maxs[j]) * 0.5);
 
-    if( VectorLength( eorg ) > rad )
-      continue;
+        if (VectorLength(eorg) > rad)
+            continue;
 
-    return from;
-  }
+        return from;
+    }
 
-  return NULL;
+    return NULL;
 }
 
 /*
@@ -939,14 +909,13 @@ G_Visible
 Test for a LOS between two entities
 ===============
 */
-qboolean G_Visible( gentity_t *ent1, gentity_t *ent2, int contents )
+bool G_Visible(gentity_t *ent1, gentity_t *ent2, int contents)
 {
-  trace_t trace;
+    trace_t trace;
 
-  trap_Trace( &trace, ent1->s.pos.trBase, NULL, NULL, ent2->s.pos.trBase,
-              ent1->s.number, contents );
+    trap_Trace(&trace, ent1->s.pos.trBase, NULL, NULL, ent2->s.pos.trBase, ent1->s.number, contents);
 
-  return trace.fraction >= 1.0f || trace.entityNum == ent2 - g_entities;
+    return trace.fraction >= 1.0f || trace.entityNum == ent2 - g_entities;
 }
 
 /*
@@ -956,31 +925,31 @@ G_ClosestEnt
 Test a list of entities for the closest to a particular point
 ===============
 */
-gentity_t *G_ClosestEnt( vec3_t origin, gentity_t **entities, int numEntities )
+gentity_t *G_ClosestEnt(vec3_t origin, gentity_t **entities, int numEntities)
 {
-  int       i;
-  float     nd, d;
-  gentity_t *closestEnt;
+    int i;
+    float nd, d;
+    gentity_t *closestEnt;
 
-  if( numEntities <= 0 )
-    return NULL;
+    if (numEntities <= 0)
+        return NULL;
 
-  closestEnt = entities[ 0 ];
-  d = DistanceSquared( origin, closestEnt->r.currentOrigin );
+    closestEnt = entities[0];
+    d = DistanceSquared(origin, closestEnt->r.currentOrigin);
 
-  for( i = 1; i < numEntities; i++ )
-  {
-    gentity_t *ent = entities[ i ];
-
-    nd = DistanceSquared( origin, ent->r.currentOrigin );
-    if( nd < d )
+    for (i = 1; i < numEntities; i++)
     {
-      d = nd;
-      closestEnt = ent;
-    }
-  }
+        gentity_t *ent = entities[i];
 
-  return closestEnt;
+        nd = DistanceSquared(origin, ent->r.currentOrigin);
+        if (nd < d)
+        {
+            d = nd;
+            closestEnt = ent;
+        }
+    }
+
+    return closestEnt;
 }
 
 /*
@@ -990,12 +959,12 @@ G_TriggerMenu
 Trigger a menu on some client
 ===============
 */
-void G_TriggerMenu( int clientNum, dynMenu_t menu )
+void G_TriggerMenu(int clientNum, dynMenu_t menu)
 {
-  char buffer[ 32 ];
+    char buffer[32];
 
-  Com_sprintf( buffer, sizeof( buffer ), "servermenu %d", menu );
-  trap_SendServerCommand( clientNum, buffer );
+    Com_sprintf(buffer, sizeof(buffer), "servermenu %d", menu);
+    trap_SendServerCommand(clientNum, buffer);
 }
 
 /*
@@ -1005,12 +974,12 @@ G_TriggerMenuArgs
 Trigger a menu on some client and passes an argument
 ===============
 */
-void G_TriggerMenuArgs( int clientNum, dynMenu_t menu, int arg )
+void G_TriggerMenuArgs(int clientNum, dynMenu_t menu, int arg)
 {
-  char buffer[ 64 ];
+    char buffer[64];
 
-  Com_sprintf( buffer, sizeof( buffer ), "servermenu %d %d", menu, arg );
-  trap_SendServerCommand( clientNum, buffer );
+    Com_sprintf(buffer, sizeof(buffer), "servermenu %d %d", menu, arg);
+    trap_SendServerCommand(clientNum, buffer);
 }
 
 /*
@@ -1020,14 +989,13 @@ G_CloseMenus
 Close all open menus on some client
 ===============
 */
-void G_CloseMenus( int clientNum )
+void G_CloseMenus(int clientNum)
 {
-  char buffer[ 32 ];
+    char buffer[32];
 
-  Com_sprintf( buffer, 32, "serverclosemenus" );
-  trap_SendServerCommand( clientNum, buffer );
+    Com_sprintf(buffer, 32, "serverclosemenus");
+    trap_SendServerCommand(clientNum, buffer);
 }
-
 
 /*
 ===============
@@ -1036,138 +1004,138 @@ G_AddressParse
 Make an IP address more usable
 ===============
 */
-static const char *addr4parse( const char *str, addr_t *addr )
+static const char *addr4parse(const char *str, addr_t *addr)
 {
-  int i;
-  int octet = 0;
-  int num = 0;
-  memset( addr, 0, sizeof( addr_t ) );
-  addr->type = addr_t::IPv4;
-  for( i = 0; octet < 4; i++ )
-  {
-    if( isdigit( str[ i ] ) )
-      num = num * 10 + str[ i ] - '0';
-    else
+    int i;
+    int octet = 0;
+    int num = 0;
+    memset(addr, 0, sizeof(addr_t));
+    addr->type = addr_t::IPv4;
+    for (i = 0; octet < 4; i++)
     {
-      if( num < 0 || num > 255 )
-        return NULL;
-      addr->addr[ octet ] = (byte)num;
-      octet++;
-      if( str[ i ] != '.' || str[ i + 1 ] == '.' )
-        break;
-      num = 0;
+        if (isdigit(str[i]))
+            num = num * 10 + str[i] - '0';
+        else
+        {
+            if (num < 0 || num > 255)
+                return NULL;
+            addr->addr[octet] = (byte)num;
+            octet++;
+            if (str[i] != '.' || str[i + 1] == '.')
+                break;
+            num = 0;
+        }
     }
-  }
-  if( octet < 1 )
-    return NULL;
-  return str + i;
+    if (octet < 1)
+        return NULL;
+    return str + i;
 }
 
-static const char *addr6parse( const char *str, addr_t *addr )
+static const char *addr6parse(const char *str, addr_t *addr)
 {
-  int i;
-  qboolean seen = qfalse;
-  /* keep track of the parts before and after the ::
-     it's either this or even uglier hacks */
-  byte a[ ADDRLEN ], b[ ADDRLEN ];
-  size_t before = 0, after = 0;
-  int num = 0;
-  /* 8 hexadectets unless :: is present */
-  for( i = 0; before + after <= 8; i++ )
-  {
-    //num = num << 4 | str[ i ] - '0';
-    if( isdigit( str[ i ] ) )
-      num = num * 16 + str[ i ] - '0';
-    else if( str[ i ] >= 'A' && str[ i ] <= 'F' )
-      num = num * 16 + 10 + str[ i ] - 'A';
-    else if( str[ i ] >= 'a' && str[ i ] <= 'f' )
-      num = num * 16 + 10 + str[ i ] - 'a';
-    else
+    int i;
+    bool seen = false;
+    /* keep track of the parts before and after the ::
+       it's either this or even uglier hacks */
+    byte a[ADDRLEN], b[ADDRLEN];
+    size_t before = 0, after = 0;
+    int num = 0;
+    /* 8 hexadectets unless :: is present */
+    for (i = 0; before + after <= 8; i++)
     {
-      if( num < 0 || num > 65535 )
-        return NULL;
-      if( i == 0 )
-      {
-        // 
-      }
-      else if( seen ) // :: has been seen already
-      {
-        b[ after * 2 ] = num >> 8;
-        b[ after * 2 + 1 ] = num & 0xff;
-        after++;
-      }
-      else
-      {
-        a[ before * 2 ] = num >> 8;
-        a[ before * 2 + 1 ] = num & 0xff;
-        before++;
-      }
-      if( !str[ i ] )
-        break;
-      if( str[ i ] != ':' || before + after == 8 )
-        break;
-      if( str[ i + 1 ] == ':' )
-      {
-        // ::: or multiple ::
-        if( seen || str[ i + 2 ] == ':' )
-          break;
-        seen = qtrue;
-        i++;
-      }
-      else if( i == 0 ) // starts with : but not ::
-        return NULL;
-      num = 0;
+        // num = num << 4 | str[ i ] - '0';
+        if (isdigit(str[i]))
+            num = num * 16 + str[i] - '0';
+        else if (str[i] >= 'A' && str[i] <= 'F')
+            num = num * 16 + 10 + str[i] - 'A';
+        else if (str[i] >= 'a' && str[i] <= 'f')
+            num = num * 16 + 10 + str[i] - 'a';
+        else
+        {
+            if (num < 0 || num > 65535)
+                return NULL;
+            if (i == 0)
+            {
+                //
+            }
+            else if (seen)  // :: has been seen already
+            {
+                b[after * 2] = num >> 8;
+                b[after * 2 + 1] = num & 0xff;
+                after++;
+            }
+            else
+            {
+                a[before * 2] = num >> 8;
+                a[before * 2 + 1] = num & 0xff;
+                before++;
+            }
+            if (!str[i])
+                break;
+            if (str[i] != ':' || before + after == 8)
+                break;
+            if (str[i + 1] == ':')
+            {
+                // ::: or multiple ::
+                if (seen || str[i + 2] == ':')
+                    break;
+                seen = true;
+                i++;
+            }
+            else if (i == 0)  // starts with : but not ::
+                return NULL;
+            num = 0;
+        }
     }
-  }
-  if( seen )
-  {
-    // there have to be fewer than 8 hexadectets when :: is present
-    if( before + after == 8 )
-      return NULL;
-  }
-  else if( before + after < 8 ) // require exactly 8 hexadectets
-    return NULL;
-  memset( addr, 0, sizeof( addr_t ) );
-  addr->type = addr_t::IPv6;
-  if( before )
-    memcpy( addr->addr, a, before * 2 );
-  if( after )
-    memcpy( addr->addr + ADDRLEN - 2 * after, b, after * 2 );
-  return str + i;
+    if (seen)
+    {
+        // there have to be fewer than 8 hexadectets when :: is present
+        if (before + after == 8)
+            return NULL;
+    }
+    else if (before + after < 8)  // require exactly 8 hexadectets
+        return NULL;
+    memset(addr, 0, sizeof(addr_t));
+    addr->type = addr_t::IPv6;
+    if (before)
+        memcpy(addr->addr, a, before * 2);
+    if (after)
+        memcpy(addr->addr + ADDRLEN - 2 * after, b, after * 2);
+    return str + i;
 }
 
-qboolean G_AddressParse( const char *str, addr_t *addr )
+bool G_AddressParse(const char *str, addr_t *addr)
 {
-  const char *p;
-  int max;
-  if( strchr( str, ':' ) )
-  {
-    p = addr6parse( str, addr );
-    max = 128;
-  }
-  else if( strchr( str, '.' ) )
-  {
-    p = addr4parse( str, addr );
-    max = 32;
-  }
-  else
-    return qfalse;
-  Q_strncpyz( addr->str, str, sizeof( addr->str ) );
-  if( !p )
-    return qfalse;
-  if( *p == '/' )
-  {
-    addr->mask = atoi( p + 1 );
-    if( addr->mask < 1 || addr->mask > max )
-      addr->mask = max;
-  }
-  else
-  {
-    if( *p )
-      return qfalse;
-    addr->mask = max;
-  }
-  return qtrue;
+    const char *p;
+    int max;
+    if (strchr(str, ':'))
+    {
+        p = addr6parse(str, addr);
+        max = 128;
+    }
+    else if (strchr(str, '.'))
+    {
+        p = addr4parse(str, addr);
+        max = 32;
+    }
+    else
+        return false;
+    Q_strncpyz(addr->str, str, sizeof(addr->str));
+    if (!p)
+        return false;
+    if (*p == '/')
+    {
+        addr->mask = atoi(p + 1);
+        if (addr->mask < 1 || addr->mask > max)
+            addr->mask = max;
+    }
+    else
+    {
+        if (*p)
+            return false;
+        addr->mask = max;
+    }
+    return true;
 }
 
 /*
@@ -1177,29 +1145,29 @@ G_AddressCompare
 Based largely on NET_CompareBaseAdrMask from ioq3 revision 1557
 ===============
 */
-qboolean G_AddressCompare( const addr_t *a, const addr_t *b )
+bool G_AddressCompare(const addr_t *a, const addr_t *b)
 {
-  int i, netmask;
-  if( a->type != b->type )
-    return qfalse;
-  netmask = a->mask;
-  if( a->type == addr_t::IPv4 )
-  {
-    if( netmask < 1 || netmask > 32 )
-      netmask = 32;
-  }
-  else if( a->type == addr_t::IPv6 )
-  {
-    if( netmask < 1 || netmask > 128 )
-      netmask = 128;
-  }
-  for( i = 0; netmask > 7; i++, netmask -= 8 )
-    if( a->addr[ i ] != b->addr[ i ] )
-      return qfalse;
-  if( netmask )
-  {
-    netmask = ( ( 1 << netmask ) - 1 ) << ( 8 - netmask );
-    return ( a->addr[ i ] & netmask ) == ( b->addr[ i ] & netmask );
-  }
-  return qtrue;
+    int i, netmask;
+    if (a->type != b->type)
+        return false;
+    netmask = a->mask;
+    if (a->type == addr_t::IPv4)
+    {
+        if (netmask < 1 || netmask > 32)
+            netmask = 32;
+    }
+    else if (a->type == addr_t::IPv6)
+    {
+        if (netmask < 1 || netmask > 128)
+            netmask = 128;
+    }
+    for (i = 0; netmask > 7; i++, netmask -= 8)
+        if (a->addr[i] != b->addr[i])
+            return false;
+    if (netmask)
+    {
+        netmask = ((1 << netmask) - 1) << (8 - netmask);
+        return (a->addr[i] & netmask) == (b->addr[i] & netmask);
+    }
+    return true;
 }

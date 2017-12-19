@@ -240,7 +240,7 @@ const char *String_Alloc(const char *p)
             str = str->next;
         }
 
-        str = static_cast<stringDef_t*>(UI_Alloc(sizeof(stringDef_t)));
+        str = static_cast<stringDef_t *>(UI_Alloc(sizeof(stringDef_t)));
         str->next = NULL;
         str->str = &strPool[ph];
 
@@ -457,7 +457,7 @@ static bool PC_Expression_Parse(int handle, float *f)
 #define PUSH_VAL(a, v)              \
     {                               \
         if (FULL(a))                \
-            return false;          \
+            return false;           \
         a.b++;                      \
         a.l[a.b].type = EXPR_VALUE; \
         a.l[a.b].u.val = v;         \
@@ -466,29 +466,29 @@ static bool PC_Expression_Parse(int handle, float *f)
 #define PUSH_OP(a, o)                  \
     {                                  \
         if (FULL(a))                   \
-            return false;             \
+            return false;              \
         a.b++;                         \
         a.l[a.b].type = EXPR_OPERATOR; \
         a.l[a.b].u.op = o;             \
     }
 
-#define POP_STACK(a)       \
-    {                      \
-        if (EMPTY(a))      \
+#define POP_STACK(a)      \
+    {                     \
+        if (EMPTY(a))     \
             return false; \
-        value = a.l[a.b];  \
-        a.b--;             \
+        value = a.l[a.b]; \
+        a.b--;            \
     }
 
 #define PEEK_STACK_OP(a) (a.l[a.b].u.op)
 #define PEEK_STACK_VAL(a) (a.l[a.b].u.val)
 
-#define POP_FIFO(a)        \
-    {                      \
-        if (EMPTY(a))      \
+#define POP_FIFO(a)       \
+    {                     \
+        if (EMPTY(a))     \
             return false; \
-        value = a.l[a.f];  \
-        a.f++;             \
+        value = a.l[a.f]; \
+        a.f++;            \
     }
 
     stack.f = fifo.f = 0;
@@ -795,7 +795,7 @@ bool PC_Int_Parse(int handle, int *i)
 Rect_Parse
 =================
 */
-bool Rect_Parse(char **p, rectDef_t *r)
+bool Rect_Parse(char **p, Rectangle *r)
 {
     if (Float_Parse(p, &r->x))
     {
@@ -817,7 +817,7 @@ bool Rect_Parse(char **p, rectDef_t *r)
 PC_Rect_Parse
 =================
 */
-bool PC_Rect_Parse(int handle, rectDef_t *r)
+bool PC_Rect_Parse(int handle, Rectangle *r)
 {
     if (PC_Float_Parse(handle, &r->x))
     {
@@ -927,7 +927,7 @@ void Init_Display(displayContextDef_t *dc) { DC = dc; }
 
 // type and style painting
 
-void GradientBar_Paint(rectDef_t *rect, vec4_t color)
+void GradientBar_Paint(Rectangle *rect, vec4_t color)
 {
     // gradient bar takes two paints
     DC->setColor(color);
@@ -984,7 +984,7 @@ void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, bool
 static void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 {
     vec4_t color;
-    rectDef_t fillRect = w->rect;
+    Rectangle fillRect = w->rect;
 
     if (DC->getCVarValue("ui_developer"))
     {
@@ -1075,7 +1075,7 @@ static void Border_Paint(Window *w)
     else if (w->border == WINDOW_BORDER_KCGRADIENT)
     {
         // this is just two gradient bars along each horz edge
-        rectDef_t r = w->rect;
+        Rectangle r = w->rect;
         r.h = w->borderSize;
         GradientBar_Paint(&r, w->borderColor);
         r.y = w->rect.y + w->rect.h - 1;
@@ -1260,7 +1260,7 @@ itemDef_t *Menu_ClearFocus(menuDef_t *menu)
 
 bool IsVisible(int flags) { return (flags & WINDOW_VISIBLE && !(flags & WINDOW_FADINGOUT)); }
 
-bool Rect_ContainsPoint(rectDef_t *rect, float x, float y)
+bool Rect_ContainsPoint(Rectangle *rect, float x, float y)
 {
     if (rect)
     {
@@ -1617,7 +1617,7 @@ void Script_Close(itemDef_t *item, char **args)
 }
 
 void Menu_TransitionItemByName(
-    menuDef_t *menu, const char *p, rectDef_t rectFrom, rectDef_t rectTo, int time, float amt)
+    menuDef_t *menu, const char *p, Rectangle rectFrom, Rectangle rectTo, int time, float amt)
 {
     itemDef_t *item;
     int i;
@@ -1631,8 +1631,8 @@ void Menu_TransitionItemByName(
         {
             item->window.flags |= (WINDOW_INTRANSITION | WINDOW_VISIBLE);
             item->window.offsetTime = time;
-            memcpy(&item->window.rectClient, &rectFrom, sizeof(rectDef_t));
-            memcpy(&item->window.rectEffects, &rectTo, sizeof(rectDef_t));
+            memcpy(&item->window.rectClient, &rectFrom, sizeof(Rectangle));
+            memcpy(&item->window.rectEffects, &rectTo, sizeof(Rectangle));
             item->window.rectEffects2.x = fabs(rectTo.x - rectFrom.x) / amt;
             item->window.rectEffects2.y = fabs(rectTo.y - rectFrom.y) / amt;
             item->window.rectEffects2.w = fabs(rectTo.w - rectFrom.w) / amt;
@@ -1645,7 +1645,7 @@ void Menu_TransitionItemByName(
 void Script_Transition(itemDef_t *item, char **args)
 {
     const char *name;
-    rectDef_t rectFrom, rectTo;
+    Rectangle rectFrom, rectTo;
     int time;
     float amt;
 
@@ -2306,8 +2306,8 @@ void Item_RunScript(itemDef_t *item, const char *s)
             if (command[0] == ';' && command[1] == '\0')
                 continue;
 
-            cmd = static_cast<commandDef_t*>(bsearch(command, commandList,
-                        scriptCommandCount, sizeof(commandDef_t), commandComp));
+            cmd = static_cast<commandDef_t *>(
+                bsearch(command, commandList, scriptCommandCount, sizeof(commandDef_t), commandComp));
             if (cmd)
                 cmd->handler(item, &p);
             else
@@ -2392,7 +2392,7 @@ bool Item_SetFocus(itemDef_t *item, float x, float y)
 
     if (item->type == ITEM_TYPE_TEXT)
     {
-        rectDef_t r;
+        Rectangle r;
         r = item->textRect;
         r.y -= r.h;
 
@@ -2591,7 +2591,7 @@ static float Item_Slider_VScale(itemDef_t *item)
 
 int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 {
-    rectDef_t r;
+    Rectangle r;
     float vScale = Item_Slider_VScale(item);
 
     r.x = Item_Slider_ThumbPosition(item) - (SLIDER_THUMB_WIDTH / 2);
@@ -2607,7 +2607,7 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 
 int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 {
-    rectDef_t r;
+    Rectangle r;
     int thumbstart;
 
     r.x = SCROLLBAR_SLIDER_X(item);
@@ -2646,7 +2646,7 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 
 void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y)
 {
-    rectDef_t r;
+    Rectangle r;
     listBoxDef_t *listPtr = item->typeData.list;
     int listBoxFlags = (WINDOW_LB_UPARROW | WINDOW_LB_DOWNARROW | WINDOW_LB_THUMB | WINDOW_LB_PGUP | WINDOW_LB_PGDN);
     int total = DC->feederCount(item->feederID);
@@ -2675,7 +2675,7 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y)
 
 void Item_MouseEnter(itemDef_t *item, float x, float y)
 {
-    rectDef_t r;
+    Rectangle r;
 
     if (item)
     {
@@ -3348,7 +3348,7 @@ static void Scroll_ListBox_AutoFunc(void *p)
 
 static void _Scroll_ListBox_ThumbFunc(scrollInfo_t *si)
 {
-    rectDef_t r;
+    Rectangle r;
     int pos, max;
 
     if (DC->cursory != si->yStart)
@@ -3494,7 +3494,7 @@ bool Item_Slider_HandleKey(itemDef_t *item, int key, bool down)
     {
         if (item->typeData.edit && (key == K_ENTER || key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3))
         {
-            rectDef_t testRect;
+            Rectangle testRect;
             width = SLIDER_WIDTH;
 
             if (item->text)
@@ -3847,10 +3847,10 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, bool down)
     }
 }
 
-static rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
+static Rectangle *Item_CorrectedTextRect(itemDef_t *item)
 {
-    static rectDef_t rect;
-    memset(&rect, 0, sizeof(rectDef_t));
+    static Rectangle rect;
+    memset(&rect, 0, sizeof(Rectangle));
 
     if (item)
     {
@@ -4058,7 +4058,7 @@ void ToWindowCoords(float *x, float *y, Window *window)
     *y += window->rect.y;
 }
 
-void Rect_ToWindowCoords(rectDef_t *rect, Window *window) { ToWindowCoords(&rect->x, &rect->y, window); }
+void Rect_ToWindowCoords(Rectangle *rect, Window *window) { ToWindowCoords(&rect->x, &rect->y, window); }
 
 void Item_SetTextExtents(itemDef_t *item, const char *text)
 {
@@ -4292,7 +4292,7 @@ const char *Item_Text_Wrap(const char *text, float scale, float width)
 
 typedef struct {
     char text[MAX_WRAP_TEXT * MAX_WRAP_LINES];
-    rectDef_t rect;
+    Rectangle rect;
     float scale;
     char lines[MAX_WRAP_LINES][MAX_WRAP_TEXT];
     float lineCoords[MAX_WRAP_LINES][2];
@@ -4305,7 +4305,7 @@ static int cacheWriteIndex = 0;
 static int cacheReadIndex = 0;
 static int cacheReadLineNum = 0;
 
-static void UI_CreateCacheEntry(const char *text, const rectDef_t *rect, float scale)
+static void UI_CreateCacheEntry(const char *text, const Rectangle *rect, float scale)
 {
     wrapCache_t *cacheEntry = &wrapCache[cacheWriteIndex];
 
@@ -4352,7 +4352,7 @@ static void UI_FinishCacheEntry(void)
         cacheWriteIndex = (cacheWriteIndex + 1) % MAX_WRAP_CACHE;
 }
 
-static bool UI_CheckWrapCache(const char *text, const rectDef_t *rect, float scale)
+static bool UI_CheckWrapCache(const char *text, const Rectangle *rect, float scale)
 {
     int i;
 
@@ -4565,7 +4565,7 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 UI_DrawTextBlock
 ==============
 */
-void UI_DrawTextBlock(rectDef_t *rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
+void UI_DrawTextBlock(Rectangle *rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
     int textvalign, int textStyle, const char *text)
 {
     static menuDef_t dummyParent;
@@ -5692,7 +5692,7 @@ void Item_Paint(itemDef_t *item)
     if (DC->getCVarValue("ui_developer"))
     {
         vec4_t color;
-        rectDef_t *r = Item_CorrectedTextRect(item);
+        Rectangle *r = Item_CorrectedTextRect(item);
         color[1] = color[3] = 1;
         color[0] = color[2] = 0;
         DC->drawRect(r->x, r->y, r->w, r->h, 1, color);
@@ -6278,16 +6278,10 @@ bool ItemParse_model_origin(itemDef_t *item, int handle)
 }
 
 // model_fovx <number>
-bool ItemParse_model_fovx(itemDef_t *item, int handle)
-{
-    return PC_Float_Parse(handle, &item->typeData.model->fov_x);
-}
+bool ItemParse_model_fovx(itemDef_t *item, int handle) { return PC_Float_Parse(handle, &item->typeData.model->fov_x); }
 
 // model_fovy <number>
-bool ItemParse_model_fovy(itemDef_t *item, int handle)
-{
-    return PC_Float_Parse(handle, &item->typeData.model->fov_y);
-}
+bool ItemParse_model_fovy(itemDef_t *item, int handle) { return PC_Float_Parse(handle, &item->typeData.model->fov_y); }
 
 // model_rotation <integer>
 bool ItemParse_model_rotation(itemDef_t *item, int handle)
@@ -6296,10 +6290,7 @@ bool ItemParse_model_rotation(itemDef_t *item, int handle)
 }
 
 // model_angle <integer>
-bool ItemParse_model_angle(itemDef_t *item, int handle)
-{
-    return PC_Int_Parse(handle, &item->typeData.model->angle);
-}
+bool ItemParse_model_angle(itemDef_t *item, int handle) { return PC_Int_Parse(handle, &item->typeData.model->angle); }
 
 // rect <rectangle>
 bool ItemParse_rect(itemDef_t *item, int handle)
@@ -6396,12 +6387,12 @@ bool ItemParse_type(itemDef_t *item, int handle)
     {
         case ITEM_TYPE_LISTBOX:
         case ITEM_TYPE_COMBOBOX:
-            item->typeData.list = static_cast<listBoxDef_t*>(UI_Alloc(sizeof(listBoxDef_t)));
+            item->typeData.list = static_cast<listBoxDef_t *>(UI_Alloc(sizeof(listBoxDef_t)));
             memset(item->typeData.list, 0, sizeof(listBoxDef_t));
             break;
 
         case ITEM_TYPE_CYCLE:
-            item->typeData.cycle = static_cast<cycleDef_t*>(UI_Alloc(sizeof(cycleDef_t)));
+            item->typeData.cycle = static_cast<cycleDef_t *>(UI_Alloc(sizeof(cycleDef_t)));
             memset(item->typeData.cycle, 0, sizeof(cycleDef_t));
             break;
 
@@ -6412,7 +6403,7 @@ bool ItemParse_type(itemDef_t *item, int handle)
         case ITEM_TYPE_BIND:
         case ITEM_TYPE_SLIDER:
         case ITEM_TYPE_TEXT:
-            item->typeData.edit = static_cast<editFieldDef_t*>(UI_Alloc(sizeof(editFieldDef_t)));
+            item->typeData.edit = static_cast<editFieldDef_t *>(UI_Alloc(sizeof(editFieldDef_t)));
             memset(item->typeData.edit, 0, sizeof(editFieldDef_t));
 
             if (item->type == ITEM_TYPE_EDITFIELD || item->type == ITEM_TYPE_SAYFIELD)
@@ -6420,12 +6411,12 @@ bool ItemParse_type(itemDef_t *item, int handle)
             break;
 
         case ITEM_TYPE_MULTI:
-            item->typeData.multi = static_cast<multiDef_t*>(UI_Alloc(sizeof(multiDef_t)));
+            item->typeData.multi = static_cast<multiDef_t *>(UI_Alloc(sizeof(multiDef_t)));
             memset(item->typeData.multi, 0, sizeof(multiDef_t));
             break;
 
         case ITEM_TYPE_MODEL:
-            item->typeData.model = static_cast<modelDef_t*>(UI_Alloc(sizeof(modelDef_t)));
+            item->typeData.model = static_cast<modelDef_t *>(UI_Alloc(sizeof(modelDef_t)));
             memset(item->typeData.model, 0, sizeof(modelDef_t));
             break;
 
@@ -6449,10 +6440,7 @@ bool ItemParse_elementheight(itemDef_t *item, int handle)
 }
 
 // dropitems, number of items to drop from a combobox
-bool ItemParse_dropitems(itemDef_t *item, int handle)
-{
-    return PC_Int_Parse(handle, &item->typeData.list->dropItems);
-}
+bool ItemParse_dropitems(itemDef_t *item, int handle) { return PC_Int_Parse(handle, &item->typeData.list->dropItems); }
 
 // feeder <int>
 bool ItemParse_feeder(itemDef_t *item, int handle)
@@ -6778,10 +6766,7 @@ bool ItemParse_cvar(itemDef_t *item, int handle)
     return true;
 }
 
-bool ItemParse_maxChars(itemDef_t *item, int handle)
-{
-    return PC_Int_Parse(handle, &item->typeData.edit->maxChars);
-}
+bool ItemParse_maxChars(itemDef_t *item, int handle) { return PC_Int_Parse(handle, &item->typeData.edit->maxChars); }
 
 bool ItemParse_maxPaintChars(itemDef_t *item, int handle)
 {
@@ -7474,7 +7459,7 @@ bool MenuParse_itemDef(itemDef_t *item, int handle)
 
     if (menu->itemCount < MAX_MENUITEMS)
     {
-        menu->items[menu->itemCount] = static_cast<itemDef_t*>(UI_Alloc(sizeof(itemDef_t)));
+        menu->items[menu->itemCount] = static_cast<itemDef_t *>(UI_Alloc(sizeof(itemDef_t)));
         Item_Init(menu->items[menu->itemCount]);
 
         if (!Item_Parse(handle, menu->items[menu->itemCount]))
@@ -7647,7 +7632,7 @@ menuDef_t *Display_CaptureItem(int x, int y)
     return NULL;
 }
 
-// FIXME: The fuck is this thing supposed to do??? 
+// FIXME: The fuck is this thing supposed to do???
 //
 // VJR 12/18/2017: I've changed the first argument from a void* to a menuDef_t* as the code
 // only supports a menu.
@@ -7687,7 +7672,7 @@ int Display_CursorType(int x, int y)
 
     for (i = 0; i < menuCount; i++)
     {
-        rectDef_t r2;
+        Rectangle r2;
         r2.x = Menus[i].window.rect.x - 3;
         r2.y = Menus[i].window.rect.y - 3;
         r2.w = r2.h = 7;

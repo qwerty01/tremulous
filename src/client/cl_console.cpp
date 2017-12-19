@@ -722,23 +722,23 @@ void Con_DrawConsole( void ) {
 		if( chatField.buffer[0] == '/' ||
 				chatField.buffer[0] == '\\' )
 			{
-				SCR_DrawBigString( 8, 232, "Command:", 1.0f, qfalse );
+				SCR_DrawBigString( 8, 232, "Command:", 1.0f, false );
 				skip = 10;
 			}
 
     else if( chat_team )
     {
-      SCR_DrawBigString( 8, 232, "Team Say:", 1.0f, qfalse );
+      SCR_DrawBigString( 8, 232, "Team Say:", 1.0f, false );
       skip = 11;
     }
     else
     {
-      SCR_DrawBigString( 8, 232, "Say:", 1.0f, qfalse );
+      SCR_DrawBigString( 8, 232, "Say:", 1.0f, false );
       skip = 5;
     }
 
     Field_BigDraw( &chatField, skip * BIGCHAR_WIDTH, 232,
-                   SCREEN_WIDTH - ( skip + 1 ) * BIGCHAR_WIDTH, qtrue, qtrue );
+                   SCREEN_WIDTH - ( skip + 1 ) * BIGCHAR_WIDTH, true, true );
 	}
 
 	if ( con.displayFrac ) {

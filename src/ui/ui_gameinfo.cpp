@@ -74,7 +74,7 @@ int UI_ParseInfos(char *buf, int max, char *infos[])
 
         while (1)
         {
-            token = COM_ParseExt(&buf, qtrue);
+            token = COM_ParseExt(&buf, true);
 
             if (!token[0])
             {
@@ -87,7 +87,7 @@ int UI_ParseInfos(char *buf, int max, char *infos[])
 
             Q_strncpyz(key, token, sizeof(key));
 
-            token = COM_ParseExt(&buf, qfalse);
+            token = COM_ParseExt(&buf, false);
 
             if (!token[0])
                 strcpy(token, "<NULL>");
@@ -96,7 +96,8 @@ int UI_ParseInfos(char *buf, int max, char *infos[])
         }
 
         // NOTE: extra space for arena number
-        infos[count] = static_cast<char*>(UI_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1));
+        infos[count] =
+            static_cast<char *>(UI_Alloc(strlen(info) + strlen("\\num\\") + strlen(va("%d", MAX_ARENAS)) + 1));
 
         if (infos[count])
         {
