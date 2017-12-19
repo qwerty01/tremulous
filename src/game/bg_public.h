@@ -53,7 +53,8 @@ enum
   NUM_TEAMS
 };
 
-using team_t = int;
+
+typedef int team_t;
 
 //
 // config strings are a general means of communicating variable length strings
@@ -340,7 +341,7 @@ enum
   WPM_NUM_WEAPONMODES
 };
 
-using weaponMode_t = int;
+typedef int weaponMode_t;
 
 enum {
   WP_NONE,
@@ -380,7 +381,7 @@ enum {
   WP_NUM_WEAPONS
 };
 
-using weapon_t = int;
+typedef int weapon_t;
 
 enum
 {
@@ -399,7 +400,7 @@ enum
   UP_NUM_UPGRADES
 };
 
-using upgrade_t = int;
+typedef int upgrade_t;
 
 // bitmasks for upgrade slots
 #define SLOT_NONE       0x00000000
@@ -438,7 +439,7 @@ enum {
   BA_NUM_BUILDABLES
 };
 
-using buildable_t = int;
+typedef int buildable_t;
 
 typedef enum
 {
@@ -771,7 +772,7 @@ enum
   MAX_BUILDABLE_ANIMATIONS
 };
 
-using buildableAnimNumber_t = int;
+typedef int buildableAnimNumber_t;
 
 typedef enum
 {
@@ -841,7 +842,7 @@ enum
   PCL_NUM_CLASSES
 };
 
-using class_t = int;
+typedef int class_t;
 
 // spectator state
 typedef enum
@@ -993,7 +994,7 @@ enum
   S3
 };
 
-using stage_t = int;
+typedef int stage_t;
 
 #define MAX_BUILDABLE_MODELS 4
 

@@ -170,7 +170,7 @@ typedef unsigned char 		byte;
 
 #define qtrue true
 #define qfalse false
-using qboolean = bool;
+typedef bool qboolean;
 
 typedef union {
 	float f;

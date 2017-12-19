@@ -211,7 +211,7 @@ void UI_LoadArenas(void)
 UI_LoadBotsFromFile
 ===============
 */
-static void UI_LoadBotsFromFile(char *filename)
+static void UI_LoadBotsFromFile(const char *filename)
 {
     int len;
     fileHandle_t f;
