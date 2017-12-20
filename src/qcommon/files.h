@@ -19,10 +19,6 @@
 #ifndef QC_FILES_H
 #define QC_FILES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "q_platform.h"
 #include "q_shared.h"
 
@@ -275,9 +271,5 @@ extern FILE *missingFiles;
 
 extern char lastValidGame[MAX_OSPATH];
 extern char lastValidBase[MAX_OSPATH];
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

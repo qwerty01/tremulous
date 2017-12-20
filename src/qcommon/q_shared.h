@@ -24,10 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __Q_SHARED_H
 #define __Q_SHARED_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
@@ -158,6 +154,12 @@ typedef int intptr_t;
   #define Q_snprintf snprintf
 #endif
 
+#endif
+
+#include "mathlib.h"
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 
@@ -360,7 +362,6 @@ void *Hunk_Alloc( int size, ha_pref preference );
 #define CIN_silent	8
 #define CIN_shader	16
 
-#include "mathlib.h"
 
 float Com_Clamp( float min, float max, float value );
 
