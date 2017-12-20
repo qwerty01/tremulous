@@ -53,6 +53,7 @@ public:
     //float ToYaw() const;
     //float ToPitch() const;
     //idAngles ToAngles() const;
+    Vec3 ToAngles() const;
     //idPolar3 ToPolar() const;
 
     void NormalVectors(Vec3& left, Vec3& down) const;  // vector should be normalized

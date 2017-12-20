@@ -308,6 +308,6 @@ Vec3 Vec3::ToAngles() const
 		}
 	}
 	
-	return Vec3 { -pitch, yaw, 0.0f };
+	return Vec3( -pitch, yaw, 0.0f );
 }
 
