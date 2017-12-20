@@ -10,7 +10,8 @@ public:
     float z;
 
     Vec3();
-    explicit Vec3(const float xyz) { Set(xyz, xyz, xyz); }
+    Vec3(const vec3_t vec) : x(vec[0]), y(vec[1]), z(vec[2]) {};
+    explicit Vec3(const float xyz) : x(xyz), y(xyz), z(xyz) {}
     explicit Vec3(const float x, const float y, const float z);
 
     void Set(const float x, const float y, const float z);
@@ -64,7 +65,11 @@ public:
     void Lerp(const Vec3& v1, const Vec3& v2, const float l);
     //void SLerp(const Vec3& v1, const Vec3& v2, const float l);
 	void Snap();// snap to closest integer value
-};
 
+    void RotatePointAroundVector( const Vec3 dir, const Vec3 point, float degrees );
+
+    // Some static garbage
+    static void AngleVectors(const Vec3& angles, Vec3* forward, Vec3* right, Vec3* up);
+};
 
 #endif

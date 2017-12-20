@@ -23,9 +23,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "cg_local.h"
 
-const char *cg_buildableSoundNames[MAX_BUILDABLE_ANIMATIONS] = {"construct1.wav", "construct2.wav", "idle1.wav",
-    "idle2.wav", "idle3.wav", "attack1.wav", "attack2.wav", "spawn1.wav", "spawn2.wav", "pain1.wav", "pain2.wav",
-    "destroy1.wav", "destroy2.wav", "destroyed.wav"};
+const char *cg_buildableSoundNames[MAX_BUILDABLE_ANIMATIONS] = {
+    "construct1.wav",
+    "construct2.wav",
+    "idle1.wav",
+    "idle2.wav",
+    "idle3.wav",
+    "attack1.wav",
+    "attack2.wav",
+    "spawn1.wav",
+    "spawn2.wav",
+    "pain1.wav",
+    "pain2.wav",
+    "destroy1.wav",
+    "destroy2.wav",
+    "destroyed.wav"
+};
 
 static sfxHandle_t defaultAlienSounds[MAX_BUILDABLE_ANIMATIONS];
 static sfxHandle_t defaultHumanSounds[MAX_BUILDABLE_ANIMATIONS];

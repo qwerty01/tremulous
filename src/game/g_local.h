@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define G_LOCAL_H
 
 #include "qcommon/q_shared.h"
+#include "qcommon/vector.h"
 
 #include "bg_public.h"
 #include "g_public.h"
@@ -218,8 +219,8 @@ struct gentity_t {
     int credits[MAX_CLIENTS];  // human credits for each client
     int killedBy;  // clientNum of killer
 
-    vec3_t turretAim;  // aim vector for turrets
-    vec3_t turretAimRate;  // track turn speed for norfenturrets
+    Vec3 turretAim;  // aim vector for turrets
+    Vec3 turretAimRate;  // track turn speed for norfenturrets
     int turretSpinupTime;  // spinup delay for norfenturrets
 
     vec4_t animation;  // animated map objects

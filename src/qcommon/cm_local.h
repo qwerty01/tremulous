@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "cvar.h"
 #include "q_shared.h"
+#include "vector.h"
 #include "qcommon.h"
 #include "cm_polylib.h"
 

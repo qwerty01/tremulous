@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "q_shared.h"
+#include "vector.h"
 
 vec3_t	vec3_origin = {0,0,0};
 vec3_t	axisDefault[3] = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
@@ -289,8 +290,8 @@ RotatePointAroundVector
 This is not implemented very well...
 ===============
 */
-void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point,
-							 float degrees ) {
+void RotatePointAroundVector( vec3_t dst, const Vec3 dir, const Vec3 point, float degrees )
+{
 	float sin_a;
 	float cos_a;
 	float cos_ia;
@@ -871,6 +872,13 @@ vec_t VectorNormalize2( const vec3_t v, vec3_t out) {
 
 }
 
+void CrossProduct( const Vec3 v1, const Vec3 v2, vec3_t cross )
+{
+	cross[0] = v1[1]*v2[2] - v1[2]*v2[1];
+	cross[1] = v1[2]*v2[0] - v1[0]*v2[2];
+	cross[2] = v1[0]*v2[1] - v1[1]*v2[0];
+}
+
 void _VectorMA( const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc) {
 	vecc[0] = veca[0] + scale*vecb[0];
 	vecc[1] = veca[1] + scale*vecb[1];
@@ -984,7 +992,7 @@ void VectorMatrixMultiply( const vec3_t p, vec3_t m[ 3 ], vec3_t out )
 }
 
 
-void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) {
+void AngleVectors( const Vec3 angles, vec3_t forward, vec3_t right, vec3_t up) {
 	float		angle;
 	static float		sr, sp, sy, cr, cp, cy;
 	// static to help MS compiler fp bugs

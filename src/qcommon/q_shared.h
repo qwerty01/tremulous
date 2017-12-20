@@ -205,11 +205,6 @@ typedef int		clipHandle_t;
 #define ARRAY_LEN(x)			(sizeof(x) / sizeof(*(x)))
 #define STRARRAY_LEN(x)			(ARRAY_LEN(x) - 1)
 
-// angle indexes
-#define	PITCH				0		// up / down
-#define	YAW					1		// left / right
-#define	ROLL				2		// fall over
-
 /* FILESYSTEM */
 enum FS_Mode {
 	FS_READ,

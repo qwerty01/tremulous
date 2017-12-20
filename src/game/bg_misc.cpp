@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "bg_public.h"
 #include "qcommon/q_shared.h"
+#include "qcommon/vector.h"
 
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, enum FS_Mode mode);
 void trap_FS_Read(void *buffer, int len, fileHandle_t f);

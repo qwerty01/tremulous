@@ -1,9 +1,11 @@
 #ifndef _MATHLIB_H
-#define _MATHLIB_H
+#define _MATHLIB_H 1
 
 #include <cmath>
 
 #include "q_platform.h"
+
+class Vec3;
 
 /*
 ==============================================================
@@ -294,17 +296,14 @@ static ID_INLINE void VectorNormalizeFast( vec3_t v )
 	v[2] *= ilength;
 }
 
-static ID_INLINE void VectorInverse( vec3_t v ){
+static ID_INLINE void VectorInverse( vec3_t v )
+{
 	v[0] = -v[0];
 	v[1] = -v[1];
 	v[2] = -v[2];
 }
 
-static ID_INLINE void CrossProduct( const vec3_t v1, const vec3_t v2, vec3_t cross ) {
-	cross[0] = v1[1]*v2[2] - v1[2]*v2[1];
-	cross[1] = v1[2]*v2[0] - v1[0]*v2[2];
-	cross[2] = v1[0]*v2[1] - v1[1]*v2[0];
-}
+void CrossProduct( const Vec3 v1, const Vec3 v2, vec3_t cross );
 
 #else
 int VectorCompare( const vec3_t v1, const vec3_t v2 );
@@ -321,7 +320,7 @@ void VectorNormalizeFast( vec3_t v );
 
 void VectorInverse( vec3_t v );
 
-void CrossProduct( const vec3_t v1, const vec3_t v2, vec3_t cross );
+void CrossProduct( const Vec3 v1, const Vec3 v2, vec3_t cross );
 
 #endif
 
@@ -339,6 +338,11 @@ float	Q_crandom( int *seed );
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
 #define crandom()	(2.0 * (random() - 0.5))
+
+// angle indexes
+#define	PITCH				0		// up / down
+#define	YAW					1		// left / right
+#define	ROLL				2		// fall over
 
 void vectoangles( const vec3_t value1, vec3_t angles);
 void AnglesToAxis( const vec3_t angles, vec3_t axis[3] );
@@ -368,7 +372,7 @@ float AngleDelta ( float angle1, float angle2 );
 
 bool PlaneFromPoints( vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c );
 void ProjectPointOnPlane( vec3_t dst, const vec3_t p, const vec3_t normal );
-void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees );
+void RotatePointAroundVector( vec3_t dst, const Vec3 dir, const Vec3 point, float degrees );
 void RotateAroundDirection( vec3_t axis[3], vec_t angle );
 void MakeNormalVectors( const vec3_t forward, vec3_t right, vec3_t up );
 // perpendicular vector could be replaced by this
@@ -377,7 +381,7 @@ void MakeNormalVectors( const vec3_t forward, vec3_t right, vec3_t up );
 
 void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void VectorMatrixMultiply( const vec3_t p, vec3_t m[ 3 ], vec3_t out );
-void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
+void AngleVectors( const Vec3 angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector( vec3_t dst, const vec3_t src );
 
 void GetPerpendicularViewVector( const vec3_t point, const vec3_t p1,

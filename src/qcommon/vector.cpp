@@ -311,3 +311,72 @@ Vec3 Vec3::ToAngles() const
 	return Vec3( -pitch, yaw, 0.0f );
 }
 
+
+void Vec3::RotatePointAroundVector( const Vec3 dir, const Vec3 point, float degrees )
+{
+	float cos_ia = DEG2RAD(degrees);
+	float sin_a = sin(cos_ia);
+	float cos_a = cos(cos_ia);
+	cos_ia = 1.0F - cos_a;
+
+	float i_i_ia = dir[0] * dir[0] * cos_ia;
+	float j_j_ia = dir[1] * dir[1] * cos_ia;
+	float k_k_ia = dir[2] * dir[2] * cos_ia;
+	float i_j_ia = dir[0] * dir[1] * cos_ia;
+	float i_k_ia = dir[0] * dir[2] * cos_ia;
+	float j_k_ia = dir[1] * dir[2] * cos_ia;
+
+	float a_sin = dir[0] * sin_a;
+	float b_sin = dir[1] * sin_a;
+	float c_sin = dir[2] * sin_a;
+
+	float rot[3][3];
+	rot[0][0] = i_i_ia + cos_a;
+	rot[0][1] = i_j_ia - c_sin;
+	rot[0][2] = i_k_ia + b_sin;
+	rot[1][0] = i_j_ia + c_sin;
+	rot[1][1] = j_j_ia + cos_a;
+	rot[1][2] = j_k_ia - a_sin;
+	rot[2][0] = i_k_ia - b_sin;
+	rot[2][1] = j_k_ia + a_sin;
+	rot[2][2] = k_k_ia + cos_a;
+
+	this->x = point[0] * rot[0][0] + point[1] * rot[0][1] + point[2] * rot[0][2];
+	this->y = point[0] * rot[1][0] + point[1] * rot[1][1] + point[2] * rot[1][2];
+	this->z = point[0] * rot[2][0] + point[1] * rot[2][1] + point[2] * rot[2][2];
+}
+
+void Vec3::AngleVectors(const Vec3& angles, Vec3* forward, Vec3* right, Vec3* up)
+{
+	float angle = angles[YAW] * (M_PI*2 / 360);
+	float sy = sin(angle);
+	float cy = cos(angle);
+
+	angle = angles[PITCH] * (M_PI*2 / 360);
+	float sp = sin(angle);
+	float cp = cos(angle);
+
+	angle = angles[ROLL] * (M_PI*2 / 360);
+	float sr = sin(angle);
+	float cr = cos(angle);
+
+	if (forward)
+	{
+		forward->x = cp*cy;
+		forward->y = cp*sy;
+		forward->z = -sp;
+	}
+	if (right)
+	{
+		right->x = (-1*sr*sp*cy+-1*cr*-sy);
+		right->y = (-1*sr*sp*sy+-1*cr*cy);
+		right->z = -1*sr*cp;
+	}
+	if (up)
+	{
+		up->x = (cr*sp*cy+-sr*-sy);
+		up->y = (cr*sp*sy+-sr*cy);
+		up->z = cr*cp;
+	}
+}
+

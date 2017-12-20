@@ -1169,7 +1169,8 @@ Returns true and fires the hive missile if the target is valid
 static bool AHive_CheckTarget(gentity_t *self, gentity_t *enemy)
 {
     trace_t trace;
-    vec3_t tip_origin, dirToTarget;
+    vec3_t tip_origin;
+    Vec3 dirToTarget;
 
     // Check if this is a valid target
     if (enemy->health <= 0 || !enemy->client || enemy->client->ps.stats[STAT_TEAM] != TEAM_HUMANS)
@@ -1192,8 +1193,8 @@ static bool AHive_CheckTarget(gentity_t *self, gentity_t *enemy)
     self->timestamp = level.time + HIVE_REPEAT;
 
     VectorSubtract(enemy->s.pos.trBase, self->s.pos.trBase, dirToTarget);
-    VectorNormalize(dirToTarget);
-    vectoangles(dirToTarget, self->turretAim);
+    dirToTarget.Normalize();
+    self->turretAim = dirToTarget.ToAngles();
 
     // Fire at target
     FireWeapon(self);
@@ -1299,7 +1300,7 @@ Used by ATrapper_Think to fire at enemy
 void ATrapper_FireOnEnemy(gentity_t *self, int firespeed, float range)
 {
     gentity_t *enemy = self->enemy;
-    vec3_t dirToTarget;
+    Vec3 dirToTarget;
     vec3_t halfAcceleration, thirdJerk;
     float distanceToTarget = BG_Buildable(self->s.modelindex)->turretRange;
     int lowMsec = 0;
@@ -1323,7 +1324,7 @@ void ATrapper_FireOnEnemy(gentity_t *self, int firespeed, float range)
         VectorMA(dirToTarget, time * time, halfAcceleration, dirToTarget);
         VectorMA(dirToTarget, time * time * time, thirdJerk, dirToTarget);
         VectorSubtract(dirToTarget, self->s.pos.trBase, dirToTarget);
-        distanceToTarget = VectorLength(dirToTarget);
+        distanceToTarget = dirToTarget.Length();
 
         if (projectileDistance < distanceToTarget)
             lowMsec = partitionMsec;
@@ -1333,8 +1334,8 @@ void ATrapper_FireOnEnemy(gentity_t *self, int firespeed, float range)
             break;  // unlikely to happen
     }
 
-    VectorNormalize(dirToTarget);
-    vectoangles(dirToTarget, self->turretAim);
+    dirToTarget.Normalize();
+    self->turretAim = dirToTarget.ToAngles();
 
     // fire at target
     FireWeapon(self);
@@ -2073,19 +2074,17 @@ Used by HMGTurret_Think to track enemy location
 */
 bool HMGTurret_TrackEnemy(gentity_t *self)
 {
-    vec3_t dirToTarget, dttAdjusted, angleToTarget, angularDiff, xNormal;
-    vec3_t refNormal = {0.0f, 0.0f, 1.0f};
+    Vec3 dirToTarget, dttAdjusted, angleToTarget, angularDiff, xNormal;
+    Vec3 refNormal { 0.0f, 0.0f, 1.0f };
     float temp, rotAngle;
 
-    VectorSubtract(self->enemy->s.pos.trBase, self->s.pos.trBase, dirToTarget);
-    VectorNormalize(dirToTarget);
+    dirToTarget = Vec3(self->enemy->s.pos.trBase) - Vec3(self->s.pos.trBase);
+    dirToTarget.Normalize();
 
-    CrossProduct(self->s.origin2, refNormal, xNormal);
-    VectorNormalize(xNormal);
+    xNormal.Cross(self->s.origin2, refNormal).Normalize();
     rotAngle = RAD2DEG(acos(DotProduct(self->s.origin2, refNormal)));
-    RotatePointAroundVector(dttAdjusted, xNormal, dirToTarget, rotAngle);
-
-    vectoangles(dttAdjusted, angleToTarget);
+    dttAdjusted.RotatePointAroundVector(xNormal, dirToTarget, rotAngle);
+    angleToTarget = dttAdjusted.ToAngles();
 
     angularDiff[PITCH] = AngleSubtract(self->s.angles2[PITCH], angleToTarget[PITCH]);
     angularDiff[YAW] = AngleSubtract(self->s.angles2[YAW], angleToTarget[YAW]);
@@ -2114,9 +2113,9 @@ bool HMGTurret_TrackEnemy(gentity_t *self)
     else
         self->s.angles2[YAW] = angleToTarget[YAW];
 
-    AngleVectors(self->s.angles2, dttAdjusted, NULL, NULL);
-    RotatePointAroundVector(dirToTarget, xNormal, dttAdjusted, -rotAngle);
-    vectoangles(dirToTarget, self->turretAim);
+    Vec3::AngleVectors(self->s.angles2, &dttAdjusted, NULL, NULL);
+    dirToTarget.RotatePointAroundVector(xNormal, dttAdjusted, -rotAngle);
+    self->turretAim = dirToTarget.ToAngles();
 
     // fire if target is within accuracy
     return (fabs(angularDiff[YAW]) - MGTURRET_ANGULARSPEED <= MGTURRET_ACCURACY_TO_FIRE) &&
