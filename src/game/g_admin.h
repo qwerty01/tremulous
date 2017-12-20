@@ -23,6 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef _G_ADMIN_H
 #define _G_ADMIN_H
 
+struct gentity_t;
+struct gclient_t;
+struct namelog_t;
+
 #define AP(x) trap_SendServerCommand(-1, x)
 #define CP(x) trap_SendServerCommand(ent-g_entities, x)
 #define CPx(x, y) trap_SendServerCommand(x, y)
@@ -71,27 +75,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_ADMIN_SHOWBANS 10
 
 struct g_admin_cmd_t {
-  const char *keyword;
-  bool (*handler)( gentity_t *ent );
-  bool silent;
-  const char *flag;
-  const char *function;  // used in /adminhelp
-  const char *syntax;  // used in /adminhelp
+    const char *keyword;
+    bool (*handler)( gentity_t *ent );
+    bool silent;
+    const char *flag;
+    const char *function;  // used in /adminhelp
+    const char *syntax;  // used in /adminhelp
 };
 
 struct g_admin_level_t {
-  g_admin_level_t *next;
-  int level;
-  char name[ MAX_NAME_LENGTH ];
-  char flags[ MAX_ADMIN_FLAGS ];
+    g_admin_level_t *next;
+    int level;
+    char name[ MAX_NAME_LENGTH ];
+    char flags[ MAX_ADMIN_FLAGS ];
 };
 
 struct g_admin_admin_t {
-  g_admin_admin_t *next;
-  int level;
-  char guid[ 33 ];
-  char name[ MAX_NAME_LENGTH ];
-  char flags[ MAX_ADMIN_FLAGS ];
+    g_admin_admin_t *next;
+    int level;
+    char guid[ 33 ];
+    char name[ MAX_NAME_LENGTH ];
+    char flags[ MAX_ADMIN_FLAGS ];
 };
 
 #define ADDRLEN 16
@@ -100,36 +104,36 @@ addr_ts are passed as "arg" to admin_search for IP address matching
 admin_search prints (char *)arg, so the stringified address needs to be first
 */
 struct addr_t {
-  char str[ 44 ];
-  enum
-  {
-    IPv4,
-    IPv6
-  } type;
-  byte addr[ ADDRLEN ];
-  int mask;
+    char str[ 44 ];
+    enum
+    {
+        IPv4,
+        IPv6
+    } type;
+    byte addr[ ADDRLEN ];
+    int mask;
 };
 
 struct g_admin_ban_t
 {
-  g_admin_ban_t *next;
-  char name[ MAX_NAME_LENGTH ];
-  char guid[ 33 ];
-  addr_t ip;
-  char reason[ MAX_ADMIN_BAN_REASON ];
-  char made[ 20 ]; // "YYYY-MM-DD hh:mm:ss"
-  int expires;
-  char banner[ MAX_NAME_LENGTH ];
-  int warnCount;
+    g_admin_ban_t *next;
+    char name[ MAX_NAME_LENGTH ];
+    char guid[ 33 ];
+    addr_t ip;
+    char reason[ MAX_ADMIN_BAN_REASON ];
+    char made[ 20 ]; // "YYYY-MM-DD hh:mm:ss"
+    int expires;
+    char banner[ MAX_NAME_LENGTH ];
+    int warnCount;
 };
 
 struct g_admin_command_t
 {
-  g_admin_command_t *next;
-  char command[ MAX_ADMIN_CMD_LEN ];
-  char exec[ MAX_QPATH ];
-  char desc[ 50 ];
-  char flag[ MAX_ADMIN_FLAG_LEN ];
+    g_admin_command_t *next;
+    char command[ MAX_ADMIN_CMD_LEN ];
+    char exec[ MAX_QPATH ];
+    char desc[ 50 ];
+    char flag[ MAX_ADMIN_FLAG_LEN ];
 };
 
 void G_admin_register_cmds( void );

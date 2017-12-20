@@ -383,13 +383,10 @@ angles and bad trails.
 */
 gentity_t *G_Spawn(void)
 {
-    int i, force;
     gentity_t *e;
+    int i = 0;
 
-    e = NULL;  // shut up warning
-    i = 0;  // shut up warning
-
-    for (force = 0; force < 2; force++)
+    for (int force = 0; force < 2; force++)
     {
         // if we go through all entities and can't find one to free,
         // override the normal minimum times before use
@@ -440,12 +437,8 @@ G_EntitiesFree
 */
 bool G_EntitiesFree(void)
 {
-    int i;
-    gentity_t *e;
-
-    e = &g_entities[MAX_CLIENTS];
-
-    for (i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+    gentity_t *e = &g_entities[MAX_CLIENTS];
+    for (int i = MAX_CLIENTS; i < level.num_entities; i++, e++)
     {
         if (e->inuse)
             continue;

@@ -32,10 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_public.h"
 #include "g_syscalls.h"
 
-struct gentity_t;
-struct gclient_t;
-struct namelog_t;
-
 #include "g_admin.h"
 
 //==================================================================
@@ -128,7 +124,8 @@ struct gentity_t {
     int soundLoop;
     gentity_t *parent;
     gentity_t *nextTrain;
-    vec3_t pos1, pos2;
+    vec3_t pos1;
+    vec3_t pos2;
     float rotatorAngle;
     gentity_t *clipBrush;  // clipping brush for model doors
 

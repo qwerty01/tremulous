@@ -36,13 +36,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 static char g_bfb[32000];
 
 // note: list ordered alphabetically
-g_admin_cmd_t g_admin_cmds[] = {{"addlayout", G_admin_addlayout, false, "addlayout",
-                                    "place layout elements into the game. the elements are specified by a "
-                                    "union of filtered layouts. the syntax is demonstrated by an example: "
-                                    "^5reactor,telenode|westside+alien|sewers^7 will place only the "
-                                    "reactor and telenodes from the westside layout, and also all alien "
-                                    "layout elements from the sewers layout",
-                                    "[^3layoutelements^7]"},
+g_admin_cmd_t g_admin_cmds[] = {
+    {"addlayout", G_admin_addlayout, false, "addlayout",
+        "place layout elements into the game. the elements are specified by a "
+        "union of filtered layouts. the syntax is demonstrated by an example: "
+        "^5reactor,telenode|westside+alien|sewers^7 will place only the "
+        "reactor and telenodes from the westside layout, and also all alien "
+        "layout elements from the sewers layout",
+        "[^3layoutelements^7]"},
 
     {"adjustban", G_admin_adjustban, false, "ban",
         "change the IP address mask, duration or reason of a ban.  mask is "
@@ -132,6 +133,7 @@ g_admin_cmd_t g_admin_cmds[] = {{"addlayout", G_admin_addlayout, false, "addlayo
     {"spec999", G_admin_spec999, false, "spec999", "move 999 pingers to the spectator team", ""},
 
     {"time", G_admin_time, true, "time", "show the current local server time", ""},
+
     {"transform", G_admin_transform, false, "magic", "change a human player to a different player model",
         "[^3name|slot#^7] [^3player model^7]"},
 
@@ -139,7 +141,8 @@ g_admin_cmd_t g_admin_cmds[] = {{"addlayout", G_admin_addlayout, false, "addlayo
 
     {"unlock", G_admin_lock, false, "lock", "unlock a locked team", "[^3a|h^7]"},
 
-    {"unmute", G_admin_mute, false, "mute", "unmute a muted player", "[^3name|slot#^7]"}};
+    {"unmute", G_admin_mute, false, "mute", "unmute a muted player", "[^3name|slot#^7]"}
+};
 
 static size_t adminNumCmds = ARRAY_LEN(g_admin_cmds);
 

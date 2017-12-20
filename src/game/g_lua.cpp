@@ -10,21 +10,22 @@
 
 sol::state lua;
 
+#if 0
 class Vec3 {
 public:
     Vec3() {}
-    Vec3(float x, float y, float z)
+    Vec3(float x, float y, float z = 0)
     {
         vec[0] = x;
         vec[1] = y;
         vec[2] = z;
     }
+
     Vec3(vec3_t v)
     {
-        vec[0] = v[0];
-        vec[1] = v[1];
-        vec[2] = v[2];
+        VectorCopy(vec, v);
     }
+
     float get_x() { return vec[0]; }
     float get_y() { return vec[1]; }
     float get_z() { return vec[2]; }
@@ -37,6 +38,7 @@ public:
 class Vec4 {
 public:
     Vec4() {}
+
     Vec4(float a, float b, float c, float d)
     {
         vec[0] = a;
@@ -44,13 +46,12 @@ public:
         vec[2] = c;
         vec[3] = d;
     }
+
     Vec4(vec4_t v)
     {
-        vec[0] = v[0];
-        vec[1] = v[1];
-        vec[2] = v[2];
-        vec[3] = v[3];
+        Vector4Copy(vec, v);
     }
+
     float get_a() { return vec[0]; }
     float get_b() { return vec[1]; }
     float get_c() { return vec[2]; }
@@ -91,6 +92,16 @@ public:
         gentity_t* in = _inflictor ? _inflictor->ent : nullptr;
         gentity_t* at = _attacker ? _attacker->ent : nullptr;
         ent->die(ent, ent, ent, damage, mod);
+    }
+
+    void link_entity()
+    {
+        trap_LinkEntity(ent);
+    }
+
+    void unlink_entity()
+    {
+        trap_UnlinkEntity(ent);
     }
 
     void free_entity()
@@ -189,6 +200,7 @@ public:
     void set_health(int health) { ent->health = health; }
     int get_health() { return ent->health; }
 
+
     // message
     void set_message(std::string name)
     {
@@ -256,6 +268,10 @@ public:
     void set_rotatorAngle(float f) { ent->rotatorAngle = f; }
     float get_rotatorAngle() { return ent->rotatorAngle; }
 
+    // spawned
+    void set_spawned(bool spawn) { ent->spawned = spawn; }
+    bool get_spawned() { return ent->spawned; }
+ 
     // spawnflags
     void set_spawnflags(int spawnflags) { ent->spawnflags = spawnflags; }
     int get_spawnflags() { return ent->spawnflags; }
@@ -303,57 +319,70 @@ public:
 private:
     gentity_t* ent = nullptr;
 };
+#endif
 
 void Api_Init()
 {
     lua.open_libraries(sol::lib::base, sol::lib::package);
+#if 0
 
-    lua.new_usertype<Vec3>("vec3_t", sol::constructors<sol::types<>, sol::types<float, float, float>>(), "x",
-        sol::property(&Vec3::get_x, &Vec3::set_x), "y", sol::property(&Vec3::get_y, &Vec3::set_y), "z",
-        sol::property(&Vec3::get_z, &Vec3::set_z));
+    lua.new_usertype<Vec3>("vec3_t",
+            sol::constructors<sol::types<>, sol::types<float, float, float>>(),
+            "x", sol::property(&Vec3::get_x, &Vec3::set_x),
+            "y", sol::property(&Vec3::get_y, &Vec3::set_y),
+            "z", sol::property(&Vec3::get_z, &Vec3::set_z));
 
-    lua.new_usertype<Vec4>("vec4_t", sol::constructors<sol::types<>, sol::types<float, float, float, float>>(), "a",
-        sol::property(&Vec4::get_a, &Vec4::set_a), "b", sol::property(&Vec4::get_b, &Vec4::set_b), "c",
-        sol::property(&Vec4::get_c, &Vec4::set_c), "d", sol::property(&Vec4::get_d, &Vec4::set_d));
+    lua.new_usertype<Vec4>("vec4_t",
+            sol::constructors<sol::types<>, sol::types<float, float, float, float>>(),
+            "a", sol::property(&Vec4::get_a, &Vec4::set_a),
+            "b", sol::property(&Vec4::get_b, &Vec4::set_b),
+            "c", sol::property(&Vec4::get_c, &Vec4::set_c),
+            "d", sol::property(&Vec4::get_d, &Vec4::set_d));
 
     // Provide accessors to all the fields available in g_spawn.c
-    lua.new_usertype<GEntity>("gentity_t", sol::constructors<sol::types<>>(),
-        // Static routine
-        "find", &GEntity::find, "call_spawn", &GEntity::call_spawn,
+    lua.new_usertype<GEntity>("gentity_t",
+            sol::constructors<sol::types<>>(),
+            // Static routine
+            "find", &GEntity::find,
+            "call_spawn", &GEntity::call_spawn,
 
-        // Member function
-        // think
-        // reached
-        // blocked
-        // touch
-        // use
-        // pain
-        "die", &GEntity::die,
+            // Member function
+            // think
+            // reached
+            // blocked
+            // touch
+            // use
+            // pain
+            "die", &GEntity::die,
+            "link_entity", &GEntity::link_entity,
+            "unlink_entity", &GEntity::unlink_entity,
 
-        // Properties available in g_spawn.c
-        "acceleration", sol::property(&GEntity::get_acceleration, &GEntity::set_acceleration), "alpha",
-        sol::property(&GEntity::get_alpha, &GEntity::set_alpha), "angle",
-        sol::property(&GEntity::get_angle, &GEntity::set_angle), "angles",
-        sol::property(&GEntity::get_angles, &GEntity::set_angles), "animation",
-        sol::property(&GEntity::get_animation, &GEntity::set_animation), "bounce",
-        sol::property(&GEntity::get_bounce, &GEntity::set_bounce), "classname",
-        sol::property(&GEntity::get_classname, &GEntity::set_classname), "count",
-        sol::property(&GEntity::get_count, &GEntity::set_count), "damage",
-        sol::property(&GEntity::get_damage, &GEntity::set_damage), "health",
-        sol::property(&GEntity::get_health, &GEntity::set_health), "model",
-        sol::property(&GEntity::get_model, &GEntity::set_model), "model2",
-        sol::property(&GEntity::get_model2, &GEntity::set_model2), "origin",
-        sol::property(&GEntity::get_origin, &GEntity::set_origin), "radius",
-        sol::property(&GEntity::get_radius, &GEntity::set_radius), "random",
-        sol::property(&GEntity::get_random, &GEntity::set_random), "rotatorAngle",
-        sol::property(&GEntity::get_rotatorAngle, &GEntity::set_rotatorAngle), "spawnflags",
-        sol::property(&GEntity::get_spawnflags, &GEntity::set_spawnflags), "speed",
-        sol::property(&GEntity::get_speed, &GEntity::set_speed), "target",
-        sol::property(&GEntity::get_target, &GEntity::set_target), "targetname",
-        sol::property(&GEntity::get_targetname, &GEntity::set_targetname), "targetShaderName",
-        sol::property(&GEntity::get_targetShaderName, &GEntity::set_targetShaderName), "targetShaderNewName",
-        sol::property(&GEntity::get_targetShaderNewName, &GEntity::set_targetShaderNewName), "wait",
-        sol::property(&GEntity::get_wait, &GEntity::set_wait));
+            // Properties available in g_spawn.c
+            "acceleration", sol::property(&GEntity::get_acceleration, &GEntity::set_acceleration),
+            "alpha", sol::property(&GEntity::get_alpha, &GEntity::set_alpha),
+            "angle", sol::property(&GEntity::get_angle, &GEntity::set_angle),
+            "angles", sol::property(&GEntity::get_angles, &GEntity::set_angles),
+            "animation", sol::property(&GEntity::get_animation, &GEntity::set_animation),
+            "bounce", sol::property(&GEntity::get_bounce, &GEntity::set_bounce),
+            "classname", sol::property(&GEntity::get_classname, &GEntity::set_classname),
+            "count", sol::property(&GEntity::get_count, &GEntity::set_count),
+            "damage", sol::property(&GEntity::get_damage, &GEntity::set_damage),
+            "health", sol::property(&GEntity::get_health, &GEntity::set_health),
+            "model", sol::property(&GEntity::get_model, &GEntity::set_model),
+            "model2", sol::property(&GEntity::get_model2, &GEntity::set_model2),
+            "origin", sol::property(&GEntity::get_origin, &GEntity::set_origin),
+            "radius", sol::property(&GEntity::get_radius, &GEntity::set_radius),
+            "random", sol::property(&GEntity::get_random, &GEntity::set_random),
+            "rotatorAngle", sol::property(&GEntity::get_rotatorAngle, &GEntity::set_rotatorAngle),
+            "spawned", sol::property(&GEntity::get_spawned, &GEntity::set_spawned),
+            "spawnflags", sol::property(&GEntity::get_spawnflags, &GEntity::set_spawnflags),
+            "speed", sol::property(&GEntity::get_speed, &GEntity::set_speed),
+            "target", sol::property(&GEntity::get_target, &GEntity::set_target),
+            "targetShaderName", sol::property(&GEntity::get_targetShaderName, &GEntity::set_targetShaderName),
+            "targetShaderNewName", sol::property(&GEntity::get_targetShaderNewName, &GEntity::set_targetShaderNewName),
+            "targetname", sol::property(&GEntity::get_targetname, &GEntity::set_targetname),
+            "wait", sol::property(&GEntity::get_wait, &GEntity::set_wait));
+#endif
 }
 
 void Cmd_LuaLoad_f(gentity_t*)

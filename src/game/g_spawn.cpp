@@ -99,47 +99,87 @@ typedef struct {
     fieldtype_t type;
 } field_t;
 
-field_t fields[] = {{"acceleration", FOFS(acceleration), F_VECTOR}, {"alpha", FOFS(pos1), F_VECTOR},
-    {"angle", FOFS(s.apos.trBase), F_ANGLEHACK}, {"angles", FOFS(s.apos.trBase), F_VECTOR},
-    {"animation", FOFS(animation), F_VECTOR4}, {"bounce", FOFS(physicsBounce), F_FLOAT},
-    {"classname", FOFS(classname), F_STRING}, {"count", FOFS(count), F_INT}, {"dmg", FOFS(damage), F_INT},
-    {"health", FOFS(health), F_INT}, {"message", FOFS(message), F_STRING}, {"model", FOFS(model), F_STRING},
-    {"model2", FOFS(model2), F_STRING}, {"origin", FOFS(s.pos.trBase), F_VECTOR}, {"radius", FOFS(pos2), F_VECTOR},
-    {"random", FOFS(random), F_FLOAT}, {"rotatorAngle", FOFS(rotatorAngle), F_FLOAT},
-    {"spawnflags", FOFS(spawnflags), F_INT}, {"speed", FOFS(speed), F_FLOAT}, {"target", FOFS(target), F_STRING},
-    {"targetname", FOFS(targetname), F_STRING}, {"targetShaderName", FOFS(targetShaderName), F_STRING},
-    {"targetShaderNewName", FOFS(targetShaderNewName), F_STRING}, {"wait", FOFS(wait), F_FLOAT}};
+field_t fields[] = {
+    {"acceleration", FOFS(acceleration), F_VECTOR},
+    {"alpha", FOFS(pos1), F_VECTOR},
+    {"angle", FOFS(s.apos.trBase), F_ANGLEHACK},
+    {"angles", FOFS(s.apos.trBase), F_VECTOR},
+    {"animation", FOFS(animation), F_VECTOR4},
+    {"bounce", FOFS(physicsBounce), F_FLOAT},
+    {"classname", FOFS(classname), F_STRING},
+    {"count", FOFS(count), F_INT},
+    {"dmg", FOFS(damage), F_INT},
+    {"health", FOFS(health), F_INT},
+    {"message", FOFS(message), F_STRING},
+    {"model", FOFS(model), F_STRING},
+    {"model2", FOFS(model2), F_STRING},
+    {"origin", FOFS(s.pos.trBase), F_VECTOR},
+    {"radius", FOFS(pos2), F_VECTOR},
+    {"random", FOFS(random), F_FLOAT},
+    {"rotatorAngle", FOFS(rotatorAngle), F_FLOAT},
+    {"spawnflags", FOFS(spawnflags), F_INT},
+    {"speed", FOFS(speed), F_FLOAT},
+    {"target", FOFS(target), F_STRING},
+    {"targetname", FOFS(targetname), F_STRING},
+    {"targetShaderName", FOFS(targetShaderName), F_STRING},
+    {"targetShaderNewName", FOFS(targetShaderNewName), F_STRING},
+    {"wait", FOFS(wait), F_FLOAT}
+};
 
 typedef struct {
     const char *name;
     void (*spawn)(gentity_t *ent);
 } spawn_t;
 
-spawn_t spawns[] = {{"func_bobbing", SP_func_bobbing}, {"func_button", SP_func_button}, {"func_door", SP_func_door},
-    {"func_door_model", SP_func_door_model}, {"func_door_rotating", SP_func_door_rotating},
-    {"func_group", SP_info_null}, {"func_pendulum", SP_func_pendulum}, {"func_plat", SP_func_plat},
-    {"func_rotating", SP_func_rotating}, {"func_static", SP_func_static},
+spawn_t spawns[] = {
+    {"func_bobbing", SP_func_bobbing},
+    {"func_button", SP_func_button},
+    {"func_door", SP_func_door},
+    {"func_door_model", SP_func_door_model},
+    {"func_door_rotating", SP_func_door_rotating},
+    {"func_group", SP_info_null},
+    {"func_pendulum", SP_func_pendulum},
+    {"func_plat", SP_func_plat},
+    {"func_rotating", SP_func_rotating},
+    {"func_static", SP_func_static},
     {"func_timer", SP_func_timer},  // rename trigger_timer?
     {"func_train", SP_func_train},
 
     // info entities don't do anything at all, but provide positional
     // information for things controlled by other processes
-    {"info_alien_intermission", SP_info_alien_intermission}, {"info_human_intermission", SP_info_human_intermission},
-    {"info_notnull", SP_info_notnull},  // use target_position instead
-    {"info_null", SP_info_null}, {"info_player_deathmatch", SP_info_player_deathmatch},
-    {"info_player_intermission", SP_info_player_intermission}, {"info_player_start", SP_info_player_start},
-    {"light", SP_light}, {"misc_anim_model", SP_misc_anim_model}, {"misc_light_flare", SP_misc_light_flare},
-    {"misc_model", SP_misc_model}, {"misc_particle_system", SP_misc_particle_system},
-    {"misc_portal_camera", SP_misc_portal_camera}, {"misc_portal_surface", SP_misc_portal_surface},
-    {"misc_teleporter_dest", SP_misc_teleporter_dest}, {"path_corner", SP_path_corner},
+    {"info_alien_intermission", SP_info_alien_intermission},
+    {"info_human_intermission", SP_info_human_intermission},
+    {"info_notnull", SP_info_notnull},
+    // use target_position instead
+    {"info_null", SP_info_null},
+    {"info_player_deathmatch", SP_info_player_deathmatch},
+    {"info_player_intermission", SP_info_player_intermission},
+    {"info_player_start", SP_info_player_start},
+    {"light", SP_light},
+    {"misc_anim_model", SP_misc_anim_model},
+    {"misc_light_flare", SP_misc_light_flare},
+    {"misc_model", SP_misc_model},
+    {"misc_particle_system", SP_misc_particle_system},
+    {"misc_portal_camera", SP_misc_portal_camera},
+    {"misc_portal_surface", SP_misc_portal_surface},
+    {"misc_teleporter_dest", SP_misc_teleporter_dest},
+    {"path_corner", SP_path_corner},
 
     // targets perform no action by themselves, but must be triggered
     // by another entity
-    {"target_alien_win", SP_target_alien_win}, {"target_delay", SP_target_delay},
-    {"target_human_win", SP_target_human_win}, {"target_hurt", SP_target_hurt}, {"target_kill", SP_target_kill},
-    {"target_location", SP_target_location}, {"target_position", SP_target_position}, {"target_print", SP_target_print},
-    {"target_push", SP_target_push}, {"target_relay", SP_target_relay}, {"target_rumble", SP_target_rumble},
-    {"target_score", SP_target_score}, {"target_speaker", SP_target_speaker},
+    {"target_alien_win", SP_target_alien_win},
+    {"target_delay", SP_target_delay},
+    {"target_human_win", SP_target_human_win},
+    {"target_hurt", SP_target_hurt},
+    {"target_kill", SP_target_kill},
+    {"target_location", SP_target_location},
+    {"target_position", SP_target_position},
+    {"target_print", SP_target_print},
+    {"target_push", SP_target_push},
+    {"target_relay", SP_target_relay},
+    {"target_rumble", SP_target_rumble},
+    {"target_score", SP_target_score},
+    {"target_speaker", SP_target_speaker},
     {"target_teleporter", SP_target_teleporter},
 
     // Triggers are brush objects that cause an effect when contacted
@@ -147,11 +187,18 @@ spawn_t spawns[] = {{"func_bobbing", SP_func_bobbing}, {"func_button", SP_func_b
     // While almost everything could be done with
     // a single trigger class and different targets, triggered effects
     // could not be client side predicted (push and teleport).
-    {"trigger_always", SP_trigger_always}, {"trigger_ammo", SP_trigger_ammo},
-    {"trigger_buildable", SP_trigger_buildable}, {"trigger_class", SP_trigger_class},
-    {"trigger_equipment", SP_trigger_equipment}, {"trigger_gravity", SP_trigger_gravity},
-    {"trigger_heal", SP_trigger_heal}, {"trigger_hurt", SP_trigger_hurt}, {"trigger_multiple", SP_trigger_multiple},
-    {"trigger_push", SP_trigger_push}, {"trigger_stage", SP_trigger_stage}, {"trigger_teleport", SP_trigger_teleport},
+    {"trigger_always", SP_trigger_always},
+    {"trigger_ammo", SP_trigger_ammo},
+    {"trigger_buildable", SP_trigger_buildable},
+    {"trigger_class", SP_trigger_class},
+    {"trigger_equipment", SP_trigger_equipment},
+    {"trigger_gravity", SP_trigger_gravity},
+    {"trigger_heal", SP_trigger_heal},
+    {"trigger_hurt", SP_trigger_hurt},
+    {"trigger_multiple", SP_trigger_multiple},
+    {"trigger_push", SP_trigger_push},
+    {"trigger_stage", SP_trigger_stage},
+    {"trigger_teleport", SP_trigger_teleport},
     {"trigger_win", SP_trigger_win}};
 
 /*

@@ -30,25 +30,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define GAME_API_VERSION 9
 
 // entity->svFlags
-// the server does not know how to interpret most of the values
-// in entityStates (level eType), so the game must explicitly flag
-// special server behaviors
-#define SVF_NOCLIENT 0x00000001  // don't send entity to clients, even if it has effects
+// the server does not know how to interpret most of the values in entityStates
+// (level eType), so the game must explicitly flag special server behaviors
 
-#define SVF_CLIENTMASK 0x00000002  // send to clients specified by these bitmasks:
-// entityShared_t->singleClient: low-order bits (0..31)
-// entityShared_t->hack.generic1: high-order bits (32..63)
+#define SVF_NOCLIENT        0x00000001  // don't send entity to clients, even if it has effects
 
-#define SVF_BROADCAST 0x00000020  // send to all connected clients
-#define SVF_PORTAL 0x00000040  // merge a second pvs at origin2 into snapshots
+#define SVF_CLIENTMASK      0x00000002  // send to clients specified by these bitmasks:
+                                        // entityShared_t->singleClient: low-order bits (0..31)
+                                        // entityShared_t->hack.generic1: high-order bits (32..63)
 
-#define SVF_SINGLECLIENT 0x00000100  // only send to a single client (entityShared_t->singleClient)
-#define SVF_NOSERVERINFO 0x00000200  // don't send CS_SERVERINFO updates to this client
-// so that it can be updated for ping tools without
-// lagging clients
-#define SVF_CAPSULE 0x00000400  // use capsule for collision detection instead of bbox
+#define SVF_BROADCAST       0x00000020  // send to all connected clients
+#define SVF_PORTAL          0x00000040  // merge a second pvs at origin2 into snapshots
+
+#define SVF_SINGLECLIENT    0x00000100  // only send to a single client (entityShared_t->singleClient)
+#define SVF_NOSERVERINFO    0x00000200  // don't send CS_SERVERINFO updates to this client
+                                        // so that it can be updated for ping tools without
+                                        // lagging clients
+#define SVF_CAPSULE         0x00000400  // use capsule for collision detection instead of bbox
 #define SVF_NOTSINGLECLIENT 0x00000800  // send entity to everyone but one client
-// (entityShared_t->singleClient)
+                                        // (entityShared_t->singleClient)
 
 //===============================================================
 

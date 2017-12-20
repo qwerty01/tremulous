@@ -153,8 +153,8 @@ static char cv_humanRepeaterBuildPoints[MAX_CVAR_VALUE_STRING];
 static char cv_humanBuildPoints[MAX_CVAR_VALUE_STRING];
 static char cv_alienBuildPoints[MAX_CVAR_VALUE_STRING];
 
-static cvarTable_t gameCvarTable[] = {
-    // don't override the cheat state set by the system
+static cvarTable_t gameCvarTable[] =
+{
     {&g_cheats, "sv_cheats", "", 0, 0, false},
 
     // noset vars
@@ -165,96 +165,92 @@ static cvarTable_t gameCvarTable[] = {
     {NULL, "P", "", CVAR_SERVERINFO | CVAR_ROM, 0, false},
 
     // latched vars
-
     {&g_maxclients, "sv_maxclients", "8", CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE, 0, false},
 
     // change anytime vars
     {&g_maxGameClients, "g_maxGameClients", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, false},
-
     {&g_timelimit, "timelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, true},
     {&g_suddenDeathTime, "g_suddenDeathTime", "0", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_NORESTART, 0, true},
-
     {&g_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO, 0, false},
-
     {&g_friendlyFire, "g_friendlyFire", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, true},
     {&g_friendlyBuildableFire, "g_friendlyBuildableFire", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, true},
     {&g_dretchPunt, "g_dretchPunt", "1", CVAR_ARCHIVE, 0, true},
-
     {&g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE, 0, true},
-
-    {&g_warmup, "g_warmup", "10", CVAR_ARCHIVE, 0, true}, {&g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, true},
+    {&g_warmup, "g_warmup", "10", CVAR_ARCHIVE, 0, true},
+    {&g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, true},
     {&g_logFile, "g_logFile", "games.log", CVAR_ARCHIVE, 0, false},
     {&g_logFileSync, "g_logFileSync", "0", CVAR_ARCHIVE, 0, false},
-
     {&g_password, "g_password", "", CVAR_USERINFO, 0, false},
-
     {&g_needpass, "g_needpass", "0", CVAR_SERVERINFO | CVAR_ROM, 0, false},
-
     {&g_dedicated, "dedicated", "0", 0, 0, false},
-
-    {&g_speed, "g_speed", "320", 0, 0, true}, {&g_gravity, "g_gravity", "800", 0, 0, true, cv_gravity},
-    {&g_knockback, "g_knockback", "1000", 0, 0, true}, {&g_inactivity, "g_inactivity", "0", 0, 0, true},
-    {&g_debugMove, "g_debugMove", "0", 0, 0, false}, {&g_debugDamage, "g_debugDamage", "0", 0, 0, false},
+    {&g_speed, "g_speed", "320", 0, 0, true},
+    {&g_gravity, "g_gravity", "800", 0, 0, true, cv_gravity},
+    {&g_knockback, "g_knockback", "1000", 0, 0, true},
+    {&g_inactivity, "g_inactivity", "0", 0, 0, true},
+    {&g_debugMove, "g_debugMove", "0", 0, 0, false},
+    {&g_debugDamage, "g_debugDamage", "0", 0, 0, false},
     {&g_motd, "g_motd", "", 0, 0, false},
-
     {&g_allowVote, "g_allowVote", "1", CVAR_ARCHIVE, 0, false},
     {&g_voteLimit, "g_voteLimit", "5", CVAR_ARCHIVE, 0, false},
     {&g_suddenDeathVotePercent, "g_suddenDeathVotePercent", "74", CVAR_ARCHIVE, 0, false},
     {&g_suddenDeathVoteDelay, "g_suddenDeathVoteDelay", "180", CVAR_ARCHIVE, 0, false},
     {&g_minNameChangePeriod, "g_minNameChangePeriod", "5", 0, 0, false},
     {&g_maxNameChanges, "g_maxNameChanges", "5", 0, 0, false},
-
     {&g_smoothClients, "g_smoothClients", "1", 0, 0, false},
     {&pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO, 0, false},
     {&pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO, 0, false},
-
     {&g_alienBuildPoints, "g_alienBuildPoints", DEFAULT_ALIEN_BUILDPOINTS, 0, 0, false, cv_alienBuildPoints},
     {&g_alienBuildQueueTime, "g_alienBuildQueueTime", DEFAULT_ALIEN_QUEUE_TIME, CVAR_ARCHIVE, 0, false},
     {&g_humanBuildPoints, "g_humanBuildPoints", DEFAULT_HUMAN_BUILDPOINTS, 0, 0, false, cv_humanBuildPoints},
     {&g_humanBuildQueueTime, "g_humanBuildQueueTime", DEFAULT_HUMAN_QUEUE_TIME, CVAR_ARCHIVE, 0, false},
-    {&g_humanRepeaterBuildPoints, "g_humanRepeaterBuildPoints", DEFAULT_HUMAN_REPEATER_BUILDPOINTS, CVAR_ARCHIVE, 0,
-        false, cv_humanRepeaterBuildPoints},
+    {&g_humanRepeaterBuildPoints, "g_humanRepeaterBuildPoints", DEFAULT_HUMAN_REPEATER_BUILDPOINTS, CVAR_ARCHIVE, 0, false, cv_humanRepeaterBuildPoints},
     {&g_humanRepeaterMaxZones, "g_humanRepeaterMaxZones", DEFAULT_HUMAN_REPEATER_MAX_ZONES, CVAR_ARCHIVE, 0, false},
-    {&g_humanRepeaterBuildQueueTime, "g_humanRepeaterBuildQueueTime", DEFAULT_HUMAN_REPEATER_QUEUE_TIME, CVAR_ARCHIVE,
-        0, false},
-    {&g_humanStage, "g_humanStage", "0", 0, 0, false}, {&g_humanCredits, "g_humanCredits", "0", 0, 0, false},
+    {&g_humanRepeaterBuildQueueTime, "g_humanRepeaterBuildQueueTime", DEFAULT_HUMAN_REPEATER_QUEUE_TIME, CVAR_ARCHIVE, 0, false},
+    {&g_humanStage, "g_humanStage", "0", 0, 0, false},
+    {&g_humanCredits, "g_humanCredits", "0", 0, 0, false},
     {&g_humanMaxStage, "g_humanMaxStage", DEFAULT_HUMAN_MAX_STAGE, 0, 0, false, cv_humanMaxStage},
     {&g_humanStage2Threshold, "g_humanStage2Threshold", DEFAULT_HUMAN_STAGE2_THRESH, 0, 0, false},
     {&g_humanStage3Threshold, "g_humanStage3Threshold", DEFAULT_HUMAN_STAGE3_THRESH, 0, 0, false},
-    {&g_alienStage, "g_alienStage", "0", 0, 0, false}, {&g_alienCredits, "g_alienCredits", "0", 0, 0, false},
+    {&g_alienStage, "g_alienStage", "0", 0, 0, false},
+    {&g_alienCredits, "g_alienCredits", "0", 0, 0, false},
     {&g_alienMaxStage, "g_alienMaxStage", DEFAULT_ALIEN_MAX_STAGE, 0, 0, false, cv_alienMaxStage},
     {&g_alienStage2Threshold, "g_alienStage2Threshold", DEFAULT_ALIEN_STAGE2_THRESH, 0, 0, false},
     {&g_alienStage3Threshold, "g_alienStage3Threshold", DEFAULT_ALIEN_STAGE3_THRESH, 0, 0, false},
     {&g_teamImbalanceWarnings, "g_teamImbalanceWarnings", "30", CVAR_ARCHIVE, 0, false},
     {&g_freeFundPeriod, "g_freeFundPeriod", DEFAULT_FREEKILL_PERIOD, CVAR_ARCHIVE, 0, true},
-
     {&g_unlagged, "g_unlagged", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, true},
 
     {&g_disabledEquipment, "g_disabledEquipment", "", CVAR_ROM | CVAR_SYSTEMINFO, 0, false},
     {&g_disabledClasses, "g_disabledClasses", "", CVAR_ROM | CVAR_SYSTEMINFO, 0, false},
     {&g_disabledBuildables, "g_disabledBuildables", "", CVAR_ROM | CVAR_SYSTEMINFO, 0, false},
-
     {&g_sayAreaRange, "g_sayAreaRange", "1000", CVAR_ARCHIVE, 0, true},
-
     {&g_floodMaxDemerits, "g_floodMaxDemerits", "5000", CVAR_ARCHIVE, 0, false},
     {&g_floodMinTime, "g_floodMinTime", "2000", CVAR_ARCHIVE, 0, false},
-
     {&g_markDeconstruct, "g_markDeconstruct", "3", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, true},
-
     {&g_debugMapRotation, "g_debugMapRotation", "0", 0, 0, false},
-    {&g_currentMapRotation, "g_currentMapRotation", "-1", 0, 0, false},  // -1 = NOT_ROTATING
+
+    {&g_currentMapRotation, "g_currentMapRotation", "-1", 0, 0, false}, // -1 = NOT_ROTATING
     {&g_mapRotationNodes, "g_mapRotationNodes", "", CVAR_ROM, 0, false},
-    {&g_mapRotationStack, "g_mapRotationStack", "", CVAR_ROM, 0, false}, {&g_nextMap, "g_nextMap", "", 0, 0, true},
+    {&g_mapRotationStack, "g_mapRotationStack", "", CVAR_ROM, 0, false},
+    {&g_nextMap, "g_nextMap", "", 0, 0, true},
     {&g_initialMapRotation, "g_initialMapRotation", "", CVAR_ARCHIVE, 0, false},
-    {&g_debugVoices, "g_debugVoices", "0", 0, 0, false}, {&g_voiceChats, "g_voiceChats", "1", CVAR_ARCHIVE, 0, false},
-    {&g_shove, "g_shove", "0.0", CVAR_ARCHIVE, 0, false}, {&g_mapConfigs, "g_mapConfigs", "", CVAR_ARCHIVE, 0, false},
+
+    {&g_debugVoices, "g_debugVoices", "0", 0, 0, false},
+    {&g_voiceChats, "g_voiceChats", "1", CVAR_ARCHIVE, 0, false},
+    {&g_shove, "g_shove", "0.0", CVAR_ARCHIVE, 0, false},
+    {&g_mapConfigs, "g_mapConfigs", "", CVAR_ARCHIVE, 0, false},
     {NULL, "g_mapConfigsLoaded", "0", CVAR_ROM, 0, false},
 
-    {&g_nextLayout, "g_nextLayout", "", 0, 0, false}, {&g_layouts[0], "g_layouts", "", 0, 0, false},
-    {&g_layouts[1], "g_layouts2", "", 0, 0, false}, {&g_layouts[2], "g_layouts3", "", 0, 0, false},
-    {&g_layouts[3], "g_layouts4", "", 0, 0, false}, {&g_layouts[4], "g_layouts5", "", 0, 0, false},
-    {&g_layouts[5], "g_layouts6", "", 0, 0, false}, {&g_layouts[6], "g_layouts7", "", 0, 0, false},
-    {&g_layouts[7], "g_layouts8", "", 0, 0, false}, {&g_layouts[8], "g_layouts9", "", 0, 0, false},
+    {&g_nextLayout, "g_nextLayout", "", 0, 0, false},
+    {&g_layouts[0], "g_layouts", "", 0, 0, false},
+    {&g_layouts[1], "g_layouts2", "", 0, 0, false},
+    {&g_layouts[2], "g_layouts3", "", 0, 0, false},
+    {&g_layouts[3], "g_layouts4", "", 0, 0, false},
+    {&g_layouts[4], "g_layouts5", "", 0, 0, false},
+    {&g_layouts[5], "g_layouts6", "", 0, 0, false},
+    {&g_layouts[6], "g_layouts7", "", 0, 0, false},
+    {&g_layouts[7], "g_layouts8", "", 0, 0, false},
+    {&g_layouts[8], "g_layouts9", "", 0, 0, false},
     {&g_layoutAuto, "g_layoutAuto", "1", CVAR_ARCHIVE, 0, false},
 
     {&g_emoticonsAllowedInNames, "g_emoticonsAllowedInNames", "1", CVAR_LATCH | CVAR_ARCHIVE, 0, false},

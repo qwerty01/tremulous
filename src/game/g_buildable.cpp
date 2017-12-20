@@ -66,7 +66,6 @@ Check if a spawn at a specified point is valid
 gentity_t *G_CheckSpawnPoint(
     int spawnNum, const vec3_t origin, const vec3_t normal, buildable_t spawn, vec3_t spawnOrigin)
 {
-    float displacement;
     vec3_t mins, maxs;
     vec3_t cmins, cmaxs;
     vec3_t localOrigin;
@@ -79,7 +78,7 @@ gentity_t *G_CheckSpawnPoint(
         VectorSet(cmins, -MAX_ALIEN_BBOX, -MAX_ALIEN_BBOX, -MAX_ALIEN_BBOX);
         VectorSet(cmaxs, MAX_ALIEN_BBOX, MAX_ALIEN_BBOX, MAX_ALIEN_BBOX);
 
-        displacement = (maxs[2] + MAX_ALIEN_BBOX) * M_ROOT3 + 1.0f;
+        float displacement = (maxs[2] + MAX_ALIEN_BBOX) * M_ROOT3 + 1.0f;
         VectorMA(origin, displacement, normal, localOrigin);
     }
     else if (spawn == BA_H_SPAWN)
@@ -268,7 +267,7 @@ power for the specified point
 */
 gentity_t *G_PowerEntityForPoint(const vec3_t origin)
 {
-    gentity_t dummy;
+    gentity_t dummy {};
 
     dummy.parentNode = NULL;
     dummy.buildableTeam = TEAM_HUMANS;
@@ -277,8 +276,8 @@ gentity_t *G_PowerEntityForPoint(const vec3_t origin)
 
     if (G_FindPower(&dummy, false))
         return dummy.parentNode;
-    else
-        return NULL;
+
+    return NULL;
 }
 
 /*
@@ -411,8 +410,6 @@ gentity_t *G_InPowerZone(gentity_t *self)
 {
     int i;
     gentity_t *ent;
-    int distance;
-    vec3_t temp_v;
 
     for (i = MAX_CLIENTS, ent = g_entities + i; i < level.num_entities; i++, ent++)
     {
@@ -431,8 +428,9 @@ gentity_t *G_InPowerZone(gentity_t *self)
         // if entity is a power item calculate the distance to it
         if ((ent->s.modelindex == BA_H_REACTOR || ent->s.modelindex == BA_H_REPEATER) && ent->spawned && ent->powered)
         {
+            vec3_t temp_v;
             VectorSubtract(self->r.currentOrigin, ent->r.currentOrigin, temp_v);
-            distance = VectorLength(temp_v);
+            int distance = VectorLength(temp_v);
 
             if (ent->s.modelindex == BA_H_REACTOR && distance <= REACTOR_BASESIZE)
                 return ent;
@@ -455,8 +453,6 @@ int G_FindDCC(gentity_t *self)
 {
     int i;
     gentity_t *ent;
-    int distance = 0;
-    vec3_t temp_v;
     int foundDCC = 0;
 
     if (self->buildableTeam != TEAM_HUMANS)
@@ -471,8 +467,9 @@ int G_FindDCC(gentity_t *self)
         // if entity is a dcc calculate the distance to it
         if (ent->s.modelindex == BA_H_DCC && ent->spawned)
         {
+            vec3_t temp_v;
             VectorSubtract(self->r.currentOrigin, ent->r.currentOrigin, temp_v);
-            distance = VectorLength(temp_v);
+            int distance = VectorLength(temp_v);
             if (distance < DC_RANGE && ent->powered)
             {
                 foundDCC++;
@@ -571,9 +568,7 @@ bool G_FindCreep(gentity_t *self)
     int i;
     gentity_t *ent;
     gentity_t *closestSpawn = NULL;
-    int distance = 0;
     int minDistance = 10000;
-    vec3_t temp_v;
 
     // don't check for creep if flying through the air
     if (!self->client && self->s.groundEntityNum == ENTITYNUM_NONE)
@@ -590,8 +585,9 @@ bool G_FindCreep(gentity_t *self)
             if ((ent->s.modelindex == BA_A_SPAWN || ent->s.modelindex == BA_A_OVERMIND) && ent->spawned &&
                 ent->health > 0)
             {
+                vec3_t temp_v;
                 VectorSubtract(self->r.currentOrigin, ent->r.currentOrigin, temp_v);
-                distance = VectorLength(temp_v);
+                int distance = VectorLength(temp_v);
                 if (distance < minDistance)
                 {
                     closestSpawn = ent;
@@ -626,14 +622,10 @@ simple wrapper to G_FindCreep to check if a location has creep
 */
 static bool G_IsCreepHere(vec3_t origin)
 {
-    gentity_t dummy;
-
-    memset(&dummy, 0, sizeof(gentity_t));
-
-    dummy.parentNode = NULL;
-    dummy.s.modelindex = BA_NONE;
+    gentity_t dummy {};
+    //dummy.parentNode = NULL;
+    //dummy.s.modelindex = BA_NONE;
     VectorCopy(origin, dummy.r.currentOrigin);
-
     return G_FindCreep(&dummy);
 }
 
@@ -647,23 +639,22 @@ Set any nearby humans' SS_CREEPSLOWED flag
 static void G_CreepSlow(gentity_t *self)
 {
     int entityList[MAX_GENTITIES];
-    vec3_t range;
-    vec3_t mins, maxs;
-    int i, num;
-    gentity_t *enemy;
+
     buildable_t buildable = self->s.modelindex;
     float creepSize = (float)BG_Buildable(buildable)->creepSize;
 
-    VectorSet(range, creepSize, creepSize, creepSize);
+    vec3_t range;
+    vec3_t mins, maxs;
 
+    VectorSet(range, creepSize, creepSize, creepSize);
     VectorAdd(self->r.currentOrigin, range, maxs);
     VectorSubtract(self->r.currentOrigin, range, mins);
 
     // find humans
-    num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-    for (i = 0; i < num; i++)
+    int num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+    for (int i = 0; i < num; i++)
     {
-        enemy = &g_entities[entityList[i]];
+        gentity_t *enemy = &g_entities[entityList[i]];
 
         if (enemy->flags & FL_NOTARGET)
             continue;
@@ -2178,7 +2169,12 @@ HMGTurret_State
 Raise or lower MG turret towards desired state
 ================
 */
-enum { MGT_STATE_INACTIVE, MGT_STATE_DROP, MGT_STATE_RISE, MGT_STATE_ACTIVE };
+enum {
+    MGT_STATE_INACTIVE,
+    MGT_STATE_DROP,
+    MGT_STATE_RISE,
+    MGT_STATE_ACTIVE
+};
 
 static bool HMGTurret_State(gentity_t *self, int state)
 {
@@ -2475,12 +2471,10 @@ G_NextQueueTime
 */
 int G_NextQueueTime(int queuedBP, int totalBP, int queueBaseRate)
 {
-    float fractionQueued;
-
     if (totalBP == 0)
         return 0;
 
-    fractionQueued = queuedBP / (float)totalBP;
+    float fractionQueued = queuedBP / (float)totalBP;
     return (1.0f - fractionQueued) * queueBaseRate;
 }
 
@@ -2493,13 +2487,9 @@ Find all trigger entities that a buildable touches.
 */
 void G_BuildableTouchTriggers(gentity_t *ent)
 {
-    int i, num;
-    int touch[MAX_GENTITIES];
-    gentity_t *hit;
-    trace_t trace;
     vec3_t mins, maxs;
     vec3_t bmins, bmaxs;
-    static vec3_t range = {10, 10, 10};
+    static vec3_t range { 10, 10, 10 };
 
     // dead buildables don't activate triggers!
     if (ent->health <= 0)
@@ -2513,14 +2503,15 @@ void G_BuildableTouchTriggers(gentity_t *ent)
     VectorSubtract(mins, range, mins);
     VectorAdd(maxs, range, maxs);
 
-    num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+    int touch[MAX_GENTITIES];
+    int num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
     VectorAdd(ent->r.currentOrigin, bmins, mins);
     VectorAdd(ent->r.currentOrigin, bmaxs, maxs);
 
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
-        hit = &g_entities[touch[i]];
+        gentity_t *hit = &g_entities[touch[i]];
 
         if (!hit->touch)
             continue;
@@ -2535,6 +2526,7 @@ void G_BuildableTouchTriggers(gentity_t *ent)
         if (!trap_EntityContact(mins, maxs, hit))
             continue;
 
+        trace_t trace;
         memset(&trace, 0, sizeof(trace));
 
         if (hit->touch)
@@ -2644,17 +2636,15 @@ bool G_BuildableRange(vec3_t origin, float r, buildable_t buildable)
     int entityList[MAX_GENTITIES];
     vec3_t range;
     vec3_t mins, maxs;
-    int i, num;
-    gentity_t *ent;
 
     VectorSet(range, r, r, r);
     VectorAdd(origin, range, maxs);
     VectorSubtract(origin, range, mins);
 
-    num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-    for (i = 0; i < num; i++)
+    int num = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+    for (int i = 0; i < num; i++)
     {
-        ent = &g_entities[entityList[i]];
+        gentity_t *ent = &g_entities[entityList[i]];
 
         if (ent->s.eType != ET_BUILDABLE)
             continue;
@@ -2725,21 +2715,32 @@ qsort comparison function for a buildable removal list
 */
 static buildable_t cmpBuildable;
 static vec3_t cmpOrigin;
+
 static int G_CompareBuildablesForRemoval(const void *a, const void *b)
 {
-    int precedence[] = {BA_NONE,
+    static const int precedence[] = {
+        BA_NONE,
+        BA_A_BARRICADE,
+        BA_A_ACIDTUBE,
+        BA_A_TRAPPER,
+        BA_A_HIVE,
+        BA_A_BOOSTER,
+        BA_A_SPAWN,
+        BA_A_OVERMIND,
+        BA_H_MGTURRET,
+        BA_H_TESLAGEN,
+        BA_H_DCC,
+        BA_H_MEDISTAT,
+        BA_H_ARMOURY,
+        BA_H_SPAWN,
+        BA_H_REPEATER,
+        BA_H_REACTOR
+    };
 
-        BA_A_BARRICADE, BA_A_ACIDTUBE, BA_A_TRAPPER, BA_A_HIVE, BA_A_BOOSTER, BA_A_SPAWN, BA_A_OVERMIND,
-
-        BA_H_MGTURRET, BA_H_TESLAGEN, BA_H_DCC, BA_H_MEDISTAT, BA_H_ARMOURY, BA_H_SPAWN, BA_H_REPEATER, BA_H_REACTOR};
-
-    gentity_t *buildableA, *buildableB;
-    int i;
-    int aPrecedence = 0, bPrecedence = 0;
     bool aMatches = false, bMatches = false;
 
-    buildableA = *(gentity_t **)a;
-    buildableB = *(gentity_t **)b;
+    gentity_t *buildableA = *(gentity_t **)a;
+    gentity_t *buildableB = *(gentity_t **)b;
 
     // Prefer the one that collides with the thing we're building
     aMatches = G_BuildablesIntersect(cmpBuildable, cmpOrigin, buildableA->s.modelindex, buildableA->r.currentOrigin);
@@ -2786,8 +2787,9 @@ static int G_CompareBuildablesForRemoval(const void *a, const void *b)
         return buildableA->deconstructTime - buildableB->deconstructTime;
     }
 
+    int aPrecedence = 0, bPrecedence = 0;
     // Resort to preference list
-    for (i = 0; i < ARRAY_LEN(precedence); i++)
+    for (int i = 0; i < ARRAY_LEN(precedence); i++)
     {
         if (buildableA->s.modelindex == precedence[i])
             aPrecedence = i;
@@ -2832,11 +2834,8 @@ Free up build points for a team by deconstructing marked buildables
 */
 void G_FreeMarkedBuildables(gentity_t *deconner, char *readable, int rsize, char *nums, int nsize)
 {
-    int i;
-    int bNum;
     int listItems = 0;
     int totalListItems = 0;
-    gentity_t *ent;
     int removalCounts[BA_NUM_BUILDABLES] = {0};
 
     if (readable && rsize)
@@ -2847,10 +2846,10 @@ void G_FreeMarkedBuildables(gentity_t *deconner, char *readable, int rsize, char
     if (!g_markDeconstruct.integer)
         return;  // Not enabled, can't deconstruct anything
 
-    for (i = 0; i < level.numBuildablesForRemoval; i++)
+    for (int i = 0; i < level.numBuildablesForRemoval; i++)
     {
-        ent = level.markedBuildables[i];
-        bNum = BG_Buildable(ent->s.modelindex)->number;
+        gentity_t *ent = level.markedBuildables[i];
+        int bNum = BG_Buildable(ent->s.modelindex)->number;
 
         if (removalCounts[bNum] == 0)
             totalListItems++;
@@ -2869,7 +2868,7 @@ void G_FreeMarkedBuildables(gentity_t *deconner, char *readable, int rsize, char
     if (!readable)
         return;
 
-    for (i = 0; i < BA_NUM_BUILDABLES; i++)
+    for (int i = 0; i < BA_NUM_BUILDABLES; i++)
     {
         if (removalCounts[i])
         {
@@ -4313,26 +4312,22 @@ void G_BuildLogRevertThink(gentity_t *ent)
 
 void G_BuildLogRevert(int id)
 {
-    buildLog_t *log;
-    gentity_t *ent;
-    int i;
-    vec3_t dist;
-
     level.numBuildablesForRemoval = 0;
-
     level.numBuildLogs -= level.buildId - id;
+
     while (level.buildId > id)
     {
-        log = &level.buildLog[--level.buildId % MAX_BUILDLOG];
+        buildLog_t *log = &level.buildLog[--level.buildId % MAX_BUILDLOG];
         if (log->fate == BF_CONSTRUCT)
         {
-            for (i = MAX_CLIENTS; i < level.num_entities; i++)
+            for (int i = MAX_CLIENTS; i < level.num_entities; i++)
             {
-                ent = &g_entities[i];
+                gentity_t *ent = &g_entities[i];
                 if (((ent->s.eType == ET_BUILDABLE && ent->health > 0) ||
                         (ent->s.eType == ET_GENERAL && ent->think == G_BuildLogRevertThink)) &&
                     ent->s.modelindex == log->modelindex)
                 {
+                    vec3_t dist;
                     VectorSubtract(ent->s.pos.trBase, log->origin, dist);
                     if (VectorLengthSquared(dist) <= 2.0f)
                     {
@@ -4411,15 +4406,11 @@ void G_UpdateBuildableRangeMarkers(void)
     gentity_t *e;
     for (e = &g_entities[MAX_CLIENTS]; e < &g_entities[level.num_entities]; ++e)
     {
-        buildable_t bType;
-        team_t bTeam;
-        int i;
-
         if (e->s.eType != ET_BUILDABLE || !e->rangeMarker)
             continue;
 
-        bType = e->s.modelindex;
-        bTeam = BG_Buildable(bType)->team;
+        buildable_t bType = e->s.modelindex;
+        team_t bTeam = BG_Buildable(bType)->team;
 
         e->rangeMarker->s.pos = e->s.pos;
         if (bType == BA_A_HIVE || bType == BA_H_TESLAGEN)
@@ -4433,13 +4424,9 @@ void G_UpdateBuildableRangeMarkers(void)
         // remove any previously added NOCLIENT flags from the hack below
         e->rangeMarker->r.svFlags &= ~SVF_NOCLIENT;
 
-        for (i = 0; i < level.maxclients; ++i)
+        for (int i = 0; i < level.maxclients; ++i)
         {
-            gclient_t *client;
-            team_t team;
-            bool weaponDisplays, wantsToSee;
-
-            client = &level.clients[i];
+            gclient_t *client = &level.clients[i];
             if (client->pers.connected != CON_CONNECTED)
                 continue;
 
@@ -4466,13 +4453,14 @@ void G_UpdateBuildableRangeMarkers(void)
                 return;
             }
 
-            team = client->pers.teamSelection;
+            bool weaponDisplays;
+            team_t team = client->pers.teamSelection;
             if (team != TEAM_NONE)
             {
                 weaponDisplays = (BG_InventoryContainsWeapon(WP_HBUILD, client->ps.stats) ||
                                   client->ps.weapon == WP_ABUILD || client->ps.weapon == WP_ABUILD2);
             }
-            wantsToSee = !!(client->pers.buildableRangeMarkerMask & (1 << bType));
+            bool wantsToSee = !!(client->pers.buildableRangeMarkerMask & (1 << bType));
 
             if ((team == TEAM_NONE || (team == bTeam && weaponDisplays)) && wantsToSee)
             {
