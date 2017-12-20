@@ -1,3 +1,9 @@
+#ifndef _MATHLIB_H
+#define _MATHLIB_H
+
+#include <cmath>
+
+#include "q_platform.h"
 
 /*
 ==============================================================
@@ -126,15 +132,16 @@ int Q_isnan(float x);
   // its address
   #define Q_ftol lrintf
   #define Q_SnapVector(vec)\
-	do\
-	{\
-		vec3_t *temp = (vec);\
-		\
-		(*temp)[0] = round((*temp)[0]);\
-		(*temp)[1] = round((*temp)[1]);\
-		(*temp)[2] = round((*temp)[2]);\
-	} while(0)
+   do\
+   {\
+           vec3_t *temp = (vec);\
+           \
+           (*temp)[0] = round((*temp)[0]);\
+           (*temp)[1] = round((*temp)[1]);\
+           (*temp)[2] = round((*temp)[2]);\
+   } while(0)
 #endif
+
 
 #if idppc
 static ID_INLINE float Q_rsqrt( float number ) {
@@ -198,6 +205,7 @@ typedef struct {
 #define VectorClear(a)			((a)[0]=(a)[1]=(a)[2]=0)
 #define VectorNegate(a,b)		((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
 #define VectorSet(v, x, y, z)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z))
+
 #define Vector4Copy(a,b)		((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
 #define Vector4Add(a,b,c)    ((c)[0]=(a)[0]+(b)[0],(c)[1]=(a)[1]+(b)[1],(c)[2]=(a)[2]+(b)[2],(c)[3]=(a)[3]+(b)[3])
 #define Vector4Lerp( f, s, e, r ) ((r)[0]=(s)[0]+(f)*((e)[0]-(s)[0]),\
@@ -399,3 +407,4 @@ vec_t DistanceBetweenLineSegments(
 #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
 
+#endif
