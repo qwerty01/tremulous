@@ -1543,6 +1543,7 @@ Q3OBJ = \
   $(B)/client/sv_world.o \
   \
   $(B)/client/q_math.o \
+  $(B)/client/vector.o \
   $(B)/client/q_shared.o \
   \
   $(B)/client/unzip.o \
@@ -1613,6 +1614,7 @@ Q3R2OBJ = \
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3R2OBJ += \
     $(B)/renderergl1/q_shared.o \
+    $(B)/renderergl1/vector.o \
     $(B)/renderergl1/puff.o \
     $(B)/renderergl1/q_math.o \
     $(B)/renderergl1/tr_subs.o
@@ -1687,6 +1689,7 @@ Q3ROBJ = \
 ifneq ($(USE_RENDERER_DLOPEN), 0)
   Q3ROBJ += \
     $(B)/renderergl1/q_shared.o \
+    $(B)/renderergl1/vector.o \
     $(B)/renderergl1/puff.o \
     $(B)/renderergl1/q_math.o \
     $(B)/renderergl1/tr_subs.o
@@ -2062,6 +2065,7 @@ Q3DOBJ = \
   $(B)/ded/parse.o \
   \
   $(B)/ded/q_math.o \
+  $(B)/ded/vector.o \
   $(B)/ded/q_shared.o \
   \
   $(B)/ded/unzip.o \
@@ -2198,6 +2202,7 @@ CGOBJ = \
   \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
   $(B)/$(BASEGAME)/qcommon/q_shared.o \
+  $(B)/$(BASEGAME)/qcommon/vector.o \
   $(B)/$(BASEGAME)/cgame/cg_syscalls.o
 
 define DO_CGAME_CC
@@ -2249,6 +2254,7 @@ GOBJ = \
   $(B)/$(BASEGAME)/game/g_cmds.o \
   $(B)/$(BASEGAME)/game/g_combat.o \
   $(B)/$(BASEGAME)/game/g_main.o \
+  $(B)/$(BASEGAME)/game/g_test.o \
   $(B)/$(BASEGAME)/game/g_maprotation.o \
   $(B)/$(BASEGAME)/game/g_misc.o \
   $(B)/$(BASEGAME)/game/g_missile.o \
@@ -2268,7 +2274,8 @@ GOBJ = \
   $(B)/$(BASEGAME)/game/g_weapondrop.o \
   $(B)/$(BASEGAME)/game/game_lauxlib.o \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
-  $(B)/$(BASEGAME)/qcommon/q_shared.o
+  $(B)/$(BASEGAME)/qcommon/q_shared.o \
+  $(B)/$(BASEGAME)/qcommon/vector.o
 
 GOBJ += $(LUAOBJ)
 
@@ -2310,6 +2317,7 @@ UIOBJ = \
   $(B)/$(BASEGAME)/ui/bg_lib.o \
   $(B)/$(BASEGAME)/qcommon/q_math.o \
   $(B)/$(BASEGAME)/qcommon/q_shared.o \
+  $(B)/$(BASEGAME)/qcommon/vector.o \
   $(B)/$(BASEGAME)/ui/ui_syscalls.o
 
 define DO_UI_CC
