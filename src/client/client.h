@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "qcommon/net.h"
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
+#include "qcommon/vector.h"
 #include "qcommon/vm.h"
 #include "renderercommon/tr_public.h"
 #include "sys/sys_shared.h"
@@ -202,7 +203,7 @@ struct clientActive_t {
     // the server sends a delta each frame which is added to the locally
     // tracked view angles to account for standing on rotating objects,
     // and teleport direction changes
-    vec3_t viewangles;
+    Vec3 viewangles;
 
     int serverId;  // included in each client message so the server
     // can tell if it is for a prior map_restart
