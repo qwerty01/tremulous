@@ -26,9 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <setjmp.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-#ifdef WIN32
+
+#ifdef _WIN32
+#include <winsock2.h>
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
 
 #include <cctype>
@@ -61,7 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef DEDICATED
 #include "script/bind.h"
 #include "script/client.h"
-#include "script/http_client.h"
+//#include "script/http_client.h"
 #endif
 #include "script/cmd.h"
 #include "script/cvar.h"
@@ -778,7 +781,7 @@ int main( int argc, char **argv )
 #ifndef DEDICATED
     script::client::init(std::move(lua));
     script::keybind::init(std::move(lua));
-    script::http_client::init(std::move(lua));
+    //script::http_client::init(std::move(lua));
 #endif
 
     for ( ;; )

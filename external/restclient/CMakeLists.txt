@@ -8,3 +8,7 @@ add_library(
     helpers.cpp
     restclient.cpp
     )
+
+include_directories(
+	${CURL_INCLUDE_DIRS}
+)

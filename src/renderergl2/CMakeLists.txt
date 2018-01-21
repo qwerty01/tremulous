@@ -1,16 +1,11 @@
-include("${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake")
-
-find_package(OpenGL)
-
 set(PARENT_DIR ${CMAKE_SOURCE_DIR}/src)
-include_directories(
-    ${PARENT_DIR}/jpeg-8c
-    ${PARENT_DIR}/renderercommon 
-    ${PARENT_DIR}/nettle-3.3
-    ${SDL2_INCLUDE_DIRS} 
-    )
 
-set(GLSL_SHADERS
+if(USE_RENDERER_DLOPEN)
+    add_definitions( -DUSE_RENDERER_DLOPEN )
+endif(USE_RENDERER_DLOPEN)
+ 
+embed_resources(
+    GLSL_SHADERS
     glsl/bokeh_fp.glsl
     glsl/bokeh_vp.glsl
     glsl/calclevels4x_fp.glsl
@@ -41,35 +36,7 @@ set(GLSL_SHADERS
     glsl/tonemap_vp.glsl
     )
 
-# Converts ^^^GSLS shaders^^^ into const char* C-strings.
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/glsl/)
-foreach(shader ${GLSL_SHADERS})
-    set(in ${CMAKE_CURRENT_SOURCE_DIR}/${shader})
-
-    get_filename_component(out ${in} NAME_WE)
-    set(out ${CMAKE_CURRENT_BINARY_DIR}/glsl/${out}.c)
-
-    get_filename_component(shader ${shader} NAME_WE)
-    message(STATUS "-- Generating embeded GLSL ${shader}")
-
-    file(READ ${in} contents HEX)
-    file(WRITE ${out} "const char *fallbackShader_${shader} = \"")
-
-    string(LENGTH "${contents}" contents_length)
-    math(EXPR contents_length "${contents_length} - 1")
-
-    foreach(iter RANGE 0 ${contents_length} 2)
-      string(SUBSTRING ${contents} ${iter} 2 line)
-      file(APPEND "${out}" "\\x${line}")
-    endforeach()
-    file(APPEND "${out}" "\";\n")
-
-    list(APPEND renderergl2_SHADERS "${out}")
-    set_source_files_properties(${out} PROPERTIES GENERATED TRUE)
-endforeach(shader)
-
 set(renderergl2_SRCS
-    ${renderergl2_SHADERS}
     tr_local.h
     tr_dsa.h
     tr_extramath.h
@@ -107,40 +74,37 @@ set(renderergl2_SRCS
     tr_surface.cpp
     tr_vbo.cpp
     tr_world.cpp
-    ${CMAKE_SOURCE_DIR}/src/common/puff.cpp
-    ${CMAKE_SOURCE_DIR}/src/common/q_shared.c
-    ${CMAKE_SOURCE_DIR}/src/common/q_math.c
+
+    ${CMAKE_SOURCE_DIR}/src/qcommon/cvar.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/json.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.cpp
+    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/q_math.c
+    ${CMAKE_SOURCE_DIR}/src/qcommon/q_shared.c
+    ${CMAKE_SOURCE_DIR}/src/qcommon/qfiles.h
+
+    ${GLSL_SHADERS}
+    )
+
+include_directories(
+    ${PARENT_DIR} 
+    ${CMAKE_BINARY_DIR}/glsl
+    #${PARENT_DIR}/renderercommon 
+    ${CMAKE_SOURCE_DIR}/external/embed-resource
+    ${CMAKE_SOURCE_DIR}/external/jpeg-8c
+    ${CMAKE_SOURCE_DIR}/external/nettle-3.3
+    ${SDL2_INCLUDE_DIRS} 
     )
 
 if(NOT USE_RENDERER_DLOPEN)
 
-    add_library(
-        renderergl2 STATIC
-        ${renderergl2_SRCS})
-
-    target_link_libraries(
-        renderergl2 renderercommon
-        ${SDL2_LIBRARIES})
+    add_library( renderer_opengl2 STATIC ${renderergl2_SRCS} )
+    target_link_libraries(renderergl2 renderercommon SDL2::SDL2)
 
 else(NOT USE_RENDERER_DLOPEN)
 
-    add_library(
-        renderergl2 SHARED
-        ${renderergl2_SRCS}
-        )
-
-        target_link_libraries(
-        renderergl2 
-        renderercommon
-        ${FRAMEWORKS}
-        ${OPENGL_LIBRARIES}
-        ${SDL2_LIBRARIES}
-        )
-    add_custom_command(
-        TARGET renderergl2
-        POST_BUILD COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${CMAKE_CURRENT_BINARY_DIR}/librenderergl2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl2${CMAKE_SHARED_LIBRARY_SUFFIX}
-        )
+    add_library( renderer_opengl2 SHARED ${renderergl2_SRCS} )
+    target_link_libraries( renderer_opengl2 renderercommon ${FRAMEWORKS} ${OPENGL_LIBRARIES} SDL2::SDL2)
 
 endif(NOT USE_RENDERER_DLOPEN)
 

@@ -1,6 +1,8 @@
 #ifndef QCOMMON_NET_H
 #define QCOMMON_NET_H 1
 
+#include "q_shared.h"
+
 #include <stdint.h>
 
 /*
@@ -66,7 +68,7 @@ void NET_Config(bool enableNetworking);
 void NET_FlushPacketQueue(void);
 void NET_SendPacket(netsrc_t sock, int length, const void *data, struct netadr_t to);
 void NET_OutOfBandPrint(netsrc_t net_socket, struct netadr_t adr, const char *format, ...)
-    __attribute__((format(printf, 3, 4)));
+ __attribute__((format(printf, 3, 4)));
 void NET_OutOfBandData(netsrc_t sock, struct netadr_t adr, uint8_t *format, int len);
 
 bool NET_CompareAdr(struct netadr_t a, struct netadr_t b);

@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "sys_local.h"
 
 #include <fcntl.h>
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 #include <termios.h>
 #include <unistd.h>
 

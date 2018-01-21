@@ -36,6 +36,8 @@ namespace sol
     class state;
 };
 
+extern cvar_t *cvar_cheats;
+
 namespace script
 {
     ////////////////////////////////////////////// Exceptions ////////////
@@ -75,7 +77,6 @@ namespace script
         { return "modifying latched cvars is unsupported"; }
     };
 
-    extern "C" cvar_t *cvar_cheats;
     ////////////////////////////////////////////// class Cvar ////////////
     struct Cvar {
     private:

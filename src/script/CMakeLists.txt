@@ -1,8 +1,15 @@
+set(PARENT_DIR ${CMAKE_SOURCE_DIR}/src)
+
+#if(USE_RESTCLIENT)
+#set(SOURCES
+#    http_client.h
+#    )
+#endif(USE_RESTCLIENT)
+
 add_library(
     script_api STATIC
     client.h
     cvar.h
-    http_client.h
     lnettlelib.c
     lnettlelib.h
     lnettlelib.h
@@ -20,16 +27,14 @@ add_library(
 
 
 include_directories(
+    ${PARENT_DIR}
+    ${CMAKE_SOURCE_DIR}
     # these are in global namespace
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/lua-5.3.3/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/sol
-    ${CMAKE_CURRENT_SOURCE_DIR}/../common
+    ${CMAKE_SOURCE_DIR}/external/lua-5.3.3/include
+    ${CMAKE_SOURCE_DIR}/external/sol
     # these have they're own namespace
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/nettle-3.3
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/rapidjson
+    ${CMAKE_SOURCE_DIR}/external/nettle-3.3
+    ${CMAKE_SOURCE_DIR}/external/rapidjson
     )
 
-target_link_libraries(
-    script_api
-    lua
-    )
+target_link_libraries(script_api lua)

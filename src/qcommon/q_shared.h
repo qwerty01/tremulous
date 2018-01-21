@@ -139,15 +139,6 @@ typedef int intptr_t;
 #ifdef _MSC_VER
   #include <io.h>
 
-  typedef __int64 int64_t;
-  typedef __int32 int32_t;
-  typedef __int16 int16_t;
-  typedef __int8 int8_t;
-  typedef unsigned __int64 uint64_t;
-  typedef unsigned __int32 uint32_t;
-  typedef unsigned __int16 uint16_t;
-  typedef unsigned __int8 uint8_t;
-
   // vsnprintf is ISO/IEC 9899:1999
   // abstracting this to make it portable
   int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap);
@@ -730,7 +721,7 @@ void MakeNormalVectors( const vec3_t forward, vec3_t right, vec3_t up );
 
 //int	PlaneTypeForNormal (vec3_t normal);
 
-void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
+//void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 void VectorMatrixMultiply( const vec3_t p, vec3_t m[ 3 ], vec3_t out );
 void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void PerpendicularVector( vec3_t dst, const vec3_t src );

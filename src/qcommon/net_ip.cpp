@@ -52,10 +52,6 @@ typedef int socklen_t;
 typedef unsigned short sa_family_t;
 #endif
 
-#define EAGAIN WSAEWOULDBLOCK
-#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
-#define EAFNOSUPPORT WSAEAFNOSUPPORT
-#define ECONNRESET WSAECONNRESET
 typedef u_long ioctlarg_t;
 #define socketError WSAGetLastError()
 
@@ -98,7 +94,7 @@ typedef int ioctlarg_t;
 #endif
 
 static bool usingSocks = false;
-static int networkingEnabled = 0;
+static bool networkingEnabled = false;
 
 static cvar_t *net_enabled;
 static cvar_t *net_alternateProtocols;

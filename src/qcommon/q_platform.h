@@ -102,11 +102,7 @@ extern "C" {
     #define ID_INLINE __inline
     #define PATH_SEP '\\'
     
-    #if defined( __WIN64__ ) 
     #define ARCH_STRING "x86_64"
-    #elif defined _M_ALPHA
-    #define ARCH_STRING "AXP"
-    #endif
     
     #define Q3_LITTLE_ENDIAN
     
@@ -135,11 +131,7 @@ extern "C" {
     #define ID_INLINE __inline
     #define PATH_SEP '\\'
     
-    #if defined( _M_IX86 ) || defined( __i386__ )
     #define ARCH_STRING "x86"
-    #elif defined _M_ALPHA
-    #define ARCH_STRING "AXP"
-    #endif
     
     #define Q3_LITTLE_ENDIAN
     

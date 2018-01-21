@@ -1076,6 +1076,7 @@ static bool ConstOptimize(vm_t *vm, int callProcOfsSyscall)
   #define EDI "%%edi"
 #endif
 
+#ifndef _WIN32
 static int Q_VMftol(void)
 {
     int retval;
@@ -1091,6 +1092,7 @@ static int Q_VMftol(void)
 
     return retval;
 }
+#endif
 
 /*
 =================
@@ -1626,7 +1628,11 @@ void VM_Compile(vm_t *vm, vmHeader_t *header)
 #else // FTOL_PTR
 			// call the library conversion function
 			EmitRexString(0x48, "BA");			// mov edx, Q_VMftol
+#ifdef _WIN32
+            EmitPtr((void*)qvmftolsse);
+#else
 			EmitPtr((void*)Q_VMftol);
+#endif
 			EmitRexString(0x48, "FF D2");			// call edx
 			EmitCommand(LAST_COMMAND_MOV_STACK_EAX);	// mov dword ptr [edi + ebx * 4], eax
 #endif
@@ -1740,7 +1746,7 @@ This function is called directly by the generated code
 */
 
 #if defined(_MSC_VER) && defined(idx64)
-extern uint8_t qvmcall64(int *programStack, int *opStack, intptr_t *instructionPointers, byte *dataBase);
+extern "C" uint8_t qvmcall64(int *programStack, int *opStack, intptr_t *instructionPointers, byte *dataBase);
 #endif
 
 int VM_CallCompiled(vm_t *vm, int *args)

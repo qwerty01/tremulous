@@ -945,6 +945,7 @@ int	PlaneTypeForNormal (vec3_t normal) {
 */
 
 
+#if 0
 /*
 ================
 MatrixMultiply
@@ -970,6 +971,7 @@ void MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]) {
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
 				in1[2][2] * in2[2][2];
 }
+#endif
 
 /*
 ================

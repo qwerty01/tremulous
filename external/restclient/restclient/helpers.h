@@ -9,6 +9,7 @@
 #ifndef INCLUDE_RESTCLIENT_CPP_HELPERS_H_
 #define INCLUDE_RESTCLIENT_CPP_HELPERS_H_
 
+#include <cctype>
 #include <string>
 #include <algorithm>
 #include <functional>

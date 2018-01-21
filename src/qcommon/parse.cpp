@@ -1842,7 +1842,7 @@ typedef struct value_s
   struct value_s *prev, *next;
 } value_t;
 
-static bool Parse_OperatorPriority(int op)
+static int Parse_OperatorPriority(int op)
 {
   switch(op)
   {

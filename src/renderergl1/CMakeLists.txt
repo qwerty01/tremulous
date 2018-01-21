@@ -1,10 +1,8 @@
-include("${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake")
-
-find_package(OpenGL)
+set(PARENT_DIR ${CMAKE_SOURCE_DIR}/src)
 
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../jpeg-8c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../renderercommon 
+    ${PARENT_DIR}
+    ${CMAKE_SOURCE_DIR}/external/jpeg-8c
     ${SDL2_INCLUDE_DIRS} 
     )
 
@@ -34,9 +32,14 @@ set(renderergl1_SRCS
     tr_surface.cpp
     tr_world.cpp
     tr_local.h
-    ${CMAKE_SOURCE_DIR}/src/common/puff.cpp
-    ${CMAKE_SOURCE_DIR}/src/common/q_shared.c
-    ${CMAKE_SOURCE_DIR}/src/common/q_math.c
+
+    ${CMAKE_SOURCE_DIR}/src/qcommon/cvar.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/json.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.cpp
+    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.h
+    ${CMAKE_SOURCE_DIR}/src/qcommon/q_math.c
+    ${CMAKE_SOURCE_DIR}/src/qcommon/q_shared.c
+    ${CMAKE_SOURCE_DIR}/src/qcommon/qfiles.h
     )
 
 if(NOT USE_RENDERER_DLOPEN)
@@ -47,21 +50,19 @@ if(NOT USE_RENDERER_DLOPEN)
 
     target_link_libraries(
         renderergl1 renderercommon
-        ${SDL2_LIBRARIES}
+        SDL2::SDL2 
         )
 else(NOT USE_RENDERER_DLOPEN)
     add_library(
         renderergl1 SHARED
         ${renderergl1_SRCS}
         )
+
     target_link_libraries(
         renderergl1
         renderercommon
         ${FRAMEWORKS}
         ${OPENGL_LIBRARIES}
-        ${SDL2_LIBRARIES}
+        SDL2::SDL2
         )
-
 endif(NOT USE_RENDERER_DLOPEN)
-
-

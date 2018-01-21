@@ -15,7 +15,7 @@
 
 #include "../../src/client/cl_curl.h"
 #ifdef USE_LOCAL_HEADERS
-  #include "../libcurl-7.35.0/curl/curl.h"
+  #include "curl/curl.h"
 #else
   #include <curl/curl.h>
 #endif
