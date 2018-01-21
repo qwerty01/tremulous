@@ -9,10 +9,16 @@
 
 
 cmake_minimum_required(VERSION 3.5)
+
+include(${CMAKE_SOURCE_DIR}/cmake/HunterGate.cmake)
+HunterGate(
+ URL "https://github.com/ruslo/hunter/archive/v0.19.227.tar.gz"
+ SHA1 "808b778a443fcdf19c2d18fea8fa4bb59d16596a"
+ )
+
 project(Tremulous C CXX)
 
-set(CMAKE_CXX_FLAGS -std=c++1y)
-set(CMAKE_C_FLAGS -std=gnu99)
+set(CMAKE_CXX_FLAGS -std=c++14)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -35,18 +41,31 @@ option(USE_OPENAL_DLOPEN "" ON)
 option(USE_VOIP "" OFF)
 option(USE_MUMBLE "" OFF)
 option(USE_CODEC_OPUS "" ON)
-option(USE_RESTCLIENT "" ON)
+option(USE_RESTCLIENT "" OFF)
 
 include(${CMAKE_SOURCE_DIR}/cmake/build_dir)
-include(${CMAKE_SOURCE_DIR}/cmake/debug_cflags)
+#include(${CMAKE_SOURCE_DIR}/cmake/debug_cflags)
+
+hunter_add_package(CURL)
+hunter_add_package(SDL2)
+hunter_add_package(OpenAL)
+
+find_package(CURL CONFIG REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
+find_package(OpenGL)
+
+add_subdirectory(external/embed-resource)
 
 # builtins 
-add_subdirectory(external/SDL2)
+#add_subdirectory(external/SDL2)
 add_subdirectory(external/lua-5.3.3)
 add_subdirectory(external/nettle-3.3)
 add_subdirectory(external/zlib)
 add_subdirectory(external/jpeg-8c)
+if(USE_RESTCLIENT)
 add_subdirectory(external/restclient)
+endif(USE_RESTCLIENT)
 
 # audio
 add_subdirectory(external/opus-1.1.4)
@@ -59,6 +78,11 @@ add_subdirectory(src/script)
 add_subdirectory(src/renderercommon)
 add_subdirectory(src/renderergl1)
 add_subdirectory(src/renderergl2)
+
+if(WIN32)
+enable_language(ASM_MASM)
+add_subdirectory(src/asm)
+endif(WIN32)
 
 #         .                    .
 #   ___   |   `   ___  , __   _/_
@@ -95,7 +119,7 @@ endif(BUILD_GRANGER)
 #                                               |__|
 # TODO: DO NOT build unless building a QVM
 
-add_subdirectory(src/tools)
+#add_subdirectory(src/tools)
 
 #
 # ,   . `
@@ -104,7 +128,7 @@ add_subdirectory(src/tools)
 # `._/| /
 #
 
-add_subdirectory(src/ui)
+#add_subdirectory(src/ui)
 
 #   ___.   ___  , _ , _     ___
 # .'   `  /   ` |' `|' `. .'   `
@@ -113,7 +137,7 @@ add_subdirectory(src/ui)
 #  \___/
 #
 
-add_subdirectory(src/game)
+#add_subdirectory(src/game)
 
 #   ___    ___.   ___  , _ , _     ___
 # .'   ` .'   `  /   ` |' `|' `. .'   `
@@ -122,7 +146,7 @@ add_subdirectory(src/game)
 #         \___/
 #
 
-add_subdirectory(src/cgame)
+#add_subdirectory(src/cgame)
 
 #            _____)                          ____  ___)
 #          /                                (, /   /      /)
