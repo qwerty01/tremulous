@@ -25,11 +25,11 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #define UI_LOCAL_H
 
 #include "client/keycodes.h"
-#include "game/bg_public.h"
+#include "bgame/bg_public.h"
 #include "qcommon/q_shared.h"
 #include "renderercommon/tr_types.h"
-#include "ui_public.h"
-#include "ui_shared.h"
+#include "gui_public.h"
+#include "gui_shared.h"
 
 //
 // ui_main.c

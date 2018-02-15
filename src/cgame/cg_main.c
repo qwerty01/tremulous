@@ -24,7 +24,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 // cg_main.c -- initialization and primary entry point for cgame
 
 #include "cg_local.h"
-#include "ui/ui_shared.h"
+#include "gui/gui_shared.h"
 
 // display context for new ui stuff
 displayContextDef_t cgDC;

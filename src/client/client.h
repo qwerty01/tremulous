@@ -43,7 +43,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include "qcommon/vm.h"
 #include "renderercommon/tr_public.h"
 #include "sys/sys_shared.h"
-#include "ui/ui_public.h"
+#include "gui/gui_public.h"
 
 #include "cl_curl.h"
 #include "keys.h"

@@ -9,7 +9,7 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(BGAME_SOURCE_DIR ../game)
+set(BGAME_SOURCE_DIR ../bgame)
 set(QC_SOURCE_DIR ../qcommon)
 set(RC_SOURCE_DIR ../renderercommon)
 set(CLIENT_SOURCE_DIR ../client)
@@ -25,12 +25,12 @@ add_definitions( -DUI )
 #set_source_files_properties(menudef.h PROPERTIES GENERATED TRUE)
 
 set(UI_SOURCES
-    ui_main.c # Must be listed first!
-    ui_atoms.c
-    ui_gameinfo.c
-    ui_local.h
-    ui_shared.c
-    ui_shared.h
+    gui_main.c # Must be listed first!
+    gui_atoms.c
+    gui_gameinfo.c
+    gui_local.h
+    gui_shared.c
+    gui_shared.h
     ${CMAKE_SOURCE_DIR}/assets/ui/menudef.h
     ${BGAME_SOURCE_DIR}/bg_lib.h
     ${BGAME_SOURCE_DIR}/bg_public.h
@@ -48,7 +48,7 @@ set(UI_SOURCES
 add_library(
     ui SHARED
     ${UI_SOURCES}
-    ui_syscalls.c
+    gui_syscalls.c
     )
 
 target_include_directories(
@@ -58,7 +58,7 @@ target_include_directories(
     )
 
 include(${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake)
-add_qvm( ui ${UI_SOURCES} ui_syscalls.asm )
+add_qvm( ui ${UI_SOURCES} gui_syscalls.asm )
 
 add_custom_command(
     TARGET ui POST_BUILD

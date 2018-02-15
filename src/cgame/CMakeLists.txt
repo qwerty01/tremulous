@@ -9,9 +9,9 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(BGAME_SOURCE_DIR ../game)
+set(BGAME_SOURCE_DIR ../bgame)
 set(QC_SOURCE_DIR ../qcommon)
-set(UI_SOURCE_DIR ../ui)
+set(GUI_SOURCE_DIR ../gui)
 set(RC_SOURCE_DIR ../renderercommon)
 
 add_definitions( -DCGAME )
@@ -52,8 +52,8 @@ set( CGAME_SOURCES
     cg_view.c
     cg_weapons.c
     #
-    ${GUI_SOURCE_DIR}/ui_shared.h
-    ${GUI_SOURCE_DIR}/ui_shared.c
+    ${GUI_SOURCE_DIR}/gui_shared.h
+    ${GUI_SOURCE_DIR}/gui_shared.c
     #
     ${QC_SOURCE_DIR}/q_shared.h
     ${QC_SOURCE_DIR}/q_shared.c

@@ -7,9 +7,6 @@
 ##  `Y88P' Y88888P Y888888P Y88888P VP   V8P    YP
 #
 
-find_package(CURL)
-find_package(OpenGL)
-find_package(OpenAL)
 include(${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake)
 
 add_definitions(
@@ -30,6 +27,10 @@ set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
 set(APPLE_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
 endif(APPLE)
+
+find_package(CURL)
+find_package(OpenGL)
+find_package(OpenAL)
 
 add_executable(
     tremulous

@@ -21,7 +21,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
-#include "ui_shared.h"
+#include "gui_shared.h"
 
 #define SCROLL_TIME_START 500
 #define SCROLL_TIME_ADJUST 150

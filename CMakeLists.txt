@@ -104,7 +104,7 @@ add_subdirectory(src/tools)
 # `._/| /
 #
 
-add_subdirectory(src/ui)
+add_subdirectory(src/gui)
 
 #   ___.   ___  , _ , _     ___
 # .'   `  /   ` |' `|' `. .'   `
