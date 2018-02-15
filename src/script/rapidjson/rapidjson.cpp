@@ -261,6 +261,7 @@ class Encoder
             writer->EndObject();
         }
 
+    //Dushan
     template<typename Writer>
         void encodeObject(lua_State* L, Writer* writer, int depth, std::vector<Key> &keys)
         {
@@ -270,10 +271,10 @@ class Encoder
 
             std::vector<Key>::const_iterator i = keys.begin();
             std::vector<Key>::const_iterator e = keys.end();
-            for ( auto const& i : keys )
+            for (; i != e; ++i)
             {
-                writer->Key(i.key, static_cast<SizeType>(i.size));
-                lua_pushlstring(L, i.key, i.size);
+                writer->Key(i->key, static_cast<SizeType>(i->size));
+                lua_pushlstring(L, i->key, i->size);
                 lua_gettable(L, -2);
                 encodeValue(L, writer, -1, depth);
                 lua_pop(L, 1);
@@ -282,13 +283,14 @@ class Encoder
             writer->EndObject();
         }
 
+    //Dushan
     template<typename Writer>
         void encodeArray(lua_State* L, Writer* writer, int depth)
         {
 
             writer->StartArray();
-            auto MAX = static_cast<int>(luax::rawlen(L, -1)); // lua_rawlen always returns value >= 0
-            for (auto n = 1; n <= MAX; ++n)
+            int MAX = static_cast<int>(luax::rawlen(L, -1)); // lua_rawlen always returns value >= 0
+            for (int n = 1; n <= MAX; ++n)
             {
                 lua_rawgeti(L, -1, n);
                 encodeValue(L, writer, -1, depth);

@@ -1,4 +1,13 @@
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D__AMD64__ 
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
 
 add_library(
     script_api STATIC
@@ -25,12 +34,11 @@ include_directories(
     # these are in global namespace
     ${EXTERNAL_DIR}/lua-5.3.3/include
     ${EXTERNAL_DIR}/sol
-	#Dushan - I have no idea what is this
-    ${CMAKE_CURRENT_SOURCE_DIR}/../common
-	#
     # these have they're own namespace
     ${EXTERNAL_DIR}/nettle-3.3
     ${EXTERNAL_DIR}/rapidjson
+	${ENGINE_DIR}/qcommon
+	${ENGINE_DIR}
     )
 
 target_link_libraries(

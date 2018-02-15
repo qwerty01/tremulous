@@ -33,7 +33,12 @@ int qlua_writestringerror(const char *fmt, ...);
 #define lua_writeline        qlua_writeline
 #define lua_writestringerror qlua_writestringerror
 
+//Dushan - TODO
+#ifdef _WIN32
+#define LUA_TMPNAMTEMPLATE	""
+#else
 #define LUA_TMPNAMTEMPLATE	"/tmp/tremulous_XXXXXX"
+#endif
 
 // Because: src/lua-5.3.3/include/luaconf.h:69:9: warning: 'LUA_USE_POSIX' macro redefined [-Wmacro-redefined]
 //#ifndef _WIN32

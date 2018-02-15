@@ -7,7 +7,7 @@ namespace file
 {
     inline FILE* open(const char* filename, const char* mode)
     {
-#if WIN32
+#if _WIN32
         FILE* fp = nullptr;
         fopen_s(&fp, filename, mode);
         return fp;

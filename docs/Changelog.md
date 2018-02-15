@@ -6,3 +6,4 @@
 	* Removed old Visual Studio files
 	* Updated cMake system
 	* More work for the cMake system on the Windows platform
+	* Fixed compiling "script_api" on the Windows platform
