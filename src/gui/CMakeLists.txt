@@ -9,7 +9,7 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(BG_SOURCE_DIR ../game)
+set(BGAME_SOURCE_DIR ../game)
 set(QC_SOURCE_DIR ../qcommon)
 set(RC_SOURCE_DIR ../renderercommon)
 set(CLIENT_SOURCE_DIR ../client)
@@ -32,12 +32,12 @@ set(UI_SOURCES
     ui_shared.c
     ui_shared.h
     ${CMAKE_SOURCE_DIR}/assets/ui/menudef.h
-    ${BG_SOURCE_DIR}/bg_lib.h
-    ${BG_SOURCE_DIR}/bg_public.h
-    ${BG_SOURCE_DIR}/bg_alloc.c
-    ${BG_SOURCE_DIR}/bg_lib.c
-    ${BG_SOURCE_DIR}/bg_misc.c
-    ${BG_SOURCE_DIR}/bg_voice.c
+    ${BGAME_SOURCE_DIR}/bg_lib.h
+    ${BGAME_SOURCE_DIR}/bg_public.h
+    ${BGAME_SOURCE_DIR}/bg_alloc.c
+    ${BGAME_SOURCE_DIR}/bg_lib.c
+    ${BGAME_SOURCE_DIR}/bg_misc.c
+    ${BGAME_SOURCE_DIR}/bg_voice.c
     ${QC_SOURCE_DIR}/q_shared.h
     ${QC_SOURCE_DIR}/q_shared.c
     ${QC_SOURCE_DIR}/q_math.c
@@ -54,7 +54,7 @@ add_library(
 target_include_directories(
     ui PUBLIC
     ${QC_SOURCE_DIR}
-    ${BG_SOURCE_DIR}
+    ${BGAME_SOURCE_DIR}
     )
 
 include(${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake)

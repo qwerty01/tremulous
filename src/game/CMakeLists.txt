@@ -10,6 +10,7 @@
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
 set(QC_SOURCE_DIR ../qcommon)
+set(BGAME_SOURCE_DIR ../bgame)
 #set(RC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../renderercommon)
 #set(CLIENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../client)
 
@@ -17,15 +18,15 @@ add_definitions( -DGAME )
 
 set( GAME_SOURCES
     g_main.c # Must be listed first!
-    bg_alloc.c
-    bg_lib.c
-    bg_lib.h
-    bg_local.h
-    bg_misc.c
-    bg_pmove.c
-    bg_public.h
-    bg_slidemove.c
-    bg_voice.c
+    ${BGAME_SOURCE_DIR}/bg_alloc.c
+    ${BGAME_SOURCE_DIR}/bg_lib.c
+    ${BGAME_SOURCE_DIR}/bg_lib.h
+    ${BGAME_SOURCE_DIR}/bg_local.h
+    ${BGAME_SOURCE_DIR}/bg_misc.c
+    ${BGAME_SOURCE_DIR}/bg_pmove.c
+    ${BGAME_SOURCE_DIR}/bg_public.h
+    ${BGAME_SOURCE_DIR}/bg_slidemove.c
+    ${BGAME_SOURCE_DIR}/bg_voice.c
     g_active.c
     g_admin.c
     g_admin.h

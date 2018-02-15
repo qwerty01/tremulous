@@ -9,7 +9,7 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(BG_SOURCE_DIR ../game)
+set(BGAME_SOURCE_DIR ../game)
 set(QC_SOURCE_DIR ../qcommon)
 set(UI_SOURCE_DIR ../ui)
 set(RC_SOURCE_DIR ../renderercommon)
@@ -21,14 +21,14 @@ set( CGAME_SOURCES
     cg_public.h
     cg_local.h
     binaryshader.h
-    ${BG_SOURCE_DIR}/bg_lib.h
-    ${BG_SOURCE_DIR}/bg_public.h
-    ${BG_SOURCE_DIR}/bg_alloc.c
-    ${BG_SOURCE_DIR}/bg_lib.c
-    ${BG_SOURCE_DIR}/bg_misc.c
-    ${BG_SOURCE_DIR}/bg_voice.c
-    ${BG_SOURCE_DIR}/bg_pmove.c
-    ${BG_SOURCE_DIR}/bg_slidemove.c
+    ${BGAME_SOURCE_DIR}/bg_lib.h
+    ${BGAME_SOURCE_DIR}/bg_public.h
+    ${BGAME_SOURCE_DIR}/bg_alloc.c
+    ${BGAME_SOURCE_DIR}/bg_lib.c
+    ${BGAME_SOURCE_DIR}/bg_misc.c
+    ${BGAME_SOURCE_DIR}/bg_voice.c
+    ${BGAME_SOURCE_DIR}/bg_pmove.c
+    ${BGAME_SOURCE_DIR}/bg_slidemove.c
     cg_animation.c
     cg_animmapobj.c
     cg_attachment.c
@@ -52,8 +52,8 @@ set( CGAME_SOURCES
     cg_view.c
     cg_weapons.c
     #
-    ${UI_SOURCE_DIR}/ui_shared.h
-    ${UI_SOURCE_DIR}/ui_shared.c
+    ${GUI_SOURCE_DIR}/ui_shared.h
+    ${GUI_SOURCE_DIR}/ui_shared.c
     #
     ${QC_SOURCE_DIR}/q_shared.h
     ${QC_SOURCE_DIR}/q_shared.c
@@ -66,10 +66,10 @@ add_library( cgame SHARED ${CGAME_SOURCES} cg_syscalls.c )
 
 target_include_directories(
     cgame PUBLIC
-    ${BG_SOURCE_DIR}
+    ${BGAME_SOURCE_DIR}
     ${QC_SOURCE_DIR}
     ${RC_SOURCE_DIR}
-    ${UI_SOURCE_DIR}
+    ${GUI_SOURCE_DIR}
     )
 
 include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake )
