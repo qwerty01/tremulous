@@ -1,3 +1,5 @@
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
 add_library(
     script_api STATIC
     client.h
@@ -21,12 +23,14 @@ add_library(
 
 include_directories(
     # these are in global namespace
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/lua-5.3.3/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/sol
+    ${EXTERNAL_DIR}/lua-5.3.3/include
+    ${EXTERNAL_DIR}/sol
+	#Dushan - I have no idea what is this
     ${CMAKE_CURRENT_SOURCE_DIR}/../common
+	#
     # these have they're own namespace
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/nettle-3.3
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/rapidjson
+    ${EXTERNAL_DIR}/nettle-3.3
+    ${EXTERNAL_DIR}/rapidjson
     )
 
 target_link_libraries(

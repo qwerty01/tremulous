@@ -1,6 +1,9 @@
 include(${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake)
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c ${SDL2_INCLUDE_DIRS} )
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
+include_directories( ${EXTERNAL_DIR}/jpeg-8c ${SDL2_INCLUDE_DIRS} ${ENGINE_DIR} )
 
 add_library(
     renderercommon STATIC
@@ -16,54 +19,54 @@ add_library(
     tr_noise.cpp
     tr_public.h
     tr_types.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../sdl/sdl_gamma.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../sdl/sdl_glimp.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jaricom.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcapimin.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcapistd.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcarith.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jccoefct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jccolor.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcdctmgr.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jchuff.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcinit.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcmainct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcmarker.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcmaster.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcomapi.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcparam.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcprepct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jcsample.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jctrans.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdapimin.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdapistd.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdarith.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdatadst.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdatasrc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdcoefct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdcolor.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jddctmgr.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdhuff.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdinput.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdmainct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdmarker.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdmaster.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdmerge.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdpostct.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdsample.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jdtrans.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jerror.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jfdctflt.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jfdctfst.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jfdctint.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jidctflt.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jidctfst.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jidctint.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jmemmgr.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jmemnobs.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jquant1.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jquant2.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jpeg-8c/jutils.c
+    ${ENGINE_DIR}/sdl/sdl_gamma.cpp
+    ${ENGINE_DIR}/sdl/sdl_glimp.cpp
+    ${EXTERNAL_DIR}/jpeg-8c/jaricom.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcapimin.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcapistd.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcarith.c
+    ${EXTERNAL_DIR}/jpeg-8c/jccoefct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jccolor.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcdctmgr.c
+    ${EXTERNAL_DIR}/jpeg-8c/jchuff.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcinit.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcmainct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcmarker.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcmaster.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcomapi.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcparam.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcprepct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jcsample.c
+    ${EXTERNAL_DIR}/jpeg-8c/jctrans.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdapimin.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdapistd.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdarith.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdatadst.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdatasrc.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdcoefct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdcolor.c
+    ${EXTERNAL_DIR}/jpeg-8c/jddctmgr.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdhuff.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdinput.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdmainct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdmarker.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdmaster.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdmerge.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdpostct.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdsample.c
+    ${EXTERNAL_DIR}/jpeg-8c/jdtrans.c
+    ${EXTERNAL_DIR}/jpeg-8c/jerror.c
+    ${EXTERNAL_DIR}/jpeg-8c/jfdctflt.c
+    ${EXTERNAL_DIR}/jpeg-8c/jfdctfst.c
+    ${EXTERNAL_DIR}/jpeg-8c/jfdctint.c
+    ${EXTERNAL_DIR}/jpeg-8c/jidctflt.c
+    ${EXTERNAL_DIR}/jpeg-8c/jidctfst.c
+    ${EXTERNAL_DIR}/jpeg-8c/jidctint.c
+    ${EXTERNAL_DIR}/jpeg-8c/jmemmgr.c
+    ${EXTERNAL_DIR}/jpeg-8c/jmemnobs.c
+    ${EXTERNAL_DIR}/jpeg-8c/jquant1.c
+    ${EXTERNAL_DIR}/jpeg-8c/jquant2.c
+    ${EXTERNAL_DIR}/jpeg-8c/jutils.c
     )
 
 add_definitions(

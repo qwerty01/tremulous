@@ -21,7 +21,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
-#include "ui_local.h"
+#include "gui_local.h"
 
 // this file is only included when building a dll
 // syscalls.asm is included instead when building a qvm

@@ -26,7 +26,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 
   User interface building blocks and support functions.
 **********************************************************************/
-#include "ui_local.h"
+#include "gui_local.h"
 
 qboolean m_entersound;  // after a frame, so caching won't disrupt the sound
 

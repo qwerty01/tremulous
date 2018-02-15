@@ -14,9 +14,17 @@ add_definitions(
     -DUSE_VOIP
     -DNDEBUG
     )
+	
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D__AMD64__ 
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
 
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
-set(PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 if(APPLE)
 set(APPLE_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
 endif(APPLE)
@@ -35,45 +43,45 @@ add_executable(
     sv_snapshot.cpp
     sv_world.cpp
     #
-    ${PARENT_DIR}/qcommon/cm_load.cpp
-    ${PARENT_DIR}/qcommon/cm_patch.cpp
-    ${PARENT_DIR}/qcommon/cm_polylib.cpp
-    ${PARENT_DIR}/qcommon/cm_test.cpp
-    ${PARENT_DIR}/qcommon/cm_trace.cpp
-    ${PARENT_DIR}/qcommon/cmd.cpp
-    ${PARENT_DIR}/qcommon/common.cpp
-    ${PARENT_DIR}/qcommon/crypto.cpp
-    ${PARENT_DIR}/qcommon/cvar.cpp
-    ${PARENT_DIR}/qcommon/files.cpp
-    ${PARENT_DIR}/qcommon/huffman.cpp
-    ${PARENT_DIR}/qcommon/huffman.h
-    ${PARENT_DIR}/qcommon/ioapi.cpp
-    ${PARENT_DIR}/qcommon/md4.cpp
-    ${PARENT_DIR}/qcommon/msg.h
-    ${PARENT_DIR}/qcommon/msg.cpp
-    ${PARENT_DIR}/qcommon/net.h
-    ${PARENT_DIR}/qcommon/net_chan.cpp
-    ${PARENT_DIR}/qcommon/net_ip.cpp
-    ${PARENT_DIR}/qcommon/parse.cpp
-    ${PARENT_DIR}/qcommon/q3_lauxlib.cpp
-    ${PARENT_DIR}/qcommon/q_math.c
-    ${PARENT_DIR}/qcommon/q_shared.c
-    ${PARENT_DIR}/qcommon/unzip.cpp
-    ${PARENT_DIR}/qcommon/vm.cpp
-    ${PARENT_DIR}/qcommon/vm_interpreted.cpp
-    ${PARENT_DIR}/qcommon/vm_x86.cpp
+    ${ENGINE_DIR}/qcommon/cm_load.cpp
+    ${ENGINE_DIR}/qcommon/cm_patch.cpp
+    ${ENGINE_DIR}/qcommon/cm_polylib.cpp
+    ${ENGINE_DIR}/qcommon/cm_test.cpp
+    ${ENGINE_DIR}/qcommon/cm_trace.cpp
+    ${ENGINE_DIR}/qcommon/cmd.cpp
+    ${ENGINE_DIR}/qcommon/common.cpp
+    ${ENGINE_DIR}/qcommon/crypto.cpp
+    ${ENGINE_DIR}/qcommon/cvar.cpp
+    ${ENGINE_DIR}/qcommon/files.cpp
+    ${ENGINE_DIR}/qcommon/huffman.cpp
+    ${ENGINE_DIR}/qcommon/huffman.h
+    ${ENGINE_DIR}/qcommon/ioapi.cpp
+    ${ENGINE_DIR}/qcommon/md4.cpp
+    ${ENGINE_DIR}/qcommon/msg.h
+    ${ENGINE_DIR}/qcommon/msg.cpp
+    ${ENGINE_DIR}/qcommon/net.h
+    ${ENGINE_DIR}/qcommon/net_chan.cpp
+    ${ENGINE_DIR}/qcommon/net_ip.cpp
+    ${ENGINE_DIR}/qcommon/parse.cpp
+    ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
+    ${ENGINE_DIR}/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/unzip.cpp
+    ${ENGINE_DIR}/qcommon/vm.cpp
+    ${ENGINE_DIR}/qcommon/vm_interpreted.cpp
+    ${ENGINE_DIR}/qcommon/vm_x86.cpp
     #
-    ${PARENT_DIR}/null/null_client.cpp
-    ${PARENT_DIR}/null/null_input.cpp
-    ${PARENT_DIR}/null/null_snddma.cpp
+    ${ENGINE_DIR}/null/null_client.cpp
+    ${ENGINE_DIR}/null/null_input.cpp
+    ${ENGINE_DIR}/null/null_snddma.cpp
     #
-    ${PARENT_DIR}/asm/snapvector.c
+    ${ENGINE_DIR}/asm/snapvector.c
     #
-    ${PARENT_DIR}/sys/con_log.cpp
-    ${PARENT_DIR}/sys/con_tty.cpp
-    ${PARENT_DIR}/sys/sys_main.cpp
-    ${PARENT_DIR}/sys/sys_unix.cpp
-    ${PARENT_DIR}/sys/sys_shared.h
+    ${ENGINE_DIR}/sys/con_log.cpp
+    ${ENGINE_DIR}/sys/con_tty.cpp
+    ${ENGINE_DIR}/sys/sys_main.cpp
+    ${ENGINE_DIR}/sys/sys_unix.cpp
+    ${ENGINE_DIR}/sys/sys_shared.h
     ${APPLE_SOURCES}
     #
     ${EXTERNAL_DIR}/zlib/adler32.c
@@ -105,7 +113,8 @@ target_link_libraries(
     )
     
 include_directories(
-    ${PARENT_DIR}/script
+	${ENGINE_DIR}
+    ${ENGINE_DIR}/script
     ${EXTERNAL_DIR}/lua-5.3.3/include
     ${EXTERNAL_DIR}/sol
     ${EXTERNAL_DIR}/script/rapidjson

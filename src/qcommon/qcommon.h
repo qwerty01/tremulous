@@ -24,7 +24,10 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #ifndef _QCOMMON_H_
 #define _QCOMMON_H_
 
+//Dushan - there is no stdbool.h for the Windows platform by default
+#ifdef __LINUX
 #include <stdbool.h>
+#endif
 
 #include "cm_public.h"
 

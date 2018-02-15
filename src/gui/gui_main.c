@@ -29,7 +29,7 @@ USER INTERFACE MAIN
 =======================================================================
 */
 
-#include "ui_local.h"
+#include "gui_local.h"
 
 uiInfo_t uiInfo;
 

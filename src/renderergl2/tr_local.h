@@ -25,7 +25,10 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
 
+#ifndef _WIN32
+//Dushan - VS2010 do not support stdbool 
 #include <stdbool.h> 
+#endif
 
 #include "qcommon/cvar.h"
 #include "qcommon/q_shared.h"

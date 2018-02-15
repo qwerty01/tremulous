@@ -9,10 +9,11 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(BGAME_SOURCE_DIR ../bgame)
-set(QC_SOURCE_DIR ../qcommon)
-set(GUI_SOURCE_DIR ../gui)
-set(RC_SOURCE_DIR ../renderercommon)
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(BGAME_SOURCE_DIR ${ENGINE_DIR}/bgame)
+set(QC_SOURCE_DIR ${ENGINE_DIR}/qcommon)
+set(GUI_SOURCE_DIR ${ENGINE_DIR}/gui)
+set(RC_SOURCE_DIR ${ENGINE_DIR}/renderercommon)
 
 add_definitions( -DCGAME )
 
@@ -70,6 +71,7 @@ target_include_directories(
     ${QC_SOURCE_DIR}
     ${RC_SOURCE_DIR}
     ${GUI_SOURCE_DIR}
+	${ENGINE_DIR}
     )
 
 include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake )

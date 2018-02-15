@@ -37,6 +37,8 @@ option(USE_MUMBLE "" OFF)
 option(USE_CODEC_OPUS "" ON)
 option(USE_RESTCLIENT "" ON)
 
+#Dushan - we need this so cMake system for the Windows can register new cMake modules in the current list of the folders
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/build_dir)
 include(${CMAKE_SOURCE_DIR}/cmake/debug_cflags)
 

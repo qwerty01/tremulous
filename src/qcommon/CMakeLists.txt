@@ -49,6 +49,6 @@ add_library (
     vm_x86.c
 )
 
-include_directories( ${RESTCLIENT_INCLUDES_DIR} )
+include_directories( ${RESTCLIENT_INCLUDES_DIR} ${ENGINE_DIR} )
 
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )

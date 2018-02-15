@@ -2,12 +2,15 @@ include("${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake")
 
 find_package(OpenGL)
 
-set(PARENT_DIR ${CMAKE_SOURCE_DIR}/src)
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
 include_directories(
-    ${PARENT_DIR}/jpeg-8c
-    ${PARENT_DIR}/renderercommon 
-    ${PARENT_DIR}/nettle-3.3
+    ${EXTERNAL_DIR}/jpeg-8c
+    ${EXTERNAL_DIR}/renderercommon 
+    ${EXTERNAL_DIR}/nettle-3.3
     ${SDL2_INCLUDE_DIRS} 
+	${ENGINE_DIR}
     )
 
 set(GLSL_SHADERS
@@ -107,9 +110,9 @@ set(renderergl2_SRCS
     tr_surface.cpp
     tr_vbo.cpp
     tr_world.cpp
-    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.cpp
-    ${CMAKE_SOURCE_DIR}/src/qcommon/q_shared.c
-    ${CMAKE_SOURCE_DIR}/src/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/puff.cpp
+    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_math.c
     )
 
 if(NOT USE_RENDERER_DLOPEN)

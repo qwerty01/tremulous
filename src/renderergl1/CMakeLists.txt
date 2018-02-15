@@ -2,10 +2,14 @@ include("${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake")
 
 find_package(OpenGL)
 
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../jpeg-8c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../renderercommon 
+    ${EXTERNAL_DIR}/jpeg-8c
+    ${ENGINE_DIR}/renderercommon 
     ${SDL2_INCLUDE_DIRS} 
+	${ENGINE_DIR}
     )
 
 set(renderergl1_SRCS
@@ -34,9 +38,9 @@ set(renderergl1_SRCS
     tr_surface.cpp
     tr_world.cpp
     tr_local.h
-    ${CMAKE_SOURCE_DIR}/src/qcommon/puff.cpp
-    ${CMAKE_SOURCE_DIR}/src/qcommon/q_shared.c
-    ${CMAKE_SOURCE_DIR}/src/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/puff.cpp
+    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_math.c
     )
 
 if(NOT USE_RENDERER_DLOPEN)

@@ -25,7 +25,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 // gameinfo.c
 //
 
-#include "ui_local.h"
+#include "gui_local.h"
 
 //
 // arena and bot info

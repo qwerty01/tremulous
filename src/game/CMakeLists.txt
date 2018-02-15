@@ -9,10 +9,11 @@
 
 set(CMAKE_INSTALL_NAME_DIR ${PROJECT_BINARY_DIR}/gpp)
 
-set(QC_SOURCE_DIR ../qcommon)
-set(BGAME_SOURCE_DIR ../bgame)
-#set(RC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../renderercommon)
-#set(CLIENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../client)
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(QC_SOURCE_DIR ${ENGINE_DIR}/qcommon)
+set(BGAME_SOURCE_DIR ${ENGINE_DIR}/bgame)
+#set(RC_SOURCE_DIR ${ENGINE_DIR}/renderercommon)
+#set(CLIENT_SOURCE_DIR ${ENGINE_DIR}/client)
 
 add_definitions( -DGAME )
 
@@ -60,7 +61,7 @@ set( GAME_SOURCES
 
 add_library( game SHARED ${GAME_SOURCES} g_syscalls.c )
 
-include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake )
+include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake ${ENGINE_DIR} )
 add_qvm( game ${GAME_SOURCES} g_syscalls.asm )
 
 add_custom_command(

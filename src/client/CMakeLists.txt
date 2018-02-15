@@ -12,6 +12,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake)
 add_definitions(
     -DUSE_LOCAL_HEADERS
     -DUSE_RESTCLIENT
+	#Dushan - we need this
+	-DUSE_CURL_DLOPEN
     -DUSE_CODEC_OPUS
     -DUSE_OPENAL
     -DUSE_OPENAL_DLOPEN
@@ -21,11 +23,20 @@ add_definitions(
     -DPRODUCT_VERSION="1.3.0 alpha"
     ${SDL2_DEFINES}
     )
+	
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D__AMD64__ 
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
 
-set(PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+#Dushan - I had problems with this on the Windows platform <3
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
-set(APPLE_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
+set(APPLE_SOURCES ${ENGINE_DIR}/sys/sys_osx.mm)
 endif(APPLE)
 
 find_package(CURL)
@@ -35,7 +46,7 @@ find_package(OpenAL)
 add_executable(
     tremulous
     #
-    ${PARENT_DIR}/asm/snapvector.c
+    ${ENGINE_DIR}/asm/snapvector.c
     #
     cl_avi.cpp
     cl_cgame.cpp
@@ -65,55 +76,55 @@ add_executable(
     snd_openal.cpp
     snd_wavelet.cpp
     #
-    ${PARENT_DIR}/qcommon/cm_load.cpp
-    ${PARENT_DIR}/qcommon/cm_patch.cpp
-    ${PARENT_DIR}/qcommon/cm_polylib.cpp
-    ${PARENT_DIR}/qcommon/cm_test.cpp
-    ${PARENT_DIR}/qcommon/cm_trace.cpp
-    ${PARENT_DIR}/qcommon/cmd.cpp
-    ${PARENT_DIR}/qcommon/common.cpp
-    ${PARENT_DIR}/qcommon/crypto.cpp
-    ${PARENT_DIR}/qcommon/cvar.cpp
-    ${PARENT_DIR}/qcommon/cvar.h
-    ${PARENT_DIR}/qcommon/files.cpp
-    ${PARENT_DIR}/qcommon/files.h
-    ${PARENT_DIR}/qcommon/huffman.cpp
-    ${PARENT_DIR}/qcommon/huffman.h
-    ${PARENT_DIR}/qcommon/ioapi.cpp
-    ${PARENT_DIR}/qcommon/md4.cpp
-    ${PARENT_DIR}/qcommon/md5.cpp
-    ${PARENT_DIR}/qcommon/msg.cpp
-    ${PARENT_DIR}/qcommon/msg.h
-    ${PARENT_DIR}/qcommon/net_chan.cpp
-    ${PARENT_DIR}/qcommon/net_ip.cpp
-    ${PARENT_DIR}/qcommon/net.h
-    ${PARENT_DIR}/qcommon/parse.cpp
-    ${PARENT_DIR}/qcommon/puff.cpp
-    ${PARENT_DIR}/qcommon/q_shared.c
-    ${PARENT_DIR}/qcommon/q3_lauxlib.cpp
-    ${PARENT_DIR}/qcommon/q_math.c
-    ${PARENT_DIR}/qcommon/unzip.cpp
-    ${PARENT_DIR}/qcommon/vm.cpp
-    ${PARENT_DIR}/qcommon/vm_interpreted.cpp
-    ${PARENT_DIR}/qcommon/vm_x86.cpp
+    ${ENGINE_DIR}/qcommon/cm_load.cpp
+    ${ENGINE_DIR}/qcommon/cm_patch.cpp
+    ${ENGINE_DIR}/qcommon/cm_polylib.cpp
+    ${ENGINE_DIR}/qcommon/cm_test.cpp
+    ${ENGINE_DIR}/qcommon/cm_trace.cpp
+    ${ENGINE_DIR}/qcommon/cmd.cpp
+    ${ENGINE_DIR}/qcommon/common.cpp
+    ${ENGINE_DIR}/qcommon/crypto.cpp
+    ${ENGINE_DIR}/qcommon/cvar.cpp
+    ${ENGINE_DIR}/qcommon/cvar.h
+    ${ENGINE_DIR}/qcommon/files.cpp
+    ${ENGINE_DIR}/qcommon/files.h
+    ${ENGINE_DIR}/qcommon/huffman.cpp
+    ${ENGINE_DIR}/qcommon/huffman.h
+    ${ENGINE_DIR}/qcommon/ioapi.cpp
+    ${ENGINE_DIR}/qcommon/md4.cpp
+    ${ENGINE_DIR}/qcommon/md5.cpp
+    ${ENGINE_DIR}/qcommon/msg.cpp
+    ${ENGINE_DIR}/qcommon/msg.h
+    ${ENGINE_DIR}/qcommon/net_chan.cpp
+    ${ENGINE_DIR}/qcommon/net_ip.cpp
+    ${ENGINE_DIR}/qcommon/net.h
+    ${ENGINE_DIR}/qcommon/parse.cpp
+    ${ENGINE_DIR}/qcommon/puff.cpp
+    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
+    ${ENGINE_DIR}/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/unzip.cpp
+    ${ENGINE_DIR}/qcommon/vm.cpp
+    ${ENGINE_DIR}/qcommon/vm_interpreted.cpp
+    ${ENGINE_DIR}/qcommon/vm_x86.cpp
     #
-    ${PARENT_DIR}/sdl/sdl_input.cpp
-    ${PARENT_DIR}/sdl/sdl_snd.cpp
+    ${ENGINE_DIR}/sdl/sdl_input.cpp
+    ${ENGINE_DIR}/sdl/sdl_snd.cpp
     #
-    ${PARENT_DIR}/server/sv_ccmds.cpp
-    ${PARENT_DIR}/server/sv_client.cpp
-    ${PARENT_DIR}/server/sv_game.cpp
-    ${PARENT_DIR}/server/sv_init.cpp
-    ${PARENT_DIR}/server/sv_main.cpp
-    ${PARENT_DIR}/server/sv_net_chan.cpp
-    ${PARENT_DIR}/server/sv_snapshot.cpp
-    ${PARENT_DIR}/server/sv_world.cpp
+    ${ENGINE_DIR}/server/sv_ccmds.cpp
+    ${ENGINE_DIR}/server/sv_client.cpp
+    ${ENGINE_DIR}/server/sv_game.cpp
+    ${ENGINE_DIR}/server/sv_init.cpp
+    ${ENGINE_DIR}/server/sv_main.cpp
+    ${ENGINE_DIR}/server/sv_net_chan.cpp
+    ${ENGINE_DIR}/server/sv_snapshot.cpp
+    ${ENGINE_DIR}/server/sv_world.cpp
     #
-    ${PARENT_DIR}/sys/con_log.cpp
-    ${PARENT_DIR}/sys/con_tty.cpp
-    ${PARENT_DIR}/sys/sys_main.cpp
-    ${PARENT_DIR}/sys/sys_unix.cpp
-    ${PARENT_DIR}/sys/sys_shared.h
+    ${ENGINE_DIR}/sys/con_log.cpp
+    ${ENGINE_DIR}/sys/con_tty.cpp
+    ${ENGINE_DIR}/sys/sys_main.cpp
+    ${ENGINE_DIR}/sys/sys_unix.cpp
+    ${ENGINE_DIR}/sys/sys_shared.h
     ${APPLE_SOURCES}
 
     ${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
@@ -158,8 +169,8 @@ target_link_libraries(
     )
 
 include_directories(
-    ${PARENT_DIR}
-    ${PARENT_DIR}/qcommon
+    ${ENGINE_DIR}
+    ${ENGINE_DIR}/qcommon
     ${EXTERNAL_DIR}/zlib
     ${EXTERNAL_DIR}/restclient
     ${EXTERNAL_DIR}/rapidjson
@@ -175,6 +186,7 @@ include_directories(
     ${EXTERNAL_DIR}/semver/src/include
     ${SDL2_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
+	${CURL_INCLUDE_DIR}
     )
 
 # TODO: Turn this into a macro 
@@ -200,11 +212,13 @@ if (USE_RENDERER_DLOPEN)
         )
 endif(USE_RENDERER_DLOPEN)
 
-add_dependencies(
-    tremulous
-    ui
-    game
-    cgame
-    renderergl1
-    renderergl2
-    )
+#There is no need to make this dependence
+#This is all wrong
+#add_dependencies(
+#    tremulous
+#    ui
+#    game
+#    cgame
+#    renderergl1
+#    renderergl2
+#    )

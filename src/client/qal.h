@@ -25,20 +25,16 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #ifndef __QAL_H__
 #define __QAL_H__
 
-#ifdef USE_LOCAL_HEADERS
-# include "AL/al.h"
-# include "AL/alc.h"
-#else
 # if defined(_MSC_VER) || defined(__APPLE__)
 // MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
 // OSX framework also needs this
+// Dushan - We don't care about local headers for the OpenAL on the Windows platform
 #  include <al.h>
 #  include <alc.h>
 # else
 #  include <AL/al.h>
 #  include <AL/alc.h>
 # endif
-#endif
 
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
