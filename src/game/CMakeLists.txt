@@ -61,7 +61,24 @@ set( GAME_SOURCES
 
 add_library( game SHARED ${GAME_SOURCES} g_syscalls.c )
 
-include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake ${ENGINE_DIR} )
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
+
+target_include_directories(
+    game PUBLIC
+    ${QC_SOURCE_DIR}
+    ${BGAME_SOURCE_DIR}
+	${ENGINE_DIR}
+    )
+
+include( ${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake )
 add_qvm( game ${GAME_SOURCES} g_syscalls.asm )
 
 add_custom_command(

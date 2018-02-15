@@ -5,6 +5,16 @@ find_package(OpenGL)
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
+
 include_directories(
     ${EXTERNAL_DIR}/jpeg-8c
     ${EXTERNAL_DIR}/renderercommon 

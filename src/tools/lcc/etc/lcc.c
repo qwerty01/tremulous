@@ -11,7 +11,7 @@ static char rcsid[] = "Id: dummy rcsid";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h> /* access() */
 #include <process.h> /* getpid() */
 #else
@@ -246,7 +246,7 @@ char *basename(char *name)
     return s;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <process.h>
 
 static char *escapeDoubleQuotes(const char *string)

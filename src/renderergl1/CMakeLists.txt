@@ -43,6 +43,16 @@ set(renderergl1_SRCS
     ${ENGINE_DIR}/qcommon/q_math.c
     )
 
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
+	
 if(NOT USE_RENDERER_DLOPEN)
     add_library(
         renderergl1 STATIC

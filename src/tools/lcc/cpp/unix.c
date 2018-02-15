@@ -70,7 +70,7 @@ void setup(int argc, char **argv)
     if (optind + 1 < argc)
     {
         int fdo;
-#ifdef WIN32
+#ifdef _WIN32
         fdo = creat(argv[optind + 1], _S_IREAD | _S_IWRITE);
 #else
         fdo = creat(argv[optind + 1], 0666);

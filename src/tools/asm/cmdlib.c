@@ -26,7 +26,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <direct.h>
 #include <windows.h>
 #elif defined(NeXT)
@@ -170,7 +170,7 @@ void qprintf( const char *format, ... ) {
 
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 HWND hwndOut = NULL;
 qboolean lookedForServer = qfalse;
 UINT wm_BroadcastCommand = -1;
@@ -179,7 +179,7 @@ UINT wm_BroadcastCommand = -1;
 void _printf( const char *format, ... ) {
 	va_list argptr;
   char text[4096];
-#ifdef WIN32
+#ifdef _WIN32
   ATOM a;
 #endif
 	va_start (argptr,format);
@@ -188,7 +188,7 @@ void _printf( const char *format, ... ) {
 
   printf("%s", text);
 
-#ifdef WIN32
+#ifdef _WIN32
   if (!lookedForServer) {
     lookedForServer = qtrue;
     hwndOut = FindWindow(NULL, "Q3Map Process Server");
@@ -396,7 +396,7 @@ void Q_getwd (char *out)
 {
 	int i = 0;
 
-#ifdef WIN32
+#ifdef _WIN32
    if (_getcwd (out, 256) == NULL)
      strcpy(out, ".");  /* shrug */
    strcat (out, "\\");
@@ -417,7 +417,7 @@ void Q_getwd (char *out)
 
 void Q_mkdir (const char *path)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	if (_mkdir (path) != -1)
 		return;
 #else

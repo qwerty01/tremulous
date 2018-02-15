@@ -58,6 +58,16 @@ target_include_directories(
     ${BGAME_SOURCE_DIR}
 	${ENGINE_DIR}
     )
+	
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
 
 include(${CMAKE_SOURCE_DIR}/cmake/AddQVM.cmake)
 add_qvm( ui ${UI_SOURCES} gui_syscalls.asm )

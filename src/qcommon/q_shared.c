@@ -1526,3 +1526,22 @@ void Com_ClientListParse( clientList_t *list, const char *s )
   sscanf( t, "%x", &list->hi );
   sscanf( s + 8, "%x", &list->lo );
 }
+
+/*
+============
+rint
+============
+*/
+#ifdef _MSC_VER
+float rint( float v )
+{
+    if( v >= 0.5f ) 
+	{
+		return ceilf( v );
+	}
+    else
+	{
+		return floorf( v );
+	}
+}
+#endif

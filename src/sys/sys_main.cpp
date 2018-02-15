@@ -27,7 +27,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 

@@ -49,6 +49,16 @@ add_library (
     vm_x86.c
 )
 
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
+
 include_directories( ${RESTCLIENT_INCLUDES_DIR} ${ENGINE_DIR} )
 
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )

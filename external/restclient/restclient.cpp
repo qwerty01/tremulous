@@ -14,11 +14,7 @@
 #include "restclient/restclient.h"
 
 #include "../../src/client/cl_curl.h"
-#ifdef USE_LOCAL_HEADERS
-  #include "../libcurl-7.35.0/curl/curl.h"
-#else
-  #include <curl/curl.h>
-#endif
+#include <curl/curl.h>
 
 #include "restclient/version.h"
 #include "restclient/connection.h"

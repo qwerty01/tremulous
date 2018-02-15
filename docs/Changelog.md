@@ -7,3 +7,4 @@
 	* Updated cMake system
 	* More work for the cMake system on the Windows platform
 	* Fixed compiling "script_api" on the Windows platform
+	* Fixed compiling most of the code on the Windows platform with Visual Studio

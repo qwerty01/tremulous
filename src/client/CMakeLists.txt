@@ -26,7 +26,9 @@ add_definitions(
 	
 if( MSVC ) # Check if we are using the Visual Studio compiler
 add_definitions(
-    -D__AMD64__ 
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
 	-D__WIN64__ 
 	-D_WIN64
 	)
@@ -182,7 +184,6 @@ include_directories(
     ${EXTERNAL_DIR}/nettle-3.3
     ${EXTERNAL_DIR}/opus-1.1.4/include
     ${EXTERNAL_DIR}/opusfile-0.8/include
-    ${EXTERNAL_DIR}/restclient
     ${EXTERNAL_DIR}/semver/src/include
     ${SDL2_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}

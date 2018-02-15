@@ -12,6 +12,10 @@
 #include <string>
 #include <algorithm>
 #include <functional>
+#if defined (_WIN32)
+#include <cctype>
+#include <locale>
+#endif
 
 #include "version.h"
 

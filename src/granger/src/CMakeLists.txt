@@ -36,9 +36,15 @@ if (NOT WIN32)
     target_link_libraries(granger m dl)
 endif()
 
-if(WIN32)
-        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif(WIN32)
+if( MSVC ) # Check if we are using the Visual Studio compiler
+add_definitions(
+    -D_CRT_SECURE_NO_WARNINGS
+    -D__AMD64__
+    -D_AMD64_
+	-D__WIN64__ 
+	-D_WIN64
+	)
+endif()
 
 if (APPLE)
         macro(ADD_FRAMEWORK fwname appname)

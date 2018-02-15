@@ -90,7 +90,7 @@ format_string(struct nettle_buffer *buffer,
   return prefix_length + length;
 }
 
-static inline size_t
+static size_t
 strlen_u8 (const uint8_t *s)
 {
   return strlen((const char*) s);
