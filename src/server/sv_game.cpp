@@ -576,7 +576,7 @@ Called on a normal map change, not on a map_restart
 */
 void SV_InitGameProgs( void ) {
 	// load the dll or bytecode
-	sv.gvm = VM_Create( "game", SV_GameSystemCalls, (vmInterpret_t)(int (Cvar_VariableValue( "vm_game" ))));
+	sv.gvm = VM_Create( "game", SV_GameSystemCalls, VMI_NATIVE );
 	if ( !sv.gvm ) {
 		Com_Error( ERR_FATAL, "VM_Create on game failed" );
 	}

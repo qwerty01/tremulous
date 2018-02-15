@@ -60,7 +60,8 @@ set( GAME_SOURCES
     )
 
 add_library( game SHARED ${GAME_SOURCES} g_syscalls.c )
-
+SET_TARGET_PROPERTIES( game PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/game/game.def" )
+	
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
 		add_definitions(

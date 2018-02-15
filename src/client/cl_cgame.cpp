@@ -785,8 +785,8 @@ void CL_InitCGame( void ) {
 	mapname = Info_ValueForKey( info, "mapname" );
 	Com_sprintf( cl.mapname, sizeof( cl.mapname ), "maps/%s.bsp", mapname );
 
-	// load the dll or bytecode
-    interpret = vmInterpret_t (int (Cvar_VariableValue( "vm_cgame" )));
+	// load the dll 
+	// Dushan - wrong :)
 	if(cl_connectedToPureServer)
 	{
 		// if sv_pure is set we only allow qvms to be loaded
@@ -794,7 +794,7 @@ void CL_InitCGame( void ) {
 			interpret = VMI_COMPILED;
 	}
 
-	cls.cgame = VM_Create( "cgame", CL_CgameSystemCalls, interpret );
+	cls.cgame = VM_Create( "cgame", CL_CgameSystemCalls, VMI_NATIVE);
 	if ( !cls.cgame ) {
 		Com_Error( ERR_DROP, "VM_Create on cgame failed" );
 	}

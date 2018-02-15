@@ -64,6 +64,7 @@ set( CGAME_SOURCES
     )
 
 add_library( cgame SHARED ${CGAME_SOURCES} cg_syscalls.c )
+SET_TARGET_PROPERTIES( cgame PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/cgame/cgame.def" )
 
 target_include_directories(
     cgame PUBLIC

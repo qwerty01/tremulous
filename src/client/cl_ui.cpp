@@ -1205,7 +1205,7 @@ void CL_InitUI(void)
         if (interpret != VMI_COMPILED && interpret != VMI_BYTECODE) interpret = VMI_COMPILED;
     }
 
-    cls.ui = VM_Create("ui", CL_UISystemCalls, interpret);
+    cls.ui = VM_Create("ui", CL_UISystemCalls, VMI_NATIVE);
     if (!cls.ui)
     {
         Com_Printf("Failed to find a valid UI vm. The following paths were searched:\n");

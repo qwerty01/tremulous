@@ -59,6 +59,8 @@ target_include_directories(
 	${ENGINE_DIR}
     )
 	
+SET_TARGET_PROPERTIES( ui PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/gui/gui.def" )
+	
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
 		add_definitions(
