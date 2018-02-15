@@ -31,7 +31,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #if _WIN32
 #include <al.h>
 #include <alc.h>
-#elif MACOS_X
+#elif __APPLE__ 
 #include <OpenAl/al.h>
 #include <OpenAl/alc.h>
 #else

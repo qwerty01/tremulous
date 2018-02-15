@@ -7,7 +7,7 @@
 #include "restclient/helpers.h"
 
 #ifdef USE_LOCAL_HEADERS
-  #include "../libcurl/curl/curl.h"
+  #include "curl/curl.h"
 #else
   #include <curl/curl.h>
 #endif

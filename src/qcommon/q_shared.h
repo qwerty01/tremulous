@@ -120,7 +120,7 @@ extern "C" {
 
 #ifdef Q3_VM
 
-#include "game/bg_lib.h"
+#include "bgame/bg_lib.h"
 
 typedef int intptr_t;
 
