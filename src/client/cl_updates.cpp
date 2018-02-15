@@ -1,3 +1,5 @@
+#if 0
+
 #include "cl_updates.h"
 
 #include <libgen.h>
@@ -267,7 +269,7 @@ void UpdateManager::extract(std::string extract_path, std::string path)
             if ( blocksiz > fi.uncompressed_size - numwrote )
                 blocksiz = fi.uncompressed_size - numwrote;
 
-            uint8_t block[blocksiz];
+            uint8_t block[16384];
             unzReadCurrentFile(z, static_cast<void*>(&block), blocksiz);
 
             dl.write((const char*)block, blocksiz);
@@ -414,6 +416,7 @@ public:
 
 void UpdateManager::execute()
 {
+#if 0
     granger_exe = "";
     granger_main_lua = "";
 
@@ -469,8 +472,11 @@ void UpdateManager::execute()
 
 	throw FailInstaller(errno);
 #endif
+#endif
 }
 
 void CL_GetLatestRelease() { UpdateManager::refresh(); }
 void CL_DownloadRelease() { UpdateManager::download(); }
 void CL_ExecuteInstaller() { UpdateManager::execute(); }
+
+#endif

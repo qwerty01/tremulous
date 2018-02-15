@@ -879,7 +879,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
             //  TODO: Do this better
             if (!strncmp((const char *)VMA(2), "checkForUpdate", 14))
             {
-                CL_GetLatestRelease();
+                //CL_GetLatestRelease();
                 return 0;
             }
 
@@ -1198,7 +1198,7 @@ CL_InitUI
 void CL_InitUI(void)
 {
     // load the dll or bytecode
-    vmInterpret_t interpret = (vmInterpret_t)Cvar_VariableValue("vm_ui");
+	vmInterpret_t interpret = vmInterpret_t (int (Cvar_VariableValue( "vm_ui" )));
     if (cl_connectedToPureServer)
     {
         // if sv_pure is set we only allow qvms to be loaded

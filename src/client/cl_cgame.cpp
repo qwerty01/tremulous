@@ -727,7 +727,7 @@ intptr_t CL_CgameSystemCalls( intptr_t *args )
         case CG_REAL_TIME:
             return Com_RealTime( (qtime_t*)VMA(1) );
         case CG_SNAPVECTOR:
-            Q_SnapVector((float*)VMA(1));
+            Q_SnapVector((vec3_t*)VMA(1));
             return 0;
 
         case CG_CIN_PLAYCINEMATIC:
@@ -786,7 +786,7 @@ void CL_InitCGame( void ) {
 	Com_sprintf( cl.mapname, sizeof( cl.mapname ), "maps/%s.bsp", mapname );
 
 	// load the dll or bytecode
-	interpret = (vmInterpret_t)Cvar_VariableValue("vm_cgame");
+    interpret = vmInterpret_t (int (Cvar_VariableValue( "vm_cgame" )));
 	if(cl_connectedToPureServer)
 	{
 		// if sv_pure is set we only allow qvms to be loaded

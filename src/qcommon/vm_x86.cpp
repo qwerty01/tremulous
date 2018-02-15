@@ -1080,6 +1080,7 @@ static int Q_VMftol(void)
 {
     int retval;
 
+#if 0
     __asm__ volatile
         (
          "movss (" EDI ", " EBX ", 4), %%xmm0\n"
@@ -1088,7 +1089,7 @@ static int Q_VMftol(void)
          :
          : "%xmm0"
         );
-
+#endif
     return retval;
 }
 
@@ -1777,54 +1778,6 @@ int VM_CallCompiled(vm_t *vm, int *args)
 	opStack = (int*)PADP(stack, 16);
 	*opStack = 0xDEADBEEF;
 	opStackOfs = 0;
-
-#ifdef _MSC_VER
-  #if idx64
-	opStackOfs = qvmcall64(&programStack, opStack, vm->instructionPointers, vm->dataBase);
-  #else
-	__asm
-	{
-		pushad
-
-		mov	esi, dword ptr programStack
-		mov	edi, dword ptr opStack
-		mov	ebx, dword ptr opStackOfs
-
-		call	entryPoint
-
-		mov	dword ptr opStackOfs, ebx
-		mov	dword ptr opStack, edi
-		mov	dword ptr programStack, esi
-		
-		popad
-	}
-  #endif		
-#elif idx64
-	__asm__ volatile(
-		"movq %5, %%rax\n"
-		"movq %3, %%r8\n"
-		"movq %4, %%r9\n"
-		"push %%r15\n"
-		"push %%r14\n"
-		"push %%r13\n"
-		"push %%r12\n"
-		"callq *%%rax\n"
-		"pop %%r12\n"
-		"pop %%r13\n"
-		"pop %%r14\n"
-		"pop %%r15\n"
-		: "+S" (programStack), "+D" (opStack), "+b" (opStackOfs)
-		: "g" (vm->instructionPointers), "g" (vm->dataBase), "g" (entryPoint)
-		: "cc", "memory", "%rax", "%rcx", "%rdx", "%r8", "%r9", "%r10", "%r11"
-	);
-#else
-	__asm__ volatile(
-		"calll *%3\n"
-		: "+S" (programStack), "+D" (opStack), "+b" (opStackOfs)
-		: "g" (entryPoint)
-		: "cc", "memory", "%eax", "%ecx", "%edx"
-	);
-#endif
 
 	if(opStackOfs != 1 || *opStack != 0xDEADBEEF)
 	{

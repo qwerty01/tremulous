@@ -139,14 +139,14 @@ typedef int intptr_t;
 #ifdef _MSC_VER
   #include <io.h>
 
-  typedef signed __int8 int8_t;
-  typedef unsigned __int8 uint8_t;
-  typedef signed __int16 int16_t;
-  typedef unsigned __int16 uint16_t;
-  typedef signed __int32 int32_t;
-  typedef unsigned __int32 uint32_t;
-  typedef signed __int64 int64_t;
-  typedef unsigned __int64 uint64_t;
+  typedef signed char        int8_t;
+  typedef short              int16_t;
+  typedef int                int32_t;
+  typedef long long          int64_t;
+  typedef unsigned char      uint8_t;
+  typedef unsigned short     uint16_t;
+  typedef unsigned int       uint32_t;
+  typedef unsigned long long uint64_t;
 
   // vsnprintf is ISO/IEC 9899:1999
   // abstracting this to make it portable
@@ -467,38 +467,16 @@ extern	vec3_t	axisDefault[3];
 
 int Q_isnan(float x);
 
-#if idx64
-  extern long qftolsse(float f);
-  extern int qvmftolsse(void);
-  extern void qsnapvectorsse(vec3_t vec);
-
-  #define Q_ftol qftolsse
-  #define Q_SnapVector qsnapvectorsse
-
-#elif id386
-  extern long QDECL qftolx87(float f);
-  extern long QDECL qftolsse(float f);
-  extern int QDECL qvmftolx87(void);
-  extern int QDECL qvmftolsse(void);
-  extern void QDECL qsnapvectorx87(vec3_t vec);
-  extern void QDECL qsnapvectorsse(vec3_t vec);
-
-  extern long (QDECL *Q_ftol)(float f);
-  extern void (QDECL *Q_SnapVector)(vec3_t vec);
-#else
-  // Q_ftol must expand to a function name so the pluggable renderer can take
-  // its address
-  #define Q_ftol lrintf
-  #define Q_SnapVector(vec)\
-	do\
-	{\
-		vec3_t *temp = (vec);\
-		\
-		(*temp)[0] = round((*temp)[0]);\
-		(*temp)[1] = round((*temp)[1]);\
-		(*temp)[2] = round((*temp)[2]);\
-	} while(0)
-#endif
+#define Q_ftol lrintf
+#define Q_SnapVector(vec)\
+do\
+{\
+	vec3_t *temp = (vec);\
+	\
+	(*temp)[0] = round((*temp)[0]);\
+	(*temp)[1] = round((*temp)[1]);\
+	(*temp)[2] = round((*temp)[2]);\
+} while(0)
 
 #if idppc
 static ID_INLINE float Q_rsqrt( float number ) {
@@ -1382,10 +1360,6 @@ typedef struct
 
 #define LERP( a, b, w ) ( ( a ) * ( 1.0f - ( w ) ) + ( b ) * ( w ) )
 #define LUMA( red, green, blue ) ( 0.2126f * ( red ) + 0.7152f * ( green ) + 0.0722f * ( blue ) )
-
-#ifdef _MSC_VER
-float rint( float v );
-#endif
 
 #ifdef __cplusplus
 };

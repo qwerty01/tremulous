@@ -21,14 +21,6 @@ endif()
 
 # XXX This one doesn't work yet
 option(USE_RENDERER_DLOPEN "" ON)
-
-# These are not used at the moment 
-if (APPLE OR WIN32)
-  option(USE_INTERNAL_SDL2 "" ON)
-else ()
-  option(USE_INTERNAL_SDL2 "" OFF)
-endif()
-
 option(USE_INTERNAL_JPEG "" ON)
 option(USE_OPENAL "" ON)
 option(USE_OPENAL_DLOPEN "" ON)
@@ -43,7 +35,6 @@ include(${CMAKE_SOURCE_DIR}/cmake/build_dir)
 include(${CMAKE_SOURCE_DIR}/cmake/debug_cflags)
 
 # builtins 
-add_subdirectory(external/SDL2)
 add_subdirectory(external/lua-5.3.3)
 add_subdirectory(external/nettle-3.3)
 add_subdirectory(external/zlib)

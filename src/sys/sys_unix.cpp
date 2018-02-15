@@ -21,6 +21,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
+#ifndef _WIN32
+
 #include "qcommon/cvar.h"
 #include "qcommon/files.h"
 #include "qcommon/q_shared.h"
@@ -818,28 +820,6 @@ void Sys_SetFloatEnv(void)
 	fesetround(FE_TONEAREST);
 }
 
-/*
-==============
-Sys_PlatformInit
-
-Unix specific initialisation
-==============
-*/
-void Sys_PlatformInit( void )
-{
-	const char* term = getenv( "TERM" );
-
-	signal( SIGHUP, Sys_SigHandler );
-	signal( SIGQUIT, Sys_SigHandler );
-	signal( SIGTRAP, Sys_SigHandler );
-	signal( SIGABRT, Sys_SigHandler );
-	signal( SIGBUS, Sys_SigHandler );
-
-	Sys_SetFloatEnv();
-
-	stdinIsATTY = isatty( STDIN_FILENO ) &&
-		!( term && ( !strcmp( term, "raw" ) || !strcmp( term, "dumb" ) ) );
-}
 
 /*
 ==============
@@ -929,3 +909,5 @@ bool Sys_DllExtension( const char *name )
 
     return false;
 }
+
+#endif

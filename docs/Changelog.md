@@ -8,3 +8,5 @@
 	* More work for the cMake system on the Windows platform
 	* Fixed compiling "script_api" on the Windows platform
 	* Fixed compiling most of the code on the Windows platform with Visual Studio
+	* Fixed compiling engine and gamelogic on the Windows platform with Visual Studio
+		NOTE : update code is turned off for now, some parts of VM code has been removed (whole VM will be gone with the wind in near future)

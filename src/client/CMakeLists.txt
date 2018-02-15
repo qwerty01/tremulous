@@ -34,6 +34,23 @@ add_definitions(
 	)
 endif()
 
+if(WIN32 AND MSVC)
+	if(CMAKE_CL_64)
+		add_definitions(
+			-D_CRT_SECURE_NO_WARNINGS
+			-D__AMD64__
+			-D_AMD64_
+			-D__WIN64__ 
+			-D_WIN64
+			)
+	else()
+		add_definitions(
+			-_WIN32
+			-WIN32
+			)
+	endif()
+endif()
+
 #Dushan - I had problems with this on the Windows platform <3
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
@@ -44,11 +61,10 @@ endif(APPLE)
 find_package(CURL)
 find_package(OpenGL)
 find_package(OpenAL)
+find_package(SDL2)
 
 add_executable(
     tremulous
-    #
-    ${ENGINE_DIR}/asm/snapvector.c
     #
     cl_avi.cpp
     cl_cgame.cpp
@@ -123,16 +139,28 @@ add_executable(
     ${ENGINE_DIR}/server/sv_world.cpp
     #
     ${ENGINE_DIR}/sys/con_log.cpp
+	${ENGINE_DIR}/sys/con_passive.cpp
     ${ENGINE_DIR}/sys/con_tty.cpp
+	${ENGINE_DIR}/sys/con_win32.cpp
     ${ENGINE_DIR}/sys/sys_main.cpp
     ${ENGINE_DIR}/sys/sys_unix.cpp
+    ${ENGINE_DIR}/sys/sys_win32.cpp
+	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
     ${ENGINE_DIR}/sys/sys_shared.h
     ${APPLE_SOURCES}
 
-    ${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
-    ${EXTERNAL_DIR}/semver/src/lib/semantic_version_v2.cpp
+    #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
+    #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v2.cpp
     )
 
+if(APPLE AND UNIX)
+add_executable(
+    tremulous
+    #
+    ${ENGINE_DIR}/asm/snapvector.c
+	)
+endif(APPLE AND UNIX)
+	
 if(APPLE)
  # FIXME Prefixed with "lua" to prevent cmake from doing "-l-framework Cocoa"
  set(FRAMEWORKS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
@@ -164,7 +192,7 @@ target_link_libraries(
     #
     ${FRAMEWORKS}
     ${CURL_LIBRARIES}
-    ${SDL2_LIBRARIES}
+    ${SDL2_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${SYSLIBS}
@@ -185,19 +213,10 @@ include_directories(
     ${EXTERNAL_DIR}/opus-1.1.4/include
     ${EXTERNAL_DIR}/opusfile-0.8/include
     ${EXTERNAL_DIR}/semver/src/include
-    ${SDL2_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIR}
     ${OPENAL_INCLUDE_DIR}
 	${CURL_INCLUDE_DIR}
     )
-
-# TODO: Turn this into a macro 
-if (USE_INTERNAL_SDL2)
-add_custom_command(
-    TARGET tremulous
-    POST_BUILD COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy ${CMAKE_SOURCE_DIR}/external/SDL2/libs/Darwin/libSDL2-2.0.0.dylib ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libSDL2-2.0.0.dylib
-    )
-endif(USE_INTERNAL_SDL2)
 
 if (USE_RENDERER_DLOPEN)
     add_custom_command(

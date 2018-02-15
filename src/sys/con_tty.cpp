@@ -21,6 +21,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
+#if !defined _WIN32
+
 #include "sys_local.h"
 
 #include <fcntl.h>
@@ -549,3 +551,6 @@ void CON_Print( const char *msg )
 		ttycon_show_overdue++;
 	}
 }
+
+#endif //!DEDICATED
+

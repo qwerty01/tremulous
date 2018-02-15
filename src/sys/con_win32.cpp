@@ -21,6 +21,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
+#ifdef _WIN32
+
 #include "sys_local.h"
 
 #include <windows.h>
@@ -555,3 +557,5 @@ void CON_Print( const char *msg )
 
 	CON_Show( );
 }
+
+#endif //!_WIN32

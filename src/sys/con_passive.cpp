@@ -21,6 +21,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
+#ifdef DEDICATED
+
 #include "sys_local.h"
 
 #include "qcommon/cvar.h"
@@ -69,3 +71,5 @@ void CON_Print( const char *msg )
 	else
 		fputs( msg, stderr );
 }
+
+#endif //!DEDICATED

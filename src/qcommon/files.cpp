@@ -3496,13 +3496,13 @@ const char *FS_ReferencedPakChecksums(bool alternate)
         // is the element a pak file?
         if (search->pack)
         {
-            if ((alternate and search->pack->onlyPrimary) or
-                (!alternate and search->pack->onlyAlternate))
+            if ((alternate && search->pack->onlyPrimary) ||
+                (!alternate && search->pack->onlyAlternate))
                 continue;
 
-            if (search->pack->referenced or
-                (search->pack->primaryVersion and search->pack->primaryVersion->referenced) or
-                (*fs_gamedirvar->string and Q_stricmp(fs_gamedirvar->string, BASEGAME) and
+            if (search->pack->referenced ||
+                (search->pack->primaryVersion && search->pack->primaryVersion->referenced) ||
+                (*fs_gamedirvar->string && Q_stricmp(fs_gamedirvar->string, BASEGAME) &&
                     Q_stricmp(search->pack->pakGamename, fs_gamedirvar->string) == 0))
             {
                 Q_strcat(info, sizeof(info), va("%i ", search->pack->checksum));

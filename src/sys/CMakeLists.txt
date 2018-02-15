@@ -9,6 +9,7 @@ add_library (
     sys_main.cpp
     sys_unix.cpp
     sys_win32.cpp
+    sys_win32_default_homepath.cpp
     win_resource.h
 )
 

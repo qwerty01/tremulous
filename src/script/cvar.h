@@ -76,7 +76,7 @@ namespace script
         { return "modifying latched cvars is unsupported"; }
     };
 
-    extern "C" cvar_t *cvar_cheats;
+    cvar_t *cvar_cheats;
     ////////////////////////////////////////////// class Cvar ////////////
     struct Cvar {
     private:

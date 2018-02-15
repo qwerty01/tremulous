@@ -165,17 +165,26 @@ void hA3Dg_ExportRenderGeom(refexport_t *incoming_re);
 
 static bool noGameRestart = false;
 
-static void CL_DownloadUpdate_f() { CL_DownloadRelease(); }
+static void CL_DownloadUpdate_f() { 
+	//CL_DownloadRelease(); 
+}
 
 static void CL_InstallUpdate_f()
 {
-    if (Cmd_Argc() > 1)
-        CL_ExecuteInstaller();
-    else
-        CL_ExecuteInstaller();
+	if (Cmd_Argc() > 1)
+	{
+		//CL_ExecuteInstaller();
+	}
+	else
+	{
+		//CL_ExecuteInstaller();
+	}
 }
 
-static void CL_CheckForUpdate_f() { CL_GetLatestRelease(); }
+static void CL_CheckForUpdate_f() 
+{ 
+	//CL_GetLatestRelease(); 
+}
 
 #ifdef USE_MUMBLE
 static void CL_UpdateMumble(void)

@@ -6,7 +6,10 @@
 
 #include "cl_rest.h"
 
+#if 0
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <cerrno>
 #include <cstring>
@@ -115,3 +118,5 @@ bool GetTremulousPk3s(const char* destdir, const char* basegame)
 
     return true;
 }
+
+#endif

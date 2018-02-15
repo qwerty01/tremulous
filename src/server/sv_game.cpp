@@ -420,7 +420,7 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
         case G_REAL_TIME:
             return Com_RealTime( (qtime_t*)VMA(1) );
         case G_SNAPVECTOR:
-            Q_SnapVector( (vec_t*)VMA(1) );
+            Q_SnapVector( (vec3_t*)VMA(1) );
             return 0;
 
         case G_SEND_GAMESTAT:
@@ -576,7 +576,7 @@ Called on a normal map change, not on a map_restart
 */
 void SV_InitGameProgs( void ) {
 	// load the dll or bytecode
-	sv.gvm = VM_Create( "game", SV_GameSystemCalls, (vmInterpret_t)Cvar_VariableValue( "vm_game" ) );
+	sv.gvm = VM_Create( "game", SV_GameSystemCalls, (vmInterpret_t)(int (Cvar_VariableValue( "vm_game" ))));
 	if ( !sv.gvm ) {
 		Com_Error( ERR_FATAL, "VM_Create on game failed" );
 	}

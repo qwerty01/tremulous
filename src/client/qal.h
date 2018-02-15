@@ -25,24 +25,22 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #ifndef __QAL_H__
 #define __QAL_H__
 
-# if defined(_MSC_VER) || defined(__APPLE__)
-// MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
-// OSX framework also needs this
-// Dushan - We don't care about local headers for the OpenAL on the Windows platform
-#  include <al.h>
-#  include <alc.h>
-# else
-#  include <AL/al.h>
-#  include <AL/alc.h>
-# endif
+#define AL_NO_PROTOTYPES
+#define ALC_NO_PROTOTYPES
+
+#if _WIN32
+#include <al.h>
+#include <alc.h>
+#elif MACOS_X
+#include <OpenAl/al.h>
+#include <OpenAl/alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
 
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
-
-#ifdef USE_OPENAL_DLOPEN
-#define AL_NO_PROTOTYPES
-#define ALC_NO_PROTOTYPES
-#endif
 
 /* Hack to enable compiling both on OpenAL SDK and OpenAL-soft. */
 #ifndef ALC_ENUMERATE_ALL_EXT

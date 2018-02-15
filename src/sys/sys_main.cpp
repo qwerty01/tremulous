@@ -26,7 +26,9 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include <setjmp.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -703,7 +705,6 @@ void SDLVersionCheck()
     }
 }
 #endif
-
 
 /*
 =================
