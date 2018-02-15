@@ -148,7 +148,7 @@ else(NOT USE_RENDERER_DLOPEN)
 
 endif(NOT USE_RENDERER_DLOPEN)
 
-SET_TARGET_PROPERTIES( renderergl1 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
+SET_TARGET_PROPERTIES( renderergl2 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
 
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)

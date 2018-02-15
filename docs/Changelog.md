@@ -13,3 +13,4 @@
 	* "void Sys_PlatformInit( void )" was removed by mistake from the sys_unix.cpp
 	* Added ".def" files what are needed for the Windows builds
 		NOTE: cMake "add_custom_command" after compiling is not working, GLSL shaders for the "renderer2" are not linked in the generated Visual Studio solution
+	* Fixed copy-paste mistake
