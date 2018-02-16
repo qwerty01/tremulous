@@ -6,7 +6,7 @@ This file is part of XreaL source code.
 
 XreaL source code is free software; you can redistribute it
 and/or modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License,
+published by the Free Software Foundation; either version 2 of the License,
 or (at your option) any later version.
 
 XreaL source code is distributed in the hope that it will be
@@ -15,7 +15,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with XreaL source code; if not, see <https://www.gnu.org/licenses/>
+along with XreaL source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 // tr_glsl.c
@@ -23,34 +24,37 @@ along with XreaL source code; if not, see <https://www.gnu.org/licenses/>
 
 #include "tr_dsa.h"
 
-extern const char *fallbackShader_bokeh_vp;
-extern const char *fallbackShader_bokeh_fp;
-extern const char *fallbackShader_calclevels4x_vp;
-extern const char *fallbackShader_calclevels4x_fp;
-extern const char *fallbackShader_depthblur_vp;
-extern const char *fallbackShader_depthblur_fp;
-extern const char *fallbackShader_dlight_vp;
-extern const char *fallbackShader_dlight_fp;
-extern const char *fallbackShader_down4x_vp;
-extern const char *fallbackShader_down4x_fp;
-extern const char *fallbackShader_fogpass_vp;
-extern const char *fallbackShader_fogpass_fp;
-extern const char *fallbackShader_generic_vp;
-extern const char *fallbackShader_generic_fp;
-extern const char *fallbackShader_lightall_vp;
-extern const char *fallbackShader_lightall_fp;
-extern const char *fallbackShader_pshadow_vp;
-extern const char *fallbackShader_pshadow_fp;
-extern const char *fallbackShader_shadowfill_vp;
-extern const char *fallbackShader_shadowfill_fp;
-extern const char *fallbackShader_shadowmask_vp;
-extern const char *fallbackShader_shadowmask_fp;
-extern const char *fallbackShader_ssao_vp;
-extern const char *fallbackShader_ssao_fp;
-extern const char *fallbackShader_texturecolor_vp;
-extern const char *fallbackShader_texturecolor_fp;
-extern const char *fallbackShader_tonemap_vp;
-extern const char *fallbackShader_tonemap_fp;
+#include "builtin.h"
+#include "Resource.h"
+
+Resource bokeh_vp = LOAD_RESOURCE(bokeh_vp_glsl);
+Resource bokeh_fp = LOAD_RESOURCE(bokeh_fp_glsl);
+Resource calclevels4x_vp = LOAD_RESOURCE(calclevels4x_vp_glsl);
+Resource calclevels4x_fp = LOAD_RESOURCE(calclevels4x_fp_glsl);
+Resource depthblur_vp = LOAD_RESOURCE(depthblur_vp_glsl);
+Resource depthblur_fp = LOAD_RESOURCE(depthblur_fp_glsl);
+Resource dlight_vp = LOAD_RESOURCE(dlight_vp_glsl);
+Resource dlight_fp = LOAD_RESOURCE(dlight_fp_glsl);
+Resource down4x_vp = LOAD_RESOURCE(down4x_vp_glsl);
+Resource down4x_fp = LOAD_RESOURCE(down4x_fp_glsl);
+Resource fogpass_vp = LOAD_RESOURCE(fogpass_vp_glsl);
+Resource fogpass_fp = LOAD_RESOURCE(fogpass_fp_glsl);
+Resource generic_vp = LOAD_RESOURCE(generic_vp_glsl);
+Resource generic_fp = LOAD_RESOURCE(generic_fp_glsl);
+Resource lightall_vp = LOAD_RESOURCE(lightall_vp_glsl);
+Resource lightall_fp = LOAD_RESOURCE(lightall_fp_glsl);
+Resource pshadow_vp = LOAD_RESOURCE(pshadow_vp_glsl);
+Resource pshadow_fp = LOAD_RESOURCE(pshadow_fp_glsl);
+Resource shadowfill_vp = LOAD_RESOURCE(shadowfill_vp_glsl);
+Resource shadowfill_fp = LOAD_RESOURCE(shadowfill_fp_glsl);
+Resource shadowmask_vp = LOAD_RESOURCE(shadowmask_vp_glsl);
+Resource shadowmask_fp = LOAD_RESOURCE(shadowmask_fp_glsl);
+Resource ssao_vp = LOAD_RESOURCE(ssao_vp_glsl);
+Resource ssao_fp = LOAD_RESOURCE(ssao_fp_glsl);
+Resource texturecolor_vp = LOAD_RESOURCE(texturecolor_vp_glsl);
+Resource texturecolor_fp = LOAD_RESOURCE(texturecolor_fp_glsl);
+Resource tonemap_vp = LOAD_RESOURCE(tonemap_vp_glsl);
+Resource tonemap_fp = LOAD_RESOURCE(tonemap_fp_glsl);
 
 struct uniformInfo_t
 {
@@ -405,7 +409,7 @@ static int GLSL_CompileGPUShader(GLuint program, GLuint *prevShader, const GLcha
 	return 1;
 }
 
-static int GLSL_LoadGPUShaderText(const char *name, const char *fallback,
+static int GLSL_LoadGPUShaderText(const char *name, Resource& fallback,
 	GLenum shaderType, char *dest, int destSize)
 {
 	char            filename[MAX_QPATH];
@@ -432,31 +436,25 @@ static int GLSL_LoadGPUShaderText(const char *name, const char *fallback,
 
 	if(!buffer)
 	{
-		if (fallback)
-		{
-			ri.Printf(PRINT_DEVELOPER, "...loading built-in '%s'\n", filename);
-			shaderText = fallback;
-			size = strlen(shaderText);
-		}
-		else
-		{
-			ri.Printf(PRINT_DEVELOPER, "couldn't load '%s'\n", filename);
-			return 0;
-		}
+		ri.Printf(PRINT_DEVELOPER, "...loading built-in '%s'\n", filename);
+		shaderText = fallback.data();
+		size = fallback.size();
 	}
 	else
 	{
 		ri.Printf(PRINT_DEVELOPER, "...loading '%s'\n", filename);
 		shaderText = buffer;
+        size += 1;
 	}
 
 	if (size > destSize)
 	{
+		ri.Printf(PRINT_DEVELOPER, "Failed loading glsl shader, it's too big!\n");
 		result = 0;
 	}
 	else
 	{
-		Q_strncpyz(dest, shaderText, size + 1);
+		Q_strncpyz(dest, shaderText, size);
 		result = 1;
 	}
 
@@ -591,7 +589,7 @@ static int GLSL_InitGPUShader2(shaderProgram_t * program, const char *name, int 
 
 static int GLSL_InitGPUShader(shaderProgram_t * program, const char *name,
 	int attribs, bool fragmentShader, const GLchar *extra, bool addHeader,
-	const char *fallback_vp, const char *fallback_fp)
+	Resource& fallback_vp, Resource& fallback_fp)
 {
 	char vpCode[32000];
 	char fpCode[32000];
@@ -931,7 +929,7 @@ void GLSL_InitGPUShaders(void)
 		if (i & GENERICDEF_USE_RGBAGEN)
 			Q_strcat(extradefines, 1024, "#define USE_RGBAGEN\n");
 
-		if (!GLSL_InitGPUShader(&tr.genericShader[i], "generic", attribs, true, extradefines, true, fallbackShader_generic_vp, fallbackShader_generic_fp))
+		if (!GLSL_InitGPUShader(&tr.genericShader[i], "generic", attribs, true, extradefines, true, generic_vp, generic_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load generic shader!");
 		}
@@ -949,7 +947,7 @@ void GLSL_InitGPUShaders(void)
 
 	attribs = ATTR_POSITION | ATTR_TEXCOORD;
 
-	if (!GLSL_InitGPUShader(&tr.textureColorShader, "texturecolor", attribs, true, extradefines, true, fallbackShader_texturecolor_vp, fallbackShader_texturecolor_fp))
+	if (!GLSL_InitGPUShader(&tr.textureColorShader, "texturecolor", attribs, true, extradefines, true, texturecolor_vp, texturecolor_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load texturecolor shader!");
 	}
@@ -973,7 +971,7 @@ void GLSL_InitGPUShaders(void)
 		if (i & FOGDEF_USE_VERTEX_ANIMATION)
 			Q_strcat(extradefines, 1024, "#define USE_VERTEX_ANIMATION\n");
 
-		if (!GLSL_InitGPUShader(&tr.fogShader[i], "fogpass", attribs, true, extradefines, true, fallbackShader_fogpass_vp, fallbackShader_fogpass_fp))
+		if (!GLSL_InitGPUShader(&tr.fogShader[i], "fogpass", attribs, true, extradefines, true, fogpass_vp, fogpass_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load fogpass shader!");
 		}
@@ -995,7 +993,7 @@ void GLSL_InitGPUShaders(void)
 			Q_strcat(extradefines, 1024, "#define USE_DEFORM_VERTEXES\n");
 		}
 
-		if (!GLSL_InitGPUShader(&tr.dlightShader[i], "dlight", attribs, true, extradefines, true, fallbackShader_dlight_vp, fallbackShader_dlight_fp))
+		if (!GLSL_InitGPUShader(&tr.dlightShader[i], "dlight", attribs, true, extradefines, true, dlight_vp, dlight_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load dlight shader!");
 		}
@@ -1123,7 +1121,7 @@ void GLSL_InitGPUShaders(void)
 			}
 		}
 
-		if (!GLSL_InitGPUShader(&tr.lightallShader[i], "lightall", attribs, true, extradefines, true, fallbackShader_lightall_vp, fallbackShader_lightall_fp))
+		if (!GLSL_InitGPUShader(&tr.lightallShader[i], "lightall", attribs, true, extradefines, true, lightall_vp, lightall_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load lightall shader!");
 		}
@@ -1147,7 +1145,7 @@ void GLSL_InitGPUShaders(void)
 
 	extradefines[0] = '\0';
 
-	if (!GLSL_InitGPUShader(&tr.shadowmapShader, "shadowfill", attribs, true, extradefines, true, fallbackShader_shadowfill_vp, fallbackShader_shadowfill_fp))
+	if (!GLSL_InitGPUShader(&tr.shadowmapShader, "shadowfill", attribs, true, extradefines, true, shadowfill_vp, shadowfill_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load shadowfill shader!");
 	}
@@ -1162,7 +1160,7 @@ void GLSL_InitGPUShaders(void)
 
 	Q_strcat(extradefines, 1024, "#define USE_PCF\n#define USE_DISCARD\n");
 
-	if (!GLSL_InitGPUShader(&tr.pshadowShader, "pshadow", attribs, true, extradefines, true, fallbackShader_pshadow_vp, fallbackShader_pshadow_fp))
+	if (!GLSL_InitGPUShader(&tr.pshadowShader, "pshadow", attribs, true, extradefines, true, pshadow_vp, pshadow_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load pshadow shader!");
 	}
@@ -1179,7 +1177,7 @@ void GLSL_InitGPUShaders(void)
 	attribs = ATTR_POSITION | ATTR_TEXCOORD;
 	extradefines[0] = '\0';
 
-	if (!GLSL_InitGPUShader(&tr.down4xShader, "down4x", attribs, true, extradefines, true, fallbackShader_down4x_vp, fallbackShader_down4x_fp))
+	if (!GLSL_InitGPUShader(&tr.down4xShader, "down4x", attribs, true, extradefines, true, down4x_vp, down4x_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load down4x shader!");
 	}
@@ -1196,7 +1194,7 @@ void GLSL_InitGPUShaders(void)
 	attribs = ATTR_POSITION | ATTR_TEXCOORD;
 	extradefines[0] = '\0';
 
-	if (!GLSL_InitGPUShader(&tr.bokehShader, "bokeh", attribs, true, extradefines, true, fallbackShader_bokeh_vp, fallbackShader_bokeh_fp))
+	if (!GLSL_InitGPUShader(&tr.bokehShader, "bokeh", attribs, true, extradefines, true, bokeh_vp, bokeh_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load bokeh shader!");
 	}
@@ -1213,7 +1211,7 @@ void GLSL_InitGPUShaders(void)
 	attribs = ATTR_POSITION | ATTR_TEXCOORD;
 	extradefines[0] = '\0';
 
-	if (!GLSL_InitGPUShader(&tr.tonemapShader, "tonemap", attribs, true, extradefines, true, fallbackShader_tonemap_vp, fallbackShader_tonemap_fp))
+	if (!GLSL_InitGPUShader(&tr.tonemapShader, "tonemap", attribs, true, extradefines, true, tonemap_vp, tonemap_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load tonemap shader!");
 	}
@@ -1236,7 +1234,7 @@ void GLSL_InitGPUShaders(void)
 		if (!i)
 			Q_strcat(extradefines, 1024, "#define FIRST_PASS\n");
 
-		if (!GLSL_InitGPUShader(&tr.calclevels4xShader[i], "calclevels4x", attribs, true, extradefines, true, fallbackShader_calclevels4x_vp, fallbackShader_calclevels4x_fp))
+		if (!GLSL_InitGPUShader(&tr.calclevels4xShader[i], "calclevels4x", attribs, true, extradefines, true, calclevels4x_vp, calclevels4x_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load calclevels4x shader!");
 		}
@@ -1267,7 +1265,7 @@ void GLSL_InitGPUShaders(void)
 	Q_strcat(extradefines, 1024, va("#define r_shadowCascadeZFar %f\n", r_shadowCascadeZFar->value));
 
 
-	if (!GLSL_InitGPUShader(&tr.shadowmaskShader, "shadowmask", attribs, true, extradefines, true, fallbackShader_shadowmask_vp, fallbackShader_shadowmask_fp))
+	if (!GLSL_InitGPUShader(&tr.shadowmaskShader, "shadowmask", attribs, true, extradefines, true, shadowmask_vp, shadowmask_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load shadowmask shader!");
 	}
@@ -1288,7 +1286,7 @@ void GLSL_InitGPUShaders(void)
 	attribs = ATTR_POSITION | ATTR_TEXCOORD;
 	extradefines[0] = '\0';
 
-	if (!GLSL_InitGPUShader(&tr.ssaoShader, "ssao", attribs, true, extradefines, true, fallbackShader_ssao_vp, fallbackShader_ssao_fp))
+	if (!GLSL_InitGPUShader(&tr.ssaoShader, "ssao", attribs, true, extradefines, true, ssao_vp, ssao_fp))
 	{
 		ri.Error(ERR_FATAL, "Could not load ssao shader!");
 	}
@@ -1316,7 +1314,7 @@ void GLSL_InitGPUShaders(void)
 			Q_strcat(extradefines, 1024, "#define USE_DEPTH\n");
 
 
-		if (!GLSL_InitGPUShader(&tr.depthBlurShader[i], "depthBlur", attribs, true, extradefines, true, fallbackShader_depthblur_vp, fallbackShader_depthblur_fp))
+		if (!GLSL_InitGPUShader(&tr.depthBlurShader[i], "depthBlur", attribs, true, extradefines, true, depthblur_vp, depthblur_fp))
 		{
 			ri.Error(ERR_FATAL, "Could not load depthBlur shader!");
 		}

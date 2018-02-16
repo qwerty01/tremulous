@@ -879,7 +879,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
             //  TODO: Do this better
             if (!strncmp((const char *)VMA(2), "checkForUpdate", 14))
             {
-                //CL_GetLatestRelease();
+                CL_GetLatestRelease();
                 return 0;
             }
 

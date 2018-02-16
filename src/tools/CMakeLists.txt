@@ -5,6 +5,24 @@
 #                                               |__|
 # TODO: DO NOT build unless building a QVM
 
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
+
+if(WIN32 AND MSVC)
+	if(CMAKE_CL_64)
+		add_definitions(
+			-D_CRT_SECURE_NO_WARNINGS
+			-D__AMD64__
+			-D_AMD64_
+			-D__WIN64__ 
+			-D_WIN64
+			)
+	else()
+		add_definitions(
+			-_WIN32
+			-WIN32
+			)
+	endif()
+endif()
 
 #  _  _                     
 # | || |                    
@@ -36,7 +54,7 @@ add_executable(
     asm/cmdlib.c
     )
 
-target_include_directories( q3asm PUBLIC lcc/src lcc/lburg )
+target_include_directories( q3asm PUBLIC lcc/src lcc/lburg ${ENGINE_DIR} )
 
 
 #        ___  _            
@@ -54,7 +72,7 @@ add_executable(
     lcc/etc/lcc.c
     )
 
-target_include_directories( q3lcc PUBLIC lcc/src lcc/lburg )
+target_include_directories( q3lcc PUBLIC lcc/src lcc/lburg ${ENGINE_DIR} )
 
 #       ___                
 #      /   \               

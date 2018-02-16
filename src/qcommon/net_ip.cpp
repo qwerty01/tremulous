@@ -98,7 +98,7 @@ typedef int ioctlarg_t;
 #endif
 
 static bool usingSocks = false;
-static int networkingEnabled = 0;
+static bool networkingEnabled = false;
 
 static cvar_t *net_enabled;
 static cvar_t *net_alternateProtocols;

@@ -24,10 +24,6 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 
 #ifdef _WIN32
 
-//Dushan - I didn't want to update cMake
-#pragma comment( lib, "ws2_32.lib")
-#pragma comment( lib, "winmm.lib")
-
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
 #include "dialog.h"

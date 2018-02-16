@@ -1,6 +1,10 @@
-#if 0
-
 #include "cl_updates.h"
+
+#ifdef _WIN32
+void CL_GetLatestRelease() { }
+void CL_DownloadRelease() { }
+void CL_ExecuteInstaller() { }
+#else
 
 #include <libgen.h>
 #include <unistd.h>
@@ -402,7 +406,7 @@ void UpdateManager::validate_signature(std::string path, std::string signature_p
     mpz_clear(signature);
 }
 
-extern char** environ;
+extern "C" char** environ;
 
 class FailInstaller : public std::exception {
     std::string msg;

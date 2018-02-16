@@ -43,7 +43,9 @@ int chat_playerNum;
 bool key_overstrikeMode;
 
 int anykeydown;
+#ifndef DEDICATED
 qkey_t keys[MAX_KEYS];
+#endif
 
 struct keyname_t {
 	const char* name;

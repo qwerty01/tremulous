@@ -11,8 +11,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(Tremulous C CXX)
 
-set(CMAKE_CXX_FLAGS -std=c++1y)
-set(CMAKE_C_FLAGS -std=gnu99)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+set(CMAKE_CXX_FLAGS "-std=c++14" )
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -33,6 +35,8 @@ option(USE_RESTCLIENT "" ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/build_dir)
 include(${CMAKE_SOURCE_DIR}/cmake/debug_cflags)
+
+add_subdirectory(external/embed-resource)
 
 # builtins 
 add_subdirectory(external/lua-5.3.3)
@@ -123,6 +127,12 @@ add_subdirectory(src/cgame)
 #        /     / ) / (_(_(_/ (_(_/__(/_/ (_) /   (__(_(_/_)  o  (__(_) // (_
 #       (____ /               .-/         (_/
 #                            (_/
+
+
+if(WIN32)
+enable_language(ASM_MASM)
+add_subdirectory(src/asm)
+endif(WIN32)
 
 # Author: Victor Roemer  wtfbbqhax, <victor@badsec.org>. 
 #  Date: Sat Nov  5 06:49:08 2016 

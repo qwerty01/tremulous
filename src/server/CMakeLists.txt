@@ -35,8 +35,23 @@ endif()
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
-set(APPLE_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
+set(SYS_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
 endif(APPLE)
+
+if(WIN32)
+set(SYS_SOURCES
+    ${ENGINE_DIR}/sys/con_passive.cpp
+    ${ENGINE_DIR}/sys/sys_win32.cpp
+	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
+	${ENGINE_DIR}/sys/win_resource.h
+    )
+else(WIN32)
+set(SYS_SOURCES
+    ${ENGINE_DIR}/sys/con_tty.cpp
+    ${ENGINE_DIR}/sys/sys_unix.cpp
+    ${ENGINE_DIR}/asm/snapvector.c
+    )
+endif(WIN32)
 
 add_executable(
     tremded
@@ -51,6 +66,8 @@ add_executable(
     sv_net_chan.cpp
     sv_snapshot.cpp
     sv_world.cpp
+	
+	${ENGINE_DIR}/game/g_public.h
     #
     ${ENGINE_DIR}/qcommon/cm_load.cpp
     ${ENGINE_DIR}/qcommon/cm_patch.cpp
@@ -58,10 +75,14 @@ add_executable(
     ${ENGINE_DIR}/qcommon/cm_test.cpp
     ${ENGINE_DIR}/qcommon/cm_trace.cpp
     ${ENGINE_DIR}/qcommon/cmd.cpp
+	${ENGINE_DIR}/qcommon/cmd.h
     ${ENGINE_DIR}/qcommon/common.cpp
     ${ENGINE_DIR}/qcommon/crypto.cpp
+	${ENGINE_DIR}/qcommon/crypto.h
     ${ENGINE_DIR}/qcommon/cvar.cpp
+	${ENGINE_DIR}/qcommon/cvar.h
     ${ENGINE_DIR}/qcommon/files.cpp
+	${ENGINE_DIR}/qcommon/files.h
     ${ENGINE_DIR}/qcommon/huffman.cpp
     ${ENGINE_DIR}/qcommon/huffman.h
     ${ENGINE_DIR}/qcommon/ioapi.cpp
@@ -74,24 +95,27 @@ add_executable(
     ${ENGINE_DIR}/qcommon/parse.cpp
     ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
     ${ENGINE_DIR}/qcommon/q_math.c
+	${ENGINE_DIR}/qcommon/q_platform.h
     ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_shared.h
+    ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
+    ${ENGINE_DIR}/qcommon/q3_lauxlib.h
+    ${ENGINE_DIR}/qcommon/qcommon.h
     ${ENGINE_DIR}/qcommon/unzip.cpp
     ${ENGINE_DIR}/qcommon/vm.cpp
+	${ENGINE_DIR}/qcommon/vm.h
     ${ENGINE_DIR}/qcommon/vm_interpreted.cpp
     ${ENGINE_DIR}/qcommon/vm_x86.cpp
     #
     ${ENGINE_DIR}/null/null_client.cpp
     ${ENGINE_DIR}/null/null_input.cpp
     ${ENGINE_DIR}/null/null_snddma.cpp
-    #
-    ${ENGINE_DIR}/asm/snapvector.c
-    #
+	#
     ${ENGINE_DIR}/sys/con_log.cpp
-    ${ENGINE_DIR}/sys/con_tty.cpp
+	${ENGINE_DIR}/sys/con_passive.cpp
     ${ENGINE_DIR}/sys/sys_main.cpp
-    ${ENGINE_DIR}/sys/sys_unix.cpp
     ${ENGINE_DIR}/sys/sys_shared.h
-    ${APPLE_SOURCES}
+    ${SYS_SOURCES}
     #
     ${EXTERNAL_DIR}/zlib/adler32.c
     ${EXTERNAL_DIR}/zlib/crc32.c
@@ -109,6 +133,10 @@ else(APPLE)
   set(SYSLIBS dl rt)
  endif(UNIX)
 endif(APPLE)
+
+if(WIN32)
+set(SYSLIBS asm wsock32 ws2_32 winmm psapi)
+endif(WIN32)
 
 target_link_libraries(
     tremded

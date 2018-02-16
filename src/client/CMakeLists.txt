@@ -24,16 +24,6 @@ add_definitions(
     ${SDL2_DEFINES}
     )
 	
-if( MSVC ) # Check if we are using the Visual Studio compiler
-add_definitions(
-    -D_CRT_SECURE_NO_WARNINGS
-    -D__AMD64__
-    -D_AMD64_
-	-D__WIN64__ 
-	-D_WIN64
-	)
-endif()
-
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
 		add_definitions(
@@ -55,8 +45,23 @@ endif()
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
-set(APPLE_SOURCES ${ENGINE_DIR}/sys/sys_osx.mm)
+set(SYS_SOURCES ${ENGINE_DIR}/sys/sys_osx.mm)
 endif(APPLE)
+
+if(WIN32)
+set(SYS_SOURCES
+    ${ENGINE_DIR}/sys/con_win32.cpp
+    ${ENGINE_DIR}/sys/sys_win32.cpp
+	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
+	${ENGINE_DIR}/sys/win_resource.h
+    )
+else(WIN32)
+set(SYS_SOURCES
+    ${ENGINE_DIR}/sys/con_tty.cpp
+    ${ENGINE_DIR}/sys/sys_unix.cpp
+    ${ENGINE_DIR}/asm/snapvector.c
+    )
+endif(WIN32)
 
 find_package(CURL)
 find_package(OpenGL)
@@ -93,6 +98,7 @@ add_executable(
     snd_mix.cpp
     snd_openal.cpp
     snd_wavelet.cpp
+	client.h
     #
     ${ENGINE_DIR}/qcommon/cm_load.cpp
     ${ENGINE_DIR}/qcommon/cm_patch.cpp
@@ -100,8 +106,10 @@ add_executable(
     ${ENGINE_DIR}/qcommon/cm_test.cpp
     ${ENGINE_DIR}/qcommon/cm_trace.cpp
     ${ENGINE_DIR}/qcommon/cmd.cpp
+	${ENGINE_DIR}/qcommon/cmd.h
     ${ENGINE_DIR}/qcommon/common.cpp
     ${ENGINE_DIR}/qcommon/crypto.cpp
+	${ENGINE_DIR}/qcommon/crypto.h
     ${ENGINE_DIR}/qcommon/cvar.cpp
     ${ENGINE_DIR}/qcommon/cvar.h
     ${ENGINE_DIR}/qcommon/files.cpp
@@ -113,6 +121,7 @@ add_executable(
     ${ENGINE_DIR}/qcommon/md5.cpp
     ${ENGINE_DIR}/qcommon/msg.cpp
     ${ENGINE_DIR}/qcommon/msg.h
+	${ENGINE_DIR}/qcommon/net.h
     ${ENGINE_DIR}/qcommon/net_chan.cpp
     ${ENGINE_DIR}/qcommon/net_ip.cpp
     ${ENGINE_DIR}/qcommon/net.h
@@ -120,7 +129,9 @@ add_executable(
     ${ENGINE_DIR}/qcommon/puff.cpp
     ${ENGINE_DIR}/qcommon/q_shared.c
     ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
-    ${ENGINE_DIR}/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/q3_lauxlib.h
+	${ENGINE_DIR}/qcommon/q_math.c
+	${ENGINE_DIR}/qcommon/qcommon.h
     ${ENGINE_DIR}/qcommon/unzip.cpp
     ${ENGINE_DIR}/qcommon/vm.cpp
     ${ENGINE_DIR}/qcommon/vm_interpreted.cpp
@@ -140,14 +151,9 @@ add_executable(
     #
     ${ENGINE_DIR}/sys/con_log.cpp
 	${ENGINE_DIR}/sys/con_passive.cpp
-    ${ENGINE_DIR}/sys/con_tty.cpp
-	${ENGINE_DIR}/sys/con_win32.cpp
     ${ENGINE_DIR}/sys/sys_main.cpp
-    ${ENGINE_DIR}/sys/sys_unix.cpp
-    ${ENGINE_DIR}/sys/sys_win32.cpp
-	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
     ${ENGINE_DIR}/sys/sys_shared.h
-    ${APPLE_SOURCES}
+    ${SYS_SOURCES}
 
     #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
     #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v2.cpp
@@ -163,12 +169,16 @@ endif(APPLE AND UNIX)
 	
 if(APPLE)
  # FIXME Prefixed with "lua" to prevent cmake from doing "-l-framework Cocoa"
- set(FRAMEWORKS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
+ set(SYSLIBS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
 else(APPLE)
  if(UNIX)
   set(SYSLIBS dl rt)
  endif(UNIX)
 endif(APPLE)
+
+if(WIN32)
+set(SYSLIBS asm wsock32 ws2_32 winmm psapi)
+endif(WIN32)
 
 if(NOT USE_RENDERER_DLOPEN)
   if(USE_OPENGL1)
@@ -231,14 +241,3 @@ if (USE_RENDERER_DLOPEN)
         ARGS -E copy ${CMAKE_BINARY_DIR}/src/renderergl2/librenderergl2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl2${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
 endif(USE_RENDERER_DLOPEN)
-
-#There is no need to make this dependence
-#This is all wrong
-#add_dependencies(
-#    tremulous
-#    ui
-#    game
-#    cgame
-#    renderergl1
-#    renderergl2
-#    )

@@ -43,6 +43,7 @@ include_directories(
     # these are in global namespace
     ${EXTERNAL_DIR}/lua-5.3.3/include
     ${EXTERNAL_DIR}/sol
+	${EXTERNAL_DIR}/restclient
     # these have they're own namespace
     ${EXTERNAL_DIR}/nettle-3.3
     ${EXTERNAL_DIR}/rapidjson

@@ -1,5 +1,8 @@
 # Changelog
 
+2018-02-16 Dusan Joci <dusanjocic@msn.com>
+	* Fixed compiling with cMake on the Windows platform
+
 2018-02-15 Dusan Joci <dusanjocic@msn.com>
 	* Added Changelog.md, TODO.md and 
 	* Changed folder structure

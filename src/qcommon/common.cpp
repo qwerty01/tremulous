@@ -2487,6 +2487,43 @@ static void Com_DetectAltivec(void)
 
 /*
 =================
+Com_DetectSSE
+Find out whether we have SSE support
+=================
+*/
+
+#if id386 || idx64
+static void Com_DetectSSE(void)
+{
+#if !idx64
+    cpuFeatures_t feat = Sys_GetProcessorFeatures();
+    if(feat & CF_SSE)
+    {
+        if(feat & CF_SSE2)
+            Q_SnapVector = qsnapvectorsse;
+        else
+            Q_SnapVector = qsnapvectorx87;
+#endif
+        Com_Printf("Have SSE support\n");
+#if !idx64
+    }
+    else
+    {
+        Q_SnapVector = qsnapvectorx87;
+
+        Com_Printf("No SSE support on this machine\n");
+    }
+#endif
+}
+
+#else
+
+#define Com_DetectSSE()
+
+#endif
+
+/*
+=================
 Com_InitRand
 Seed the random number generator, if possible with an OS supplied random seed.
 =================
@@ -2532,6 +2569,8 @@ void Com_Init( char *commandLine )
 
     //Swap_Init ();
     Cbuf_Init ();
+
+	Com_DetectSSE();
 
     // override anything from the config files with command line args
     Com_StartupVariable( NULL );

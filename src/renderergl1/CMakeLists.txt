@@ -46,28 +46,28 @@ set(renderergl1_SRCS
 
 if(NOT USE_RENDERER_DLOPEN)
     add_library(
-        renderergl1 STATIC
+        renderer_opengl1 STATIC
         ${renderergl1_SRCS}
         )
 
     target_link_libraries(
-        renderergl1 renderercommon
+        renderer_opengl1 renderercommon
         ${SDL2_LIBRARY}
         )
 else(NOT USE_RENDERER_DLOPEN)
     add_library(
-        renderergl1 SHARED
+        renderer_opengl1 SHARED
         ${renderergl1_SRCS}
         )
     target_link_libraries(
-        renderergl1
+        renderer_opengl1
         renderercommon
         ${FRAMEWORKS}
         ${OPENGL_LIBRARIES}
         ${SDL2_LIBRARY}
         )
 endif(NOT USE_RENDERER_DLOPEN)
-SET_TARGET_PROPERTIES( renderergl1 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
+SET_TARGET_PROPERTIES( renderer_opengl1 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
 		add_definitions(
