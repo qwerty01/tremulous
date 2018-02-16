@@ -51,7 +51,14 @@ Mingw32 requires `USE_INTERNAL_LIBS=1`
 * Mingw-w64
 * g++-mingw-w64
 
-Currently there is no native Windows build setup, all builds are cross compiled on Linux.
+### Windows build
+
+* cMake-GUI.
+* Visual Studio 2013 version (or any higher version).
+
+* Generate solution project with cMake.
+* Open it with your VS application, build (F5).
+* Copy your compiled files to the game folder and run it.
 
 ### OSX
 

@@ -3,6 +3,7 @@
 2018-02-16 Dusan Joci <dusanjocic@msn.com>
 	* Fixed compiling with cMake on the Windows platform
 	* Forgot to upload some files
+	* Updated README.md file with building for the Windows
 
 2018-02-15 Dusan Joci <dusanjocic@msn.com>
 	* Added Changelog.md, TODO.md and 
