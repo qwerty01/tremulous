@@ -1,6 +1,24 @@
 // Unit tests for MSG_ReadString, MSG_ReadBigString and MSG_ReadStringLine
 // Victor Roemer (wtfbbqhax), <victor@badsec.org>.
 
+// 
+// Messages
+//
+//
+//  Out Of Band: 
+//     
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |              -1               |           RAW DATA          ...
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+//
+//  Sequence Number (s32)
+//  QPort (u16):
+//  
+//
+
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -9,6 +27,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
+#define PARANOID
 #include "qcommon/cvar.h"
 #include "qcommon/huffman.h"
 #include "qcommon/msg.h"
