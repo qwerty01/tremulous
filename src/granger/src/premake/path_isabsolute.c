@@ -7,21 +7,21 @@
 #include "premake.h"
 
 
-int path_isabsolute(lua_State* L)
+int path_isabsolute( lua_State* L )
 {
-	const char* path = luaL_checkstring(L, -1);
-	lua_pushboolean(L, do_isabsolute(path));
-	return 1;
+    const char* path = luaL_checkstring( L, -1 );
+    lua_pushboolean( L, do_isabsolute( path ) );
+    return 1;
 }
 
 
-int do_isabsolute(const char* path)
+int do_isabsolute( const char* path )
 {
-	return (
-		path[0] == '/' ||
-	    path[0] == '\\' ||
-	    path[0] == '$' ||
-	    (path[0] == '"' && path[1] == '$') ||
-	    (path[0] != '\0' && path[1] == ':')
-	);
+    return (
+               path[0] == '/' ||
+               path[0] == '\\' ||
+               path[0] == '$' ||
+               ( path[0] == '"' && path[1] == '$' ) ||
+               ( path[0] != '\0' && path[1] == ':' )
+           );
 }

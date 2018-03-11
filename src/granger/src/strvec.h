@@ -18,18 +18,18 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>
  *
  ****************************************************************************/
- 
+
 #ifndef _STRVEC_H_
 #define _STRVEC_H_
 
-void* StringVector_New(void);
-void StringVector_Delete(void*);
+void* StringVector_New( void );
+void StringVector_Delete( void* );
 
-int StringVector_Add(void*, const char*);
-char* StringVector_Get(void*, unsigned index);
+int StringVector_Add( void*, const char* );
+char* StringVector_Get( void*, unsigned index );
 
-int StringVector_AddVector(void* dst, void* src);
-const char** StringVector_GetVector(void*);
-const char* StringVector_toString(void*);
+int StringVector_AddVector( void* dst, void* src );
+const char** StringVector_GetVector( void* );
+const char* StringVector_toString( void* );
 
 #endif // _STRVEC_H_

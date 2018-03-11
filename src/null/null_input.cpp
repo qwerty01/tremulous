@@ -23,14 +23,18 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 
 #include "sys/sys_local.h"
 
-void IN_Init( void ) {
+void IN_Init( void )
+{
 }
 
-void IN_Frame (void) {
+void IN_Frame( void )
+{
 }
 
-void IN_Shutdown( void ) {
+void IN_Shutdown( void )
+{
 }
 
-void IN_Restart( void ) {
+void IN_Restart( void )
+{
 }

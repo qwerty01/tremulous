@@ -33,12 +33,12 @@ void Mat4Identity( mat4_t out );
 void Mat4Copy( const mat4_t in, mat4_t out );
 void Mat4Multiply( const mat4_t in1, const mat4_t in2, mat4_t out );
 void Mat4Transform( const mat4_t in1, const vec4_t in2, vec4_t out );
-bool Mat4Compare(const mat4_t a, const mat4_t b);
+bool Mat4Compare( const mat4_t a, const mat4_t b );
 void Mat4Dump( const mat4_t in );
 void Mat4Translation( vec3_t vec, mat4_t out );
 void Mat4Ortho( float left, float right, float bottom, float top, float znear, float zfar, mat4_t out );
-void Mat4View(vec3_t axes[3], vec3_t origin, mat4_t out);
-void Mat4SimpleInverse( const mat4_t in, mat4_t out);
+void Mat4View( vec3_t axes[3], vec3_t origin, mat4_t out );
+void Mat4SimpleInverse( const mat4_t in, mat4_t out );
 
 #define VectorCopy2(a,b)		((b)[0]=(a)[0],(b)[1]=(a)[1])
 #define VectorSet2(v,x,y)       ((v)[0]=(x),(v)[1]=(y));
@@ -55,29 +55,29 @@ void Mat4SimpleInverse( const mat4_t in, mat4_t out);
 #define ByteToFloat(a)          ((float)(a) * 1.0f/255.0f)
 #define FloatToByte(a)          (byte)((a) * 255.0f)
 
-static ID_INLINE int VectorCompare4(const vec4_t v1, const vec4_t v2)
+static ID_INLINE int VectorCompare4( const vec4_t v1, const vec4_t v2 )
 {
-	if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3])
-	{
-		return 0;
-	}
-	return 1;
+    if( v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3] )
+    {
+        return 0;
+    }
+    return 1;
 }
 
-static ID_INLINE int VectorCompare5(const vec5_t v1, const vec5_t v2)
+static ID_INLINE int VectorCompare5( const vec5_t v1, const vec5_t v2 )
 {
-	if(v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3] || v1[4] != v2[4])
-	{
-		return 0;
-	}
-	return 1;
+    if( v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2] || v1[3] != v2[3] || v1[4] != v2[4] )
+    {
+        return 0;
+    }
+    return 1;
 }
 
-void VectorLerp( vec3_t a, vec3_t b, float lerp, vec3_t c);
+void VectorLerp( vec3_t a, vec3_t b, float lerp, vec3_t c );
 
 
-bool SpheresIntersect(vec3_t origin1, float radius1, vec3_t origin2, float radius2);
-void BoundingSphereOfSpheres(vec3_t origin1, float radius1, vec3_t origin2, float radius2, vec3_t origin3, float *radius3);
+bool SpheresIntersect( vec3_t origin1, float radius1, vec3_t origin2, float radius2 );
+void BoundingSphereOfSpheres( vec3_t origin1, float radius1, vec3_t origin2, float radius2, vec3_t origin3, float* radius3 );
 
 #ifndef SGN
 #define SGN(x) (((x) >= 0) ? !!(x) : -1)
@@ -95,8 +95,8 @@ void BoundingSphereOfSpheres(vec3_t origin1, float radius1, vec3_t origin2, floa
 #define CLAMP(a,b,c) MIN(MAX((a),(b)),(c))
 #endif
 
-int NextPowerOfTwo(int in);
-unsigned short FloatToHalf(float in);
-float HalfToFloat(unsigned short in);
+int NextPowerOfTwo( int in );
+unsigned short FloatToHalf( float in );
+float HalfToFloat( unsigned short in );
 
 #endif

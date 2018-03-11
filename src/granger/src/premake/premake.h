@@ -48,43 +48,43 @@
 
 
 /* Bootstrapping helper functions */
-void do_getabsolute(char* result, const char* value, const char* relative_to);
-int do_getcwd(char* buffer, size_t size);
-int do_isabsolute(const char* path);
-int do_isfile(const char* filename);
-void do_normalize(lua_State* L, char* buffer, const char* path);
-void do_translate(char* value, const char sep);
+void do_getabsolute( char* result, const char* value, const char* relative_to );
+int do_getcwd( char* buffer, size_t size );
+int do_isabsolute( const char* path );
+int do_isfile( const char* filename );
+void do_normalize( lua_State* L, char* buffer, const char* path );
+void do_translate( char* value, const char sep );
 
 
 /* Built-in functions */
-int path_getabsolute(lua_State* L);
-int path_getrelative(lua_State* L);
-int path_isabsolute(lua_State* L);
-int path_join(lua_State* L);
-int path_normalize(lua_State* L);
-int path_translate(lua_State* L);
-int os_access(lua_State* L);
-int os_chdir(lua_State* L);
-int os_copyfile(lua_State* L);
-int os_elevate(lua_State *L);
-int os_getcwd(lua_State* L);
-int os_getversion(lua_State* L);
-int os_is64bit(lua_State* L);
-int os_isdir(lua_State* L);
-int os_isfile(lua_State* L);
-int os_matchdone(lua_State* L);
-int os_matchisfile(lua_State* L);
-int os_matchname(lua_State* L);
-int os_matchnext(lua_State* L);
-int os_matchstart(lua_State* L);
-int os_mkdir(lua_State* L);
-int os_pathsearch(lua_State* L);
-int os_rmdir(lua_State* L);
-int os_stat(lua_State* L);
-int string_endswith(lua_State* L);
+int path_getabsolute( lua_State* L );
+int path_getrelative( lua_State* L );
+int path_isabsolute( lua_State* L );
+int path_join( lua_State* L );
+int path_normalize( lua_State* L );
+int path_translate( lua_State* L );
+int os_access( lua_State* L );
+int os_chdir( lua_State* L );
+int os_copyfile( lua_State* L );
+int os_elevate( lua_State* L );
+int os_getcwd( lua_State* L );
+int os_getversion( lua_State* L );
+int os_is64bit( lua_State* L );
+int os_isdir( lua_State* L );
+int os_isfile( lua_State* L );
+int os_matchdone( lua_State* L );
+int os_matchisfile( lua_State* L );
+int os_matchname( lua_State* L );
+int os_matchnext( lua_State* L );
+int os_matchstart( lua_State* L );
+int os_mkdir( lua_State* L );
+int os_pathsearch( lua_State* L );
+int os_rmdir( lua_State* L );
+int os_stat( lua_State* L );
+int string_endswith( lua_State* L );
 
 
 /* Engine interface */
-int premake_init(lua_State* L);
-int premake_locate(lua_State* L, const char* argv0);
+int premake_init( lua_State* L );
+int premake_locate( lua_State* L, const char* argv0 );
 

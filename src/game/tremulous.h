@@ -21,8 +21,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
-#ifndef _TREMULOUS_H_
-#define _TREMULOUS_H_
+#ifndef __TREMULOUS_H__
+#define __TREMULOUS_H__
 
 /*
  * ALIEN weapons
@@ -96,7 +96,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 
 #define LEVEL3_CLAW_DMG             ADM(80)
 #define LEVEL3_CLAW_RANGE           80.0f
-#define LEVEL3_CLAW_UPG_RANGE       LEVEL3_CLAW_RANGE + 3.0f          
+#define LEVEL3_CLAW_UPG_RANGE       LEVEL3_CLAW_RANGE + 3.0f
 #define LEVEL3_CLAW_WIDTH           12.0f
 #define LEVEL3_CLAW_REPEAT          900
 #define LEVEL3_CLAW_K_SCALE         1.0f
@@ -673,8 +673,8 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #define DEFAULT_HUMAN_MAX_STAGE     "2"
 
 #define DAMAGE_FRACTION_FOR_KILL    0.5f //how much damage players (versus structures) need to
-                                         //do to increment the stage kill counters
-                                         
+//do to increment the stage kill counters
+
 #define MAXIMUM_BUILD_TIME          20000 // used for pie timer
 
-#endif
+#endif //!__TREMULOUS_H__

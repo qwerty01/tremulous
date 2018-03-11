@@ -39,18 +39,18 @@
 extern "C" {
 #endif
 
-/* Individual version numbers in decimal */
+    /* Individual version numbers in decimal */
 #define NETTLE_VERSION_MAJOR 3
 #define NETTLE_VERSION_MINOR 3
-
+    
 #define NETTLE_USE_MINI_GMP 1
-
-/* We need a preprocessor constant for GMP_NUMB_BITS, simply using
-   sizeof(mp_limb_t) * CHAR_BIT is not good enough. */
+    
+    /* We need a preprocessor constant for GMP_NUMB_BITS, simply using
+       sizeof(mp_limb_t) * CHAR_BIT is not good enough. */
 #if NETTLE_USE_MINI_GMP
 # define GMP_NUMB_BITS (sizeof(unsigned long) * 8)
 #endif
-
+    
 #ifdef __cplusplus
 }
 #endif

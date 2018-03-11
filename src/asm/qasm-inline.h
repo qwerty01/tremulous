@@ -26,15 +26,15 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include "qcommon/q_platform.h"
 
 #if idx64
-  #define EAX "%%rax"
-  #define EBX "%%rbx"
-  #define ESP "%%rsp"
-  #define EDI "%%rdi"
+#define EAX "%%rax"
+#define EBX "%%rbx"
+#define ESP "%%rsp"
+#define EDI "%%rdi"
 #else
-  #define EAX "%%eax"
-  #define EBX "%%ebx"
-  #define ESP "%%esp"
-  #define EDI "%%edi"
+#define EAX "%%eax"
+#define EBX "%%ebx"
+#define ESP "%%esp"
+#define EDI "%%edi"
 #endif
 
 #endif

@@ -29,11 +29,12 @@ along with Reaction source code; if not, see <https://www.gnu.org/licenses/>
 #define RDF_EXTRA		0x0010		// Makro - refdefex_t to follow after refdef_t
 #define RDF_SUNLIGHT    0x0020      // SmileTheory - render sunlight and shadows
 
-typedef struct {
-	float			blurFactor;
-	float           sunDir[3];
-	float           sunCol[3];
-	float           sunAmbCol[3];
+typedef struct
+{
+    float			blurFactor;
+    float           sunDir[3];
+    float           sunCol[3];
+    float           sunAmbCol[3];
 } refdefex_t;
 
 #endif

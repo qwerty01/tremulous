@@ -1,46 +1,28 @@
-
-#
-##    .dMMMb  dMMMMMP dMMMMb  dMP dMP dMMMMMP dMMMMb
-##   dMP" VP dMP     dMP.dMP dMP dMP dMP     dMP.dMP
-##   VMMMb  dMMMP   dMMMMK" dMP dMP dMMMP   dMMMMK"
-## dP .dMP dMP     dMP"AMF  YMvAP" dMP     dMP"AMF
-## VMMMP" dMMMMMP dMP dMP    VP"  dMMMMMP dMP dMP
-#
-
-add_definitions(
-    -DDEDICATED
-    -DUSE_LOCAL_HEADERS
-    -DPRODUCT_VERSION="1.2.0 pre-release"
-    -DUSE_VOIP
-    -DNDEBUG
-    )
-	
-if(WIN32 AND MSVC)
-	if(CMAKE_CL_64)
-		add_definitions(
-			-D_CRT_SECURE_NO_WARNINGS
-			-D__AMD64__
-			-D_AMD64_
-			-D__WIN64__ 
-			-D_WIN64
-			)
-	else()
-		add_definitions(
-			-_WIN32
-			-WIN32
-			)
-	endif()
-endif()
-
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
 set(SYS_SOURCES ${PARENT_DIR}/sys/sys_osx.mm)
 endif(APPLE)
 
+add_definitions(
+    -DDEDICATED
+    -DUSE_LOCAL_HEADERS
+    -DNDEBUG
+    )
+	
+if(WIN32 AND MSVC)
+	if(CMAKE_CL_64)
+		add_definitions( -D_CRT_SECURE_NO_WARNINGS -D__AMD64__ -D_AMD64_ -D__WIN64__ -D_WIN64 )
+	else()
+		add_definitions( -D_WIN32 -DWIN32 )
+	endif()
+endif()
+
+
 if(WIN32)
 set(SYS_SOURCES
-    ${ENGINE_DIR}/sys/con_passive.cpp
+    ${ENGINE_DIR}/sys/con_passive
+pp
     ${ENGINE_DIR}/sys/sys_win32.cpp
 	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
 	${ENGINE_DIR}/sys/win_resource.h
@@ -49,7 +31,6 @@ else(WIN32)
 set(SYS_SOURCES
     ${ENGINE_DIR}/sys/con_tty.cpp
     ${ENGINE_DIR}/sys/sys_unix.cpp
-    ${ENGINE_DIR}/asm/snapvector.c
     )
 endif(WIN32)
 
@@ -69,11 +50,11 @@ add_executable(
 	
 	${ENGINE_DIR}/game/g_public.h
     #
-    ${ENGINE_DIR}/qcommon/cm_load.cpp
-    ${ENGINE_DIR}/qcommon/cm_patch.cpp
-    ${ENGINE_DIR}/qcommon/cm_polylib.cpp
-    ${ENGINE_DIR}/qcommon/cm_test.cpp
-    ${ENGINE_DIR}/qcommon/cm_trace.cpp
+    ${ENGINE_DIR}/cm/cm_load.cpp
+    ${ENGINE_DIR}/cm/cm_patch.cpp
+    ${ENGINE_DIR}/cm/cm_polylib.cpp
+    ${ENGINE_DIR}/cm/cm_test.cpp
+    ${ENGINE_DIR}/cm/cm_trace.cpp
     ${ENGINE_DIR}/qcommon/cmd.cpp
 	${ENGINE_DIR}/qcommon/cmd.h
     ${ENGINE_DIR}/qcommon/common.cpp
@@ -94,9 +75,9 @@ add_executable(
     ${ENGINE_DIR}/qcommon/net_ip.cpp
     ${ENGINE_DIR}/qcommon/parse.cpp
     ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
-    ${ENGINE_DIR}/qcommon/q_math.c
+    ${ENGINE_DIR}/qcommon/q_math.cpp
 	${ENGINE_DIR}/qcommon/q_platform.h
-    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_shared.cpp
     ${ENGINE_DIR}/qcommon/q_shared.h
     ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
     ${ENGINE_DIR}/qcommon/q3_lauxlib.h
@@ -126,16 +107,16 @@ add_executable(
     )
 
 if(APPLE)
- # FIXME Prefixed with "lua" to prevent cmake from doing "-l-framework Cocoa"
- set(FRAMEWORKS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
+  # FIXME Prefixed with "lua" to prevent cmake from doing "-l-framework Cocoa"
+  set(FRAMEWORKS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
 else(APPLE)
- if(UNIX)
-  set(SYSLIBS dl rt)
- endif(UNIX)
+  if(UNIX)
+    set(SYSLIBS dl rt)
+  endif(UNIX)
 endif(APPLE)
 
 if(WIN32)
-set(SYSLIBS asm wsock32 ws2_32 winmm psapi)
+  set(SYSLIBS asm wsock32 ws2_32 winmm psapi)
 endif(WIN32)
 
 target_link_libraries(
@@ -149,7 +130,7 @@ target_link_libraries(
     ${SYSLIBS}
     )
     
-include_directories(
+include_directories (
 	${ENGINE_DIR}
     ${ENGINE_DIR}/script
     ${EXTERNAL_DIR}/lua-5.3.3/include
@@ -157,4 +138,4 @@ include_directories(
     ${EXTERNAL_DIR}/script/rapidjson
     ${EXTERNAL_DIR}/nettle-3.3
     ${EXTERNAL_DIR}/zlib
-    )
+)

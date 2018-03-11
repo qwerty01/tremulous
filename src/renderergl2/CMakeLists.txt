@@ -1,5 +1,3 @@
-include("${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake")
-
 find_package(OpenGL)
 find_package(SDL2)
 
@@ -86,8 +84,8 @@ set(renderergl2_SRCS
     ${ENGINE_DIR}/qcommon/json.h
     ${ENGINE_DIR}/qcommon/puff.cpp
     ${ENGINE_DIR}/qcommon/puff.h
-    ${ENGINE_DIR}/qcommon/q_math.c
-    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_math.cpp
+    ${ENGINE_DIR}/qcommon/q_shared.cpp
     ${ENGINE_DIR}/qcommon/qfiles.h
 
     ${GLSL_SHADERS}
@@ -111,21 +109,11 @@ else(NOT USE_RENDERER_DLOPEN)
     target_link_libraries( renderer_opengl2 renderercommon ${FRAMEWORKS} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY})
 endif(NOT USE_RENDERER_DLOPEN)
 
-SET_TARGET_PROPERTIES( renderer_opengl2 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
-
 if(WIN32 AND MSVC)
+	SET_TARGET_PROPERTIES( renderer_opengl2 PROPERTIES LINK_FLAGS "/DEF:\"${ENGINE_DIR}/renderercommon/ref_trin.def" )
 	if(CMAKE_CL_64)
-		add_definitions(
-			-D_CRT_SECURE_NO_WARNINGS
-			-D__AMD64__
-			-D_AMD64_
-			-D__WIN64__ 
-			-D_WIN64
-			)
+		add_definitions( -D_CRT_SECURE_NO_WARNINGS -D__AMD64__ -D_AMD64_ -D__WIN64__ -D_WIN64 )
 	else()
-		add_definitions(
-			-_WIN32
-			-WIN32
-			)
+		add_definitions( -D_WIN32 -DWIN32 )
 	endif()
 endif()

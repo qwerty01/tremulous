@@ -66,11 +66,11 @@
    this */
 
 /* #define Choice(x,y,z) ( ( (x) & (y) ) | ( ~(x) & (z) ) ) */
-#define Choice(x,y,z)   ( (z) ^ ( (x) & ( (y) ^ (z) ) ) ) 
+#define Choice(x,y,z)   ( (z) ^ ( (x) & ( (y) ^ (z) ) ) )
 /* #define Majority(x,y,z) ( ((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)) ) */
 #define Majority(x,y,z) ( ((x) & (y)) ^ ((z) & ((x) ^ (y))) )
 
-#define S0(x) (ROTL32(30,(x)) ^ ROTL32(19,(x)) ^ ROTL32(10,(x))) 
+#define S0(x) (ROTL32(30,(x)) ^ ROTL32(19,(x)) ^ ROTL32(10,(x)))
 #define S1(x) (ROTL32(26,(x)) ^ ROTL32(21,(x)) ^ ROTL32(7,(x)))
 
 #define s0(x) (ROTL32(25,(x)) ^ ROTL32(14,(x)) ^ ((x) >> 3))
@@ -119,81 +119,101 @@
 /* For fat builds */
 #if HAVE_NATIVE_sha256_compress
 void
-_nettle_sha256_compress_c(uint32_t *state, const uint8_t *input, const uint32_t *k);
+_nettle_sha256_compress_c( uint32_t* state, const uint8_t* input, const uint32_t* k );
 #define _nettle_sha256_compress _nettle_sha256_compress_c
 #endif
 
 void
-_nettle_sha256_compress(uint32_t *state, const uint8_t *input, const uint32_t *k)
+_nettle_sha256_compress( uint32_t* state, const uint8_t* input, const uint32_t* k )
 {
-  uint32_t data[SHA256_DATA_LENGTH];
-  uint32_t A, B, C, D, E, F, G, H;     /* Local vars */
-  unsigned i;
-  uint32_t *d;
-
-  for (i = 0; i < SHA256_DATA_LENGTH; i++, input+= 4)
+    uint32_t data[SHA256_DATA_LENGTH];
+    uint32_t A, B, C, D, E, F, G, H;     /* Local vars */
+    unsigned i;
+    uint32_t* d;
+    
+    for( i = 0; i < SHA256_DATA_LENGTH; i++, input += 4 )
     {
-      data[i] = READ_UINT32(input);
+        data[i] = READ_UINT32( input );
     }
-
-  /* Set up first buffer and local data buffer */
-  A = state[0];
-  B = state[1];
-  C = state[2];
-  D = state[3];
-  E = state[4];
-  F = state[5];
-  G = state[6];
-  H = state[7];
-  
-  /* Heavy mangling */
-  /* First 16 subrounds that act on the original data */
-
-  DEBUG(-1);
-  for (i = 0, d = data; i<16; i+=8, k += 8, d+= 8)
+    
+    /* Set up first buffer and local data buffer */
+    A = state[0];
+    B = state[1];
+    C = state[2];
+    D = state[3];
+    E = state[4];
+    F = state[5];
+    G = state[6];
+    H = state[7];
+    
+    /* Heavy mangling */
+    /* First 16 subrounds that act on the original data */
+    
+    DEBUG( -1 );
+    for( i = 0, d = data; i < 16; i += 8, k += 8, d += 8 )
     {
-      ROUND(A, B, C, D, E, F, G, H, k[0], d[0]); DEBUG(i);
-      ROUND(H, A, B, C, D, E, F, G, k[1], d[1]); DEBUG(i+1);
-      ROUND(G, H, A, B, C, D, E, F, k[2], d[2]);
-      ROUND(F, G, H, A, B, C, D, E, k[3], d[3]);
-      ROUND(E, F, G, H, A, B, C, D, k[4], d[4]);
-      ROUND(D, E, F, G, H, A, B, C, k[5], d[5]);
-      ROUND(C, D, E, F, G, H, A, B, k[6], d[6]); DEBUG(i+6);
-      ROUND(B, C, D, E, F, G, H, A, k[7], d[7]); DEBUG(i+7);
+        ROUND( A, B, C, D, E, F, G, H, k[0], d[0] );
+        DEBUG( i );
+        ROUND( H, A, B, C, D, E, F, G, k[1], d[1] );
+        DEBUG( i + 1 );
+        ROUND( G, H, A, B, C, D, E, F, k[2], d[2] );
+        ROUND( F, G, H, A, B, C, D, E, k[3], d[3] );
+        ROUND( E, F, G, H, A, B, C, D, k[4], d[4] );
+        ROUND( D, E, F, G, H, A, B, C, k[5], d[5] );
+        ROUND( C, D, E, F, G, H, A, B, k[6], d[6] );
+        DEBUG( i + 6 );
+        ROUND( B, C, D, E, F, G, H, A, k[7], d[7] );
+        DEBUG( i + 7 );
     }
-  
-  for (; i<64; i += 16, k+= 16)
+    
+    for( ; i < 64; i += 16, k += 16 )
     {
-      ROUND(A, B, C, D, E, F, G, H, k[ 0], EXPAND(data,  0)); DEBUG(i);
-      ROUND(H, A, B, C, D, E, F, G, k[ 1], EXPAND(data,  1)); DEBUG(i+1);
-      ROUND(G, H, A, B, C, D, E, F, k[ 2], EXPAND(data,  2)); DEBUG(i+2);
-      ROUND(F, G, H, A, B, C, D, E, k[ 3], EXPAND(data,  3)); DEBUG(i+3);
-      ROUND(E, F, G, H, A, B, C, D, k[ 4], EXPAND(data,  4)); DEBUG(i+4);
-      ROUND(D, E, F, G, H, A, B, C, k[ 5], EXPAND(data,  5)); DEBUG(i+5);
-      ROUND(C, D, E, F, G, H, A, B, k[ 6], EXPAND(data,  6)); DEBUG(i+6);
-      ROUND(B, C, D, E, F, G, H, A, k[ 7], EXPAND(data,  7)); DEBUG(i+7);
-      ROUND(A, B, C, D, E, F, G, H, k[ 8], EXPAND(data,  8)); DEBUG(i+8);
-      ROUND(H, A, B, C, D, E, F, G, k[ 9], EXPAND(data,  9)); DEBUG(i+9);
-      ROUND(G, H, A, B, C, D, E, F, k[10], EXPAND(data, 10)); DEBUG(i+10);
-      ROUND(F, G, H, A, B, C, D, E, k[11], EXPAND(data, 11)); DEBUG(i+11);
-      ROUND(E, F, G, H, A, B, C, D, k[12], EXPAND(data, 12)); DEBUG(i+12);
-      ROUND(D, E, F, G, H, A, B, C, k[13], EXPAND(data, 13)); DEBUG(i+13);
-      ROUND(C, D, E, F, G, H, A, B, k[14], EXPAND(data, 14)); DEBUG(i+14);
-      ROUND(B, C, D, E, F, G, H, A, k[15], EXPAND(data, 15)); DEBUG(i+15);
+        ROUND( A, B, C, D, E, F, G, H, k[ 0], EXPAND( data,  0 ) );
+        DEBUG( i );
+        ROUND( H, A, B, C, D, E, F, G, k[ 1], EXPAND( data,  1 ) );
+        DEBUG( i + 1 );
+        ROUND( G, H, A, B, C, D, E, F, k[ 2], EXPAND( data,  2 ) );
+        DEBUG( i + 2 );
+        ROUND( F, G, H, A, B, C, D, E, k[ 3], EXPAND( data,  3 ) );
+        DEBUG( i + 3 );
+        ROUND( E, F, G, H, A, B, C, D, k[ 4], EXPAND( data,  4 ) );
+        DEBUG( i + 4 );
+        ROUND( D, E, F, G, H, A, B, C, k[ 5], EXPAND( data,  5 ) );
+        DEBUG( i + 5 );
+        ROUND( C, D, E, F, G, H, A, B, k[ 6], EXPAND( data,  6 ) );
+        DEBUG( i + 6 );
+        ROUND( B, C, D, E, F, G, H, A, k[ 7], EXPAND( data,  7 ) );
+        DEBUG( i + 7 );
+        ROUND( A, B, C, D, E, F, G, H, k[ 8], EXPAND( data,  8 ) );
+        DEBUG( i + 8 );
+        ROUND( H, A, B, C, D, E, F, G, k[ 9], EXPAND( data,  9 ) );
+        DEBUG( i + 9 );
+        ROUND( G, H, A, B, C, D, E, F, k[10], EXPAND( data, 10 ) );
+        DEBUG( i + 10 );
+        ROUND( F, G, H, A, B, C, D, E, k[11], EXPAND( data, 11 ) );
+        DEBUG( i + 11 );
+        ROUND( E, F, G, H, A, B, C, D, k[12], EXPAND( data, 12 ) );
+        DEBUG( i + 12 );
+        ROUND( D, E, F, G, H, A, B, C, k[13], EXPAND( data, 13 ) );
+        DEBUG( i + 13 );
+        ROUND( C, D, E, F, G, H, A, B, k[14], EXPAND( data, 14 ) );
+        DEBUG( i + 14 );
+        ROUND( B, C, D, E, F, G, H, A, k[15], EXPAND( data, 15 ) );
+        DEBUG( i + 15 );
     }
-
-  /* Update state */
-  state[0] += A;
-  state[1] += B;
-  state[2] += C;
-  state[3] += D;
-  state[4] += E;
-  state[5] += F;
-  state[6] += G;
-  state[7] += H;
+    
+    /* Update state */
+    state[0] += A;
+    state[1] += B;
+    state[2] += C;
+    state[3] += D;
+    state[4] += E;
+    state[5] += F;
+    state[6] += G;
+    state[7] += H;
 #if SHA256_DEBUG
-  fprintf(stderr, "99: %8x %8x %8x %8x %8x %8x %8x %8x\n",
-	  state[0], state[1], state[2], state[3],
-	  state[4], state[5], state[6], state[7]);
+    fprintf( stderr, "99: %8x %8x %8x %8x %8x %8x %8x %8x\n",
+             state[0], state[1], state[2], state[3],
+             state[4], state[5], state[6], state[7] );
 #endif
 }

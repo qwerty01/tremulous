@@ -51,6 +51,6 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #	define Sys_LibraryError() SDL_GetError()
 #endif
 
-void * QDECL Sys_LoadDll(const char *name, bool useSystemLib);
+void* QDECL Sys_LoadDll( const char* name, bool useSystemLib );
 
 #endif

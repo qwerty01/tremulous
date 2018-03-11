@@ -21,14 +21,15 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
-#ifndef UI_PUBLIC_H
-#define UI_PUBLIC_H
+#ifndef __UI_PUBLIC_H__
+#define __UI_PUBLIC_H__
 
 #include "qcommon/q_shared.h"
 
 #define UI_API_VERSION 6
 
-typedef struct {
+typedef struct
+{
     connstate_t connState;
     int connectPacketCount;
     int clientNum;
@@ -37,7 +38,8 @@ typedef struct {
     char messageString[MAX_STRING_CHARS];
 } uiClientState_t;
 
-typedef enum {
+typedef enum
+{
     UI_ERROR,
     UI_PRINT,
     UI_MILLISECONDS,
@@ -129,7 +131,7 @@ typedef enum {
     // 1.32
     UI_FS_SEEK,
     UI_SET_PBCLSTATUS,
-
+    
 #ifndef MODULE_INTERFACE_11
     UI_PARSE_ADD_GLOBAL_DEFINE,
     UI_PARSE_LOAD_SOURCE,
@@ -138,11 +140,11 @@ typedef enum {
     UI_PARSE_SOURCE_FILE_AND_LINE,
     UI_GETNEWS,
 #endif
-
+    
     // XXX THERE IS ROOM FOR _1_ (or 2? Did i count from 0?)
     // SYSCALL BETWEEN UI_GETNEWS and UI_MEMSET
     // UI_RESERVED_SYSCALL = 99,
-
+    
     UI_MEMSET = 100,
     UI_MEMCPY,
     UI_STRNCPY,
@@ -158,47 +160,48 @@ typedef enum { UIMENU_NONE, UIMENU_MAIN, UIMENU_INGAME } uiMenuCommand_t;
 
 typedef enum { SORT_HOST, SORT_GAME, SORT_MAP, SORT_CLIENTS, SORT_PING } serverSortField_t;
 
-typedef enum {
+typedef enum
+{
     UI_GETAPIVERSION = 0,  // system reserved
-
+    
     UI_INIT,
     //  void  UI_Init( void );
-
+    
     UI_SHUTDOWN,
     //  void  UI_Shutdown( void );
-
+    
     UI_KEY_EVENT,
     //  void  UI_KeyEvent( int key );
-
+    
     UI_MOUSE_EVENT,
 //  void  UI_MouseEvent( int dx, int dy );
 
 #ifndef MODULE_INTERFACE_11
     UI_MOUSE_POSITION,
     //  int   UI_MousePosition( void );
-
+    
     UI_SET_MOUSE_POSITION,
 //  void  UI_SetMousePosition( int x, int y );
 #endif
 
     UI_REFRESH,
     //  void  UI_Refresh( int time );
-
+    
     UI_IS_FULLSCREEN,
-    //  qboolean UI_IsFullscreen( void );
-
+    //  bool UI_IsFullscreen( void );
+    
     UI_SET_ACTIVE_MENU,
     //  void  UI_SetActiveMenu( uiMenuCommand_t menu );
-
+    
     UI_CONSOLE_COMMAND,
-    //  qboolean UI_ConsoleCommand( int realTime );
-
+    //  bool UI_ConsoleCommand( int realTime );
+    
     UI_DRAW_CONNECT_SCREEN
-    //  void  UI_DrawConnectScreen( qboolean overlay );
-
+    //  void  UI_DrawConnectScreen( bool overlay );
+    
     // if !overlay, the background will be drawn, otherwise it will be
     // overlayed over whatever the cgame has drawn.
     // a GetClientState syscall will be made to get the current strings
 } uiExport_t;
 
-#endif
+#endif //!__UI_PUBLIC_H__

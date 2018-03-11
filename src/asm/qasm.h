@@ -26,7 +26,7 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include "qcommon/q_platform.h"
 
 #ifdef __ELF__
-.section .note.GNU-stack,"",@progbits
+.section .note.GNU - stack, "", @progbits
 #endif
 
 #if defined(__ELF__) || defined(__WIN64__)

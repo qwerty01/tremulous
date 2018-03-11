@@ -21,12 +21,18 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 ===========================================================================
 */
 
-#ifndef __UI_SHARED_H
-#define __UI_SHARED_H
+#ifndef __UI_SHARED_H__
+#define __UI_SHARED_H__
 
+#ifndef __KEYCODES_H__
 #include "client/keycodes.h"
+#endif
+#ifndef __Q_SHARED_H__
 #include "qcommon/q_shared.h"
+#endif
+#ifndef __TR_TYPES_H__
 #include "renderercommon/tr_types.h"
+#endif
 
 #include "../../assets/ui/menudef.h"
 
@@ -117,12 +123,14 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #define SLIDER_THUMB_HEIGHT 20.0f
 #define NUM_CROSSHAIRS 10
 
-typedef struct {
-    const char *command;
-    const char *args[MAX_SCRIPT_ARGS];
+typedef struct
+{
+    const char* command;
+    const char* args[MAX_SCRIPT_ARGS];
 } scriptDef_t;
 
-typedef struct {
+typedef struct
+{
     float x;  // horiz position
     float y;  // vert position
     float w;  // width
@@ -133,13 +141,14 @@ typedef rectDef_t Rectangle;
 
 // FIXME: do something to separate text vs window stuff
 
-typedef struct {
+typedef struct
+{
     Rectangle rect;  // client coord rectangle
     int aspectBias;  // direction in which to aspect compensate
     Rectangle rectClient;  // screen coord rectangle
-    const char *name;  //
-    const char *group;  // if it belongs to a group
-    const char *cinematicName;  // cinematic name
+    const char* name;  //
+    const char* group;  // if it belongs to a group
+    const char* cinematicName;  // cinematic name
     int cinematic;  // cinematic handle
     int style;  //
     int border;  //
@@ -158,7 +167,8 @@ typedef struct {
     qhandle_t background;  // background asset
 } Window;
 
-typedef struct {
+typedef struct
+{
     vec4_t color;
     float low;
     float high;
@@ -176,39 +186,43 @@ typedef struct {
 //
 #define MAX_LB_COLUMNS 16
 
-typedef struct columnInfo_s {
+typedef struct columnInfo_s
+{
     int pos;
     int width;
     int align;
 } columnInfo_t;
 
-typedef struct listBoxDef_s {
+typedef struct listBoxDef_s
+{
     int startPos;
     int endPos;
     int cursorPos;
-
+    
     float elementWidth;
     float elementHeight;
     int elementStyle;
     int dropItems;
-
+    
     int numColumns;
     columnInfo_t columnInfo[MAX_LB_COLUMNS];
-
-    const char *doubleClick;
-
-    qboolean notselectable;
-    qboolean noscrollbar;
-
-    qboolean resetonfeederchange;
+    
+    const char* doubleClick;
+    
+    bool notselectable;
+    bool noscrollbar;
+    
+    bool resetonfeederchange;
     int lastFeederCount;
 } listBoxDef_t;
 
-typedef struct cycleDef_s {
+typedef struct cycleDef_s
+{
     int cursorPos;
 } cycleDef_t;
 
-typedef struct editFieldDef_s {
+typedef struct editFieldDef_s
+{
     float minVal;  //  edit field limits
     float maxVal;  //
     float defVal;  //
@@ -221,15 +235,17 @@ typedef struct editFieldDef_s {
 
 #define MAX_MULTI_CVARS 32
 
-typedef struct multiDef_s {
-    const char *cvarList[MAX_MULTI_CVARS];
-    const char *cvarStr[MAX_MULTI_CVARS];
+typedef struct multiDef_s
+{
+    const char* cvarList[MAX_MULTI_CVARS];
+    const char* cvarStr[MAX_MULTI_CVARS];
     float cvarValue[MAX_MULTI_CVARS];
     int count;
-    qboolean strDef;
+    bool strDef;
 } multiDef_t;
 
-typedef struct modelDef_s {
+typedef struct modelDef_s
+{
     int angle;
     vec3_t origin;
     float fov_x;
@@ -244,7 +260,8 @@ typedef struct modelDef_s {
 
 typedef enum { TYPE_ANY = -1, TYPE_NONE, TYPE_LIST, TYPE_EDIT, TYPE_MULTI, TYPE_COMBO, TYPE_MODEL } itemDataType_t;
 
-typedef struct itemDef_s {
+typedef struct itemDef_s
+{
     Window window;  // common positional, border, style, layout info
     Rectangle textRect;  // rectangle the text ( if any ) consumes
     int type;  // text, button, radiobutton, checkbox, textfield, listbox, combo
@@ -255,61 +272,64 @@ typedef struct itemDef_s {
     float textaligny;  // ( optional ) text alignment x coord
     float textscale;  // scale percentage from 72pts
     int textStyle;  // ( optional ) style, normal and shadowed are it for now
-    const char *text;  // display text
-    void *parent;  // menu owner
+    const char* text;  // display text
+    void* parent;  // menu owner
     qhandle_t asset;  // handle to asset
-    const char *mouseEnterText;  // mouse enter script
-    const char *mouseExitText;  // mouse exit script
-    const char *mouseEnter;  // mouse enter script
-    const char *mouseExit;  // mouse exit script
-    const char *action;  // select script
-    const char *onFocus;  // select script
-    const char *leaveFocus;  // select script
-    const char *onTextEntry;  // called when text entered
-    const char *onCharEntry;  // called when text entered
-    const char *cvar;  // associated cvar
-    const char *cvarTest;  // associated cvar for enable actions
-    const char *enableCvar;  // enable, disable, show, or hide based on value, this can contain a list
+    const char* mouseEnterText;  // mouse enter script
+    const char* mouseExitText;  // mouse exit script
+    const char* mouseEnter;  // mouse enter script
+    const char* mouseExit;  // mouse exit script
+    const char* action;  // select script
+    const char* onFocus;  // select script
+    const char* leaveFocus;  // select script
+    const char* onTextEntry;  // called when text entered
+    const char* onCharEntry;  // called when text entered
+    const char* cvar;  // associated cvar
+    const char* cvarTest;  // associated cvar for enable actions
+    const char* enableCvar;  // enable, disable, show, or hide based on value, this can contain a list
     int cvarFlags;  //  what type of action to take on cvarenables
     sfxHandle_t focusSound;
     int numColors;  // number of color ranges
     colorRangeDef_t colorRanges[MAX_COLOR_RANGES];
     int feederID;  // where to get data for this item
     int cursorPos;  // cursor position in characters
-    union {
-        void *data;
-        listBoxDef_t *list;
-        editFieldDef_t *edit;
-        multiDef_t *multi;
-        cycleDef_t *cycle;
-        modelDef_t *model;
+    union
+    {
+        void* data;
+        listBoxDef_t* list;
+        editFieldDef_t* edit;
+        multiDef_t* multi;
+        cycleDef_t* cycle;
+        modelDef_t* model;
     } typeData;  // type specific data pointers
 } itemDef_t;
 
-typedef struct {
+typedef struct
+{
     Window window;
-    const char *font;  // font
-    qboolean fullScreen;  // covers entire screen
+    const char* font;  // font
+    bool fullScreen;  // covers entire screen
     int itemCount;  // number of items;
     int fontIndex;  //
     int cursorItem;  // which item as the cursor
     int fadeCycle;  //
     float fadeClamp;  //
     float fadeAmount;  //
-    const char *onOpen;  // run when the menu is first opened
-    const char *onClose;  // run when the menu is closed
-    const char *onESC;  // run when the menu is closed
-    const char *soundName;  // background loop sound for menu
-
+    const char* onOpen;  // run when the menu is first opened
+    const char* onClose;  // run when the menu is closed
+    const char* onESC;  // run when the menu is closed
+    const char* soundName;  // background loop sound for menu
+    
     vec4_t focusColor;  // focus color for items
     vec4_t disableColor;  // focus color for items
-    itemDef_t *items[MAX_MENUITEMS];  // items this menu contains
+    itemDef_t* items[MAX_MENUITEMS];  // items this menu contains
 } menuDef_t;
 
-typedef struct {
-    const char *fontStr;
-    const char *cursorStr;
-    const char *gradientStr;
+typedef struct
+{
+    const char* fontStr;
+    const char* cursorStr;
+    const char* gradientStr;
     fontInfo_t textFont;
     fontInfo_t smallFont;
     fontInfo_t bigFont;
@@ -337,69 +357,71 @@ typedef struct {
     float shadowY;
     vec4_t shadowColor;
     float shadowFadeClamp;
-    qboolean fontRegistered;
+    bool fontRegistered;
     emoticon_t emoticons[MAX_EMOTICONS];
     int emoticonCount;
 } cachedAssets_t;
 
-typedef struct {
-    const char *name;
-    void (*handler)(itemDef_t *item, char **args);
+typedef struct
+{
+    const char* name;
+    void ( *handler )( itemDef_t* item, char** args );
 } commandDef_t;
 
-typedef struct {
-    qhandle_t (*registerShaderNoMip)(const char *p);
-    void (*setColor)(const vec4_t v);
-    void (*drawHandlePic)(float x, float y, float w, float h, qhandle_t asset);
-    void (*drawStretchPic)(
-        float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
-    qhandle_t (*registerModel)(const char *p);
-    void (*modelBounds)(qhandle_t model, vec3_t min, vec3_t max);
-    void (*fillRect)(float x, float y, float w, float h, const vec4_t color);
-    void (*drawRect)(float x, float y, float w, float h, float size, const vec4_t color);
-    void (*drawSides)(float x, float y, float w, float h, float size);
-    void (*drawTopBottom)(float x, float y, float w, float h, float size);
-    void (*clearScene)(void);
-    void (*addRefEntityToScene)(const refEntity_t *re);
-    void (*renderScene)(const refdef_t *fd);
-    void (*registerFont)(const char *pFontname, int pointSize, fontInfo_t *font);
-    void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw,
-        int ownerDrawFlags, int align, int textalign, int textvalign, float borderSize, float scale, vec4_t foreColor,
-        vec4_t backColor, qhandle_t shader, int textStyle);
-    float (*getValue)(int ownerDraw);
-    qboolean (*ownerDrawVisible)(int flags);
-    void (*runScript)(char **p);
-    void (*getCVarString)(const char *cvar, char *buffer, int bufsize);
-    float (*getCVarValue)(const char *cvar);
-    void (*setCVar)(const char *cvar, const char *value);
-    void (*drawTextWithCursor)(float x, float y, float scale, vec4_t color, const char *text, int cursorPos,
-        char cursor, int limit, int style);
-    void (*setOverstrikeMode)(qboolean b);
-    qboolean (*getOverstrikeMode)(void);
-    void (*startLocalSound)(sfxHandle_t sfx, int channelNum);
-    qboolean (*ownerDrawHandleKey)(int ownerDraw, int key);
-    int (*feederCount)(int feederID);
-    const char *(*feederItemText)(int feederID, int index, int column, qhandle_t *handle);
-    qhandle_t (*feederItemImage)(int feederID, int index);
-    void (*feederSelection)(int feederID, int index);
-    int (*feederInitialise)(int feederID);
-    void (*keynumToStringBuf)(int keynum, char *buf, int buflen);
-    void (*getBindingBuf)(int keynum, char *buf, int buflen);
-    void (*setBinding)(int keynum, const char *binding);
-    void (*executeText)(int exec_when, const char *text);
-    void (*Error)(int level, const char *error, ...) __attribute__((noreturn, format(printf, 2, 3)));
-    void (*Print)(const char *msg, ...) __attribute__((format(printf, 1, 2)));
-    void (*Pause)(qboolean b);
-    int (*ownerDrawWidth)(int ownerDraw, float scale);
-    const char *(*ownerDrawText)(int ownerDraw);
-    sfxHandle_t (*registerSound)(const char *name, qboolean compressed);
-    void (*startBackgroundTrack)(const char *intro, const char *loop);
-    void (*stopBackgroundTrack)(void);
-    int (*playCinematic)(const char *name, float x, float y, float w, float h);
-    void (*stopCinematic)(int handle);
-    void (*drawCinematic)(int handle, float x, float y, float w, float h);
-    void (*runCinematicFrame)(int handle);
-
+typedef struct
+{
+    qhandle_t ( *registerShaderNoMip )( const char* p );
+    void ( *setColor )( const vec4_t v );
+    void ( *drawHandlePic )( float x, float y, float w, float h, qhandle_t asset );
+    void ( *drawStretchPic )(
+        float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader );
+    qhandle_t ( *registerModel )( const char* p );
+    void ( *modelBounds )( qhandle_t model, vec3_t min, vec3_t max );
+    void ( *fillRect )( float x, float y, float w, float h, const vec4_t color );
+    void ( *drawRect )( float x, float y, float w, float h, float size, const vec4_t color );
+    void ( *drawSides )( float x, float y, float w, float h, float size );
+    void ( *drawTopBottom )( float x, float y, float w, float h, float size );
+    void ( *clearScene )( void );
+    void ( *addRefEntityToScene )( const refEntity_t* re );
+    void ( *renderScene )( const refdef_t* fd );
+    void ( *registerFont )( const char* pFontname, int pointSize, fontInfo_t* font );
+    void ( *ownerDrawItem )( float x, float y, float w, float h, float text_x, float text_y, int ownerDraw,
+                             int ownerDrawFlags, int align, int textalign, int textvalign, float borderSize, float scale, vec4_t foreColor,
+                             vec4_t backColor, qhandle_t shader, int textStyle );
+    float( *getValue )( int ownerDraw );
+    bool ( *ownerDrawVisible )( int flags );
+    void ( *runScript )( char** p );
+    void ( *getCVarString )( const char* cvar, char* buffer, int bufsize );
+    float( *getCVarValue )( const char* cvar );
+    void ( *setCVar )( const char* cvar, const char* value );
+    void ( *drawTextWithCursor )( float x, float y, float scale, vec4_t color, const char* text, int cursorPos,
+                                  char cursor, int limit, int style );
+    void ( *setOverstrikeMode )( bool b );
+    bool ( *getOverstrikeMode )( void );
+    void ( *startLocalSound )( sfxHandle_t sfx, int channelNum );
+    bool ( *ownerDrawHandleKey )( int ownerDraw, int key );
+    int ( *feederCount )( int feederID );
+    const char* ( *feederItemText )( int feederID, int index, int column, qhandle_t* handle );
+    qhandle_t ( *feederItemImage )( int feederID, int index );
+    void ( *feederSelection )( int feederID, int index );
+    int ( *feederInitialise )( int feederID );
+    void ( *keynumToStringBuf )( int keynum, char* buf, int buflen );
+    void ( *getBindingBuf )( int keynum, char* buf, int buflen );
+    void ( *setBinding )( int keynum, const char* binding );
+    void ( *executeText )( int exec_when, const char* text );
+    void ( *Error )( int level, const char* error, ... ) __attribute__( ( noreturn, format( printf, 2, 3 ) ) );
+    void ( *Print )( const char* msg, ... ) __attribute__( ( format( printf, 1, 2 ) ) );
+    void ( *Pause )( bool b );
+    int ( *ownerDrawWidth )( int ownerDraw, float scale );
+    const char* ( *ownerDrawText )( int ownerDraw );
+    sfxHandle_t ( *registerSound )( const char* name, bool compressed );
+    void ( *startBackgroundTrack )( const char* intro, const char* loop );
+    void ( *stopBackgroundTrack )( void );
+    int ( *playCinematic )( const char* name, float x, float y, float w, float h );
+    void ( *stopCinematic )( int handle );
+    void ( *drawCinematic )( int handle, float x, float y, float w, float h );
+    void ( *runCinematicFrame )( int handle );
+    
     float yscale;
     float xscale;
     float aspectScale;
@@ -409,105 +431,105 @@ typedef struct {
     float cursory;
     float smallFontScale;
     float bigFontScale;
-    qboolean debug;
-
+    bool debug;
+    
     cachedAssets_t Assets;
-
+    
     glconfig_t glconfig;
     qhandle_t whiteShader;
     qhandle_t gradientImage;
     qhandle_t cursor;
     float FPS;
-
+    
 } displayContextDef_t;
 
-const char *String_Alloc(const char *p);
-void String_Init(void);
-void String_Report(void);
-void Init_Display(displayContextDef_t *dc);
-void Display_ExpandMacros(char *buff);
-void Menu_Init(menuDef_t *menu);
-void Item_Init(itemDef_t *item);
-void Menu_PostParse(menuDef_t *menu);
-menuDef_t *Menu_GetFocused(void);
-void Menu_HandleKey(menuDef_t *menu, int key, qboolean down);
-void Menu_HandleMouseMove(menuDef_t *menu, float x, float y);
-void Menu_ScrollFeeder(menuDef_t *menu, int feeder, qboolean down);
-qboolean Float_Parse(char **p, float *f);
-qboolean Color_Parse(char **p, vec4_t *c);
-qboolean Int_Parse(char **p, int *i);
-qboolean Rect_Parse(char **p, rectDef_t *r);
-qboolean String_Parse(char **p, const char **out);
-qboolean Script_Parse(char **p, const char **out);
-qboolean PC_Float_Parse(int handle, float *f);
-qboolean PC_Color_Parse(int handle, vec4_t *c);
-qboolean PC_Int_Parse(int handle, int *i);
-qboolean PC_Rect_Parse(int handle, rectDef_t *r);
-qboolean PC_String_Parse(int handle, const char **out);
-qboolean PC_Script_Parse(int handle, const char **out);
-int Menu_Count(void);
-void Menu_New(int handle);
-void Menu_UpdateAll(void);
-void Menu_PaintAll(void);
-menuDef_t *Menus_ActivateByName(const char *p);
-menuDef_t *Menus_ReplaceActiveByName(const char *p);
-void Menu_Reset(void);
-qboolean Menus_AnyFullScreenVisible(void);
-void Menus_Activate(menuDef_t *menu);
-qboolean Menus_ReplaceActive(menuDef_t *menu);
+const char* String_Alloc( const char* p );
+void String_Init( void );
+void String_Report( void );
+void Init_Display( displayContextDef_t* dc );
+void Display_ExpandMacros( char* buff );
+void Menu_Init( menuDef_t* menu );
+void Item_Init( itemDef_t* item );
+void Menu_PostParse( menuDef_t* menu );
+menuDef_t* Menu_GetFocused( void );
+void Menu_HandleKey( menuDef_t* menu, int key, bool down );
+void Menu_HandleMouseMove( menuDef_t* menu, float x, float y );
+void Menu_ScrollFeeder( menuDef_t* menu, int feeder, bool down );
+bool Float_Parse( char** p, float* f );
+bool Color_Parse( char** p, vec4_t* c );
+bool Int_Parse( char** p, int* i );
+bool Rect_Parse( char** p, rectDef_t* r );
+bool String_Parse( char** p, const char** out );
+bool Script_Parse( char** p, const char** out );
+bool PC_Float_Parse( int handle, float* f );
+bool PC_Color_Parse( int handle, vec4_t* c );
+bool PC_Int_Parse( int handle, int* i );
+bool PC_Rect_Parse( int handle, rectDef_t* r );
+bool PC_String_Parse( int handle, const char** out );
+bool PC_Script_Parse( int handle, const char** out );
+int Menu_Count( void );
+void Menu_New( int handle );
+void Menu_UpdateAll( void );
+void Menu_PaintAll( void );
+menuDef_t* Menus_ActivateByName( const char* p );
+menuDef_t* Menus_ReplaceActiveByName( const char* p );
+void Menu_Reset( void );
+bool Menus_AnyFullScreenVisible( void );
+void Menus_Activate( menuDef_t* menu );
+bool Menus_ReplaceActive( menuDef_t* menu );
 
-displayContextDef_t *Display_GetContext(void);
-void *Display_CaptureItem(int x, int y);
-qboolean Display_MouseMove(void *p, float x, float y);
-int Display_CursorType(int x, int y);
-qboolean Display_KeyBindPending(void);
-menuDef_t *Menus_FindByName(const char *p);
-void Menus_CloseByName(const char *p);
-void Display_HandleKey(int key, qboolean down, int x, int y);
-void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
-void Menus_CloseAll(void);
-void Menu_Update(menuDef_t *menu);
-void Menu_Paint(menuDef_t *menu, qboolean forcePaint);
-void Menu_SetFeederSelection(menuDef_t *menu, int feeder, int index, const char *name);
-void Display_CacheAll(void);
+displayContextDef_t* Display_GetContext( void );
+void* Display_CaptureItem( int x, int y );
+bool Display_MouseMove( void* p, float x, float y );
+int Display_CursorType( int x, int y );
+bool Display_KeyBindPending( void );
+menuDef_t* Menus_FindByName( const char* p );
+void Menus_CloseByName( const char* p );
+void Display_HandleKey( int key, bool down, int x, int y );
+void LerpColor( vec4_t a, vec4_t b, vec4_t c, float t );
+void Menus_CloseAll( void );
+void Menu_Update( menuDef_t* menu );
+void Menu_Paint( menuDef_t* menu, bool forcePaint );
+void Menu_SetFeederSelection( menuDef_t* menu, int feeder, int index, const char* name );
+void Display_CacheAll( void );
 
-typedef void(CaptureFunc)(void *p);
+typedef void( CaptureFunc )( void* p );
 
-void UI_InstallCaptureFunc(CaptureFunc *f, void *data, int timeout);
-void UI_RemoveCaptureFunc(void);
+void UI_InstallCaptureFunc( CaptureFunc* f, void* data, int timeout );
+void UI_RemoveCaptureFunc( void );
 
-void *UI_Alloc(int size);
-void UI_InitMemory(void);
-qboolean UI_OutOfMemory(void);
+void* UI_Alloc( int size );
+void UI_InitMemory( void );
+bool UI_OutOfMemory( void );
 
-void Controls_GetConfig(void);
-void Controls_SetConfig(qboolean restart);
-void Controls_SetDefaults(void);
+void Controls_GetConfig( void );
+void Controls_SetConfig( bool restart );
+void Controls_SetDefaults( void );
 
-void trap_R_SetClipRegion(const float *region);
+void trap_R_SetClipRegion( const float* region );
 
 // for cg_draw.c
-void Item_Text_Wrapped_Paint(itemDef_t *item);
-const char *Item_Text_Wrap(const char *text, float scale, float width);
-void UI_DrawTextBlock(rectDef_t *rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
-    int textvalign, int textStyle, const char *text);
-void UI_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
+void Item_Text_Wrapped_Paint( itemDef_t* item );
+const char* Item_Text_Wrap( const char* text, float scale, float width );
+void UI_DrawTextBlock( rectDef_t* rect, float text_x, float text_y, vec4_t color, float scale, int textalign,
+                       int textvalign, int textStyle, const char* text );
+void UI_Text_Paint( float x, float y, float scale, vec4_t color, const char* text, float adjust, int limit, int style );
 void UI_Text_Paint_Limit(
-    float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit);
-float UI_Text_Width(const char *text, float scale);
-float UI_Text_Height(const char *text, float scale);
-float UI_Text_EmWidth(float scale);
-float UI_Text_EmHeight(float scale);
-qboolean UI_Text_IsEmoticon(const char *s, qboolean *escaped, int *length, qhandle_t *h, int *width);
-void UI_EscapeEmoticons(char *dest, const char *src, int destsize);
+    float* maxX, float x, float y, float scale, vec4_t color, const char* text, float adjust, int limit );
+float UI_Text_Width( const char* text, float scale );
+float UI_Text_Height( const char* text, float scale );
+float UI_Text_EmWidth( float scale );
+float UI_Text_EmHeight( float scale );
+bool UI_Text_IsEmoticon( const char* s, bool* escaped, int* length, qhandle_t* h, int* width );
+void UI_EscapeEmoticons( char* dest, const char* src, int destsize );
 
-int trap_Parse_AddGlobalDefine(char *define);
-int trap_Parse_LoadSource(const char *filename);
-int trap_Parse_FreeSource(int handle);
-int trap_Parse_ReadToken(int handle, pc_token_t *pc_token);
-int trap_Parse_SourceFileAndLine(int handle, char *filename, int *line);
+int trap_Parse_AddGlobalDefine( char* define );
+int trap_Parse_LoadSource( const char* filename );
+int trap_Parse_FreeSource( int handle );
+int trap_Parse_ReadToken( int handle, pc_token_t* pc_token );
+int trap_Parse_SourceFileAndLine( int handle, char* filename, int* line );
 
-void BindingFromName(const char *cvar);
+void BindingFromName( const char* cvar );
 extern char g_nameBind1[32];
 extern char g_nameBind2[32];
 #endif

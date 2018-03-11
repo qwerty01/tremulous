@@ -27,65 +27,80 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
 
-cvar_t *cl_shownet;
+cvar_t* cl_shownet;
 
-void CL_Shutdown(const char *finalmsg, bool disconnect, bool quit)
+void CL_Shutdown( const char* finalmsg, bool disconnect, bool quit )
 {
 }
 
-void CL_Init( void ) {
-	cl_shownet = Cvar_Get ("cl_shownet", "0", CVAR_TEMP );
+void CL_Init( void )
+{
+    cl_shownet = Cvar_Get( "cl_shownet", "0", CVAR_TEMP );
 }
 
-void CL_MouseEvent( int dx, int dy, int time ) {
-}
-
-void Key_WriteBindings( fileHandle_t f ) {
-}
-
-void CL_Frame ( int msec ) {
-}
-
-void CL_PacketEvent( struct netadr_t from, struct msg_t *msg ) {
-}
-
-void CL_CharEvent( int key ) {
-}
-
-void CL_Disconnect( bool showMainMenu ) {
-}
-
-void CL_MapLoading( void ) {
-}
-
-bool CL_GameCommand( void ) {
-  return false;
-}
-
-void CL_KeyEvent (int key, bool down, unsigned time) {
-}
-
-bool UI_GameCommand( void ) {
-	return false;
-}
-
-void CL_ForwardCommandToServer( const char *string ) {
-}
-
-void CL_ConsolePrint( const char *txt ) {
-}
-
-void CL_JoystickEvent( int axis, int value, int time ) {
-}
-
-void CL_InitKeyCommands( void ) {
-}
-
-void CL_FlushMemory(void)
+void CL_MouseEvent( int dx, int dy, int time )
 {
 }
 
-void CL_ShutdownAll(bool shutdownRef)
+void Key_WriteBindings( fileHandle_t f )
+{
+}
+
+void CL_Frame( int msec )
+{
+}
+
+void CL_PacketEvent( struct netadr_t from, struct msg_t* msg )
+{
+}
+
+void CL_CharEvent( int key )
+{
+}
+
+void CL_Disconnect( bool showMainMenu )
+{
+}
+
+void CL_MapLoading( void )
+{
+}
+
+bool CL_GameCommand( void )
+{
+    return false;
+}
+
+void CL_KeyEvent( int key, bool down, unsigned time )
+{
+}
+
+bool UI_GameCommand( void )
+{
+    return false;
+}
+
+void CL_ForwardCommandToServer( const char* string )
+{
+}
+
+void CL_ConsolePrint( const char* txt )
+{
+}
+
+void CL_JoystickEvent( int axis, int value, int time )
+{
+}
+
+void CL_InitKeyCommands( void )
+{
+}
+
+void CL_FlushMemory( void )
+{
+}
+
+void CL_ShutdownAll( bool shutdownRef )
 {
 }
 

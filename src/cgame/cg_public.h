@@ -39,19 +39,20 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 // Snapshots are generated at regular time intervals by the server,
 // but they may not be sent if a client's rate level is exceeded, or
 // they may be dropped by the network.
-typedef struct {
+typedef struct
+{
     int snapFlags;  // SNAPFLAG_RATE_DELAYED, etc
     int ping;
-
+    
     int serverTime;  // server time the message is valid for (in msec)
-
+    
     byte areamask[MAX_MAP_AREA_BYTES];  // portalarea visibility bits
-
+    
     playerState_t ps;  // complete information about the current player at this time
-
+    
     int numEntities;  // all of the entities that need to be presented
     entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT];  // at the time of this snapshot
-
+    
     int numServerCommands;  // text based server commands to execute when this
     int serverCommandSequence;  // snapshot becomes current
 } snapshot_t;
@@ -68,7 +69,8 @@ functions imported from the main executable
 
 #define CGAME_IMPORT_API_VERSION 4
 
-typedef enum {
+typedef enum
+{
     CG_PRINT,
     CG_ERROR,
     CG_MILLISECONDS,
@@ -156,7 +158,7 @@ typedef enum {
     CG_R_REMAP_SHADER,
     CG_S_ADDREALLOOPINGSOUND,
     CG_S_STOPLOOPINGSOUND,
-
+    
     CG_CM_TEMPCAPSULEMODEL,
     CG_CM_CAPSULETRACE,
     CG_CM_TRANSFORMEDCAPSULETRACE,
@@ -172,25 +174,25 @@ typedef enum {
     CG_GETDEMOSTATE,
     CG_GETDEMOPOS,
     CG_GETDEMONAME,
-
+    
     CG_KEY_KEYNUMTOSTRINGBUF,
     CG_KEY_GETBINDINGBUF,
     CG_KEY_SETBINDING,
-
+    
 #ifndef MODULE_INTERFACE_11
     CG_PARSE_ADD_GLOBAL_DEFINE,
     CG_PARSE_LOAD_SOURCE,
     CG_PARSE_FREE_SOURCE,
     CG_PARSE_READ_TOKEN,
     CG_PARSE_SOURCE_FILE_AND_LINE,
-
+    
     CG_KEY_SETOVERSTRIKEMODE,
     CG_KEY_GETOVERSTRIKEMODE,
-
+    
     CG_S_SOUNDDURATION,
     CG_FIELD_COMPLETELIST,
 #endif
-
+    
     CG_MEMSET = 200,
     CG_MEMCPY,
     CG_STRNCPY,
@@ -200,7 +202,7 @@ typedef enum {
     CG_SQRT,
     CG_FLOOR,
     CG_CEIL,
-
+    
     CG_TESTPRINTINT,
     CG_TESTPRINTFLOAT,
     CG_ACOS
@@ -214,7 +216,8 @@ functions exported to the main executable
 ==================================================================
 */
 
-typedef enum {
+typedef enum
+{
     CG_INIT,
     // void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum )
     // called when the level loads or when the renderer is restarted
@@ -223,48 +226,48 @@ typedef enum {
     // will call CG_DrawInformation during the loading process
     // reliableCommandSequence will be 0 on fresh loads, but higher for
     // demos, tourney restarts, or vid_restarts
-
+    
     CG_SHUTDOWN,
     // void (*CG_Shutdown)( void );
     // oportunity to flush and close any open files
-
+    
     CG_CONSOLE_COMMAND,
-    // qboolean (*CG_ConsoleCommand)( void );
+    // bool (*CG_ConsoleCommand)( void );
     // a console command has been issued locally that is not recognized by the
     // main game system.
-    // use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the
+    // use Cmd_Argc() / Cmd_Argv() to read the command, return false if the
     // command is not known to the game
-
+    
     CG_DRAW_ACTIVE_FRAME,
-    // void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
+    // void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, bool demoPlayback );
     // Generates and draws a game scene and status information at the given time.
     // If demoPlayback is set, local movement prediction will not be enabled
-
+    
     CG_CROSSHAIR_PLAYER,
     // int (*CG_CrosshairPlayer)( void );
-
+    
     CG_LAST_ATTACKER,
     // int (*CG_LastAttacker)( void );
-
+    
     CG_KEY_EVENT,
-    // void  (*CG_KeyEvent)( int key, qboolean down );
-
+    // void  (*CG_KeyEvent)( int key, bool down );
+    
     CG_MOUSE_EVENT,
     // void  (*CG_MouseEvent)( int dx, int dy );
     CG_EVENT_HANDLING,
     // void (*CG_EventHandling)(int type);
-
+    
     CG_CONSOLE_TEXT,
     // void (*CG_ConsoleText)( void );
     // pass text that has been printed to the console to cgame
     // use Cmd_Argc() / Cmd_Argv() to read it
-
+    
     CG_VOIP_STRING,
     // char *(*CG_VoIPString)( void );
     // returns a string of comma-delimited clientnums based on cl_voipSendTarget
-
+    
     CG_CONSOLE_COMPLETARGUMENT
-    // qboolean (*CG_Console_CompleteArgument)( int argNum )
+    // bool (*CG_Console_CompleteArgument)( int argNum )
     // Requests CGAME to try to complete the command line
     // argument. argNum indicates which argument we're completing. CGAME
     // uses trap_Argv and trap_Argc to read the command line

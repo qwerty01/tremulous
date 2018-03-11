@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #define LUA_NETTLELIBNAME	"nettle"
-LUAMOD_API int (luaopen_nettle) (lua_State *L);
-
+    LUAMOD_API int ( luaopen_nettle )( lua_State* L );
+    
 #ifdef __cplusplus
 }
 #endif

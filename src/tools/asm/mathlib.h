@@ -65,14 +65,14 @@ qboolean VectorCompare( const vec3_t v1, const vec3_t v2 );
 #define VectorScale(a,b,c) {c[0]=b*a[0];c[1]=b*a[1];c[2]=b*a[2];}
 #define VectorClear(x) {x[0] = x[1] = x[2] = 0;}
 #define	VectorNegate(x) {x[0]=-x[0];x[1]=-x[1];x[2]=-x[2];}
-void Vec10Copy( vec_t *in, vec_t *out );
+void Vec10Copy( vec_t* in, vec_t* out );
 
-vec_t Q_rint (vec_t in);
-vec_t _DotProduct (vec3_t v1, vec3_t v2);
-void _VectorSubtract (vec3_t va, vec3_t vb, vec3_t out);
-void _VectorAdd (vec3_t va, vec3_t vb, vec3_t out);
-void _VectorCopy (vec3_t in, vec3_t out);
-void _VectorScale (vec3_t v, vec_t scale, vec3_t out);
+vec_t Q_rint( vec_t in );
+vec_t _DotProduct( vec3_t v1, vec3_t v2 );
+void _VectorSubtract( vec3_t va, vec3_t vb, vec3_t out );
+void _VectorAdd( vec3_t va, vec3_t vb, vec3_t out );
+void _VectorCopy( vec3_t in, vec3_t out );
+void _VectorScale( vec3_t v, vec_t scale, vec3_t out );
 
 double VectorLength( const vec3_t v );
 
@@ -81,15 +81,15 @@ void VectorMA( const vec3_t va, double scale, const vec3_t vb, vec3_t vc );
 void CrossProduct( const vec3_t v1, const vec3_t v2, vec3_t cross );
 vec_t VectorNormalize( const vec3_t in, vec3_t out );
 vec_t ColorNormalize( const vec3_t in, vec3_t out );
-void VectorInverse (vec3_t v);
+void VectorInverse( vec3_t v );
 
-void ClearBounds (vec3_t mins, vec3_t maxs);
+void ClearBounds( vec3_t mins, vec3_t maxs );
 void AddPointToBounds( const vec3_t v, vec3_t mins, vec3_t maxs );
 
 qboolean PlaneFromPoints( vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c );
 
 void NormalToLatLong( const vec3_t normal, byte bytes[2] );
 
-int	PlaneTypeForNormal (vec3_t normal);
+int	PlaneTypeForNormal( vec3_t normal );
 
 #endif

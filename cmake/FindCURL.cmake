@@ -6,10 +6,9 @@
 #  CURL_FOUND        - True if curl found.
 
 # Look for the header file.
-
-set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
   $ENV{INCLUDE}
+  "$ENV{LIB_DIR}/include"
   /usr/local/include
   /usr/include
   #mingw
@@ -23,11 +22,14 @@ FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
 MARK_AS_ADVANCED(CURL_INCLUDE_DIR)
 
 # Look for the library.
-FIND_LIBRARY(CURL_LIBRARY NAMES curl libcurl_imp libcurl PATHS
+FIND_LIBRARY(CURL_LIBRARY NAMES curl libcurl curllib libcurl_imp curllib_static PATHS
   $ENV{LIB}
+  "$ENV{LIB_DIR}/lib"
   /usr/local/lib
   /usr/lib
   c:/msys/local/lib
+  #Dushan
+  /usr/lib/x86_64-linux-gnu/
   ${CMAKE_SOURCE_DIR}/external/libcurl/lib/
   ${EXTERNAL_DIR}/libcurl/lib/
   NO_DEFAULT_PATH

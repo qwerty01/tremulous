@@ -30,7 +30,7 @@
    the GNU Lesser General Public License along with this program.  If
    not, see http://www.gnu.org/licenses/.
 */
- 
+
 #ifndef NETTLE_MD5_H_INCLUDED
 #define NETTLE_MD5_H_INCLUDED
 
@@ -40,45 +40,45 @@
 extern "C" {
 #endif
 
-/* Name mangling */
+    /* Name mangling */
 #define md5_init nettle_md5_init
 #define md5_update nettle_md5_update
 #define md5_digest nettle_md5_digest
-
+    
 #define MD5_DIGEST_SIZE 16
 #define MD5_BLOCK_SIZE 64
-/* For backwards compatibility */
+    /* For backwards compatibility */
 #define MD5_DATA_SIZE MD5_BLOCK_SIZE
-
-/* Digest is kept internally as 4 32-bit words. */
+    
+    /* Digest is kept internally as 4 32-bit words. */
 #define _MD5_DIGEST_LENGTH 4
-
-struct md5_ctx
-{
-  uint32_t state[_MD5_DIGEST_LENGTH];
-  uint64_t count;               /* Block count */
-  uint8_t block[MD5_BLOCK_SIZE]; /* Block buffer */
-  unsigned index;               /* Into buffer */
-};
-
-void
-md5_init(struct md5_ctx *ctx);
-
-void
-md5_update(struct md5_ctx *ctx,
-	   size_t length,
-	   const uint8_t *data);
-
-void
-md5_digest(struct md5_ctx *ctx,
-	   size_t length,
-	   uint8_t *digest);
-
-/* Internal compression function. STATE points to 4 uint32_t words,
-   and DATA points to 64 bytes of input data, possibly unaligned. */
-void
-_nettle_md5_compress(uint32_t *state, const uint8_t *data);
-
+    
+    struct md5_ctx
+    {
+        uint32_t state[_MD5_DIGEST_LENGTH];
+        uint64_t count;               /* Block count */
+        uint8_t block[MD5_BLOCK_SIZE]; /* Block buffer */
+        unsigned index;               /* Into buffer */
+    };
+    
+    void
+    md5_init( struct md5_ctx* ctx );
+    
+    void
+    md5_update( struct md5_ctx* ctx,
+                size_t length,
+                const uint8_t* data );
+                
+    void
+    md5_digest( struct md5_ctx* ctx,
+                size_t length,
+                uint8_t* digest );
+                
+    /* Internal compression function. STATE points to 4 uint32_t words,
+       and DATA points to 64 bytes of input data, possibly unaligned. */
+    void
+    _nettle_md5_compress( uint32_t* state, const uint8_t* data );
+    
 #ifdef __cplusplus
 }
 #endif

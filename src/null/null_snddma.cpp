@@ -27,35 +27,37 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #include "qcommon/q_shared.h"
 #include "qcommon/qcommon.h"
 
-bool SNDDMA_Init(void)
+bool SNDDMA_Init( void )
 {
-	return false;
+    return false;
 }
 
-int	SNDDMA_GetDMAPos(void)
+int	SNDDMA_GetDMAPos( void )
 {
-	return 0;
+    return 0;
 }
 
-void SNDDMA_Shutdown(void)
-{
-}
-
-void SNDDMA_BeginPainting (void)
+void SNDDMA_Shutdown( void )
 {
 }
 
-void SNDDMA_Submit(void)
+void SNDDMA_BeginPainting( void )
 {
 }
 
-sfxHandle_t S_RegisterSound( const char *name, bool compressed ) 
+void SNDDMA_Submit( void )
 {
-	return 0;
 }
 
-void S_StartLocalSound( sfxHandle_t sfxHandle, int channelNum ) {
+sfxHandle_t S_RegisterSound( const char* name, bool compressed )
+{
+    return 0;
 }
 
-void S_ClearSoundBuffer( void ) {
+void S_StartLocalSound( sfxHandle_t sfxHandle, int channelNum )
+{
+}
+
+void S_ClearSoundBuffer( void )
+{
 }

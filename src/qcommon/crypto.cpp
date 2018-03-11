@@ -35,57 +35,58 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #define MOCK_PTR_SIZE(x) (REAL_PTR_SIZE(TO_REAL_PTR(x)))
 
 
-static void *crypto_alloc( size_t size )
+static void* crypto_alloc( size_t size )
 {
-	void *p;
-
-	assert( size > 0 );
-
-	p = malloc( sizeof(size_t) + size );
-	if ( !p )
-		Com_Error( ERR_FATAL, "crypto_alloc: Virtual memory exhausted." );
-
-	REAL_PTR_SIZE( p ) = size;
-	return TO_MOCK_PTR( p );
+    void* p;
+    
+    assert( size > 0 );
+    
+    p = malloc( sizeof( size_t ) + size );
+    if( !p )
+        Com_Error( ERR_FATAL, "crypto_alloc: Virtual memory exhausted." );
+        
+    REAL_PTR_SIZE( p ) = size;
+    return TO_MOCK_PTR( p );
 }
 
-static void *crypto_realloc( void *old, size_t old_size, size_t new_size )
+static void* crypto_realloc( void* old, size_t old_size, size_t new_size )
 {
-	void *p;
-
-	old_size = MOCK_PTR_SIZE( old );
-	if ( new_size == old_size ) {
-		return old;
-	}
-
-	p = malloc( sizeof(size_t) + new_size );
-	if ( !p )
-		Com_Error( ERR_FATAL, "crypto_realloc: Virtual memory exhausted." );
-	REAL_PTR_SIZE( p ) = new_size;
-
-	p = TO_MOCK_PTR( p );
-	memcpy( p, old, MIN( old_size, new_size ) );
-	old = TO_REAL_PTR( old );
-	memset( old, 0, sizeof(size_t) + old_size );
-	free( old );
-
-	return p;
+    void* p;
+    
+    old_size = MOCK_PTR_SIZE( old );
+    if( new_size == old_size )
+    {
+        return old;
+    }
+    
+    p = malloc( sizeof( size_t ) + new_size );
+    if( !p )
+        Com_Error( ERR_FATAL, "crypto_realloc: Virtual memory exhausted." );
+    REAL_PTR_SIZE( p ) = new_size;
+    
+    p = TO_MOCK_PTR( p );
+    memcpy( p, old, MIN( old_size, new_size ) );
+    old = TO_REAL_PTR( old );
+    memset( old, 0, sizeof( size_t ) + old_size );
+    free( old );
+    
+    return p;
 }
 
-static void crypto_free( void *p, size_t size )
+static void crypto_free( void* p, size_t size )
 {
-	p = TO_REAL_PTR( p );
-	size = REAL_PTR_SIZE( p );
-	memset( p, 0, sizeof(size_t) + size );
-	free( p );
+    p = TO_REAL_PTR( p );
+    size = REAL_PTR_SIZE( p );
+    memset( p, 0, sizeof( size_t ) + size );
+    free( p );
 }
 
 void Crypto_Init( void )
 {
-	mp_set_memory_functions( crypto_alloc, crypto_realloc, crypto_free );
+    mp_set_memory_functions( crypto_alloc, crypto_realloc, crypto_free );
 }
 
-void qnettle_random( void *ctx, size_t length, uint8_t *dst )
+void qnettle_random( void* ctx, size_t length, uint8_t* dst )
 {
-	Sys_CryptoRandomBytes( dst, length );
+    Sys_CryptoRandomBytes( dst, length );
 }

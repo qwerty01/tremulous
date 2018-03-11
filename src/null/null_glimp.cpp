@@ -23,40 +23,49 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 
 #include "renderercommon/tr_common.h"
 
-qboolean ( * qwglSwapIntervalEXT)( int interval );
+bool ( * qwglSwapIntervalEXT )( int interval );
 void ( * qglMultiTexCoord2fARB )( GLenum texture, float s, float t );
 void ( * qglActiveTextureARB )( GLenum texture );
 void ( * qglClientActiveTextureARB )( GLenum texture );
 
 
-void ( * qglLockArraysEXT)( int, int);
-void ( * qglUnlockArraysEXT) ( void );
+void ( * qglLockArraysEXT )( int, int );
+void ( * qglUnlockArraysEXT )( void );
 
 
-void		GLimp_EndFrame( void ) {
+void		GLimp_EndFrame( void )
+{
 }
 
-void 		GLimp_Init( void ) {
+void 		GLimp_Init( void )
+{
 }
 
-void		GLimp_Shutdown( void ) {
+void		GLimp_Shutdown( void )
+{
 }
 
-void		GLimp_EnableLogging( qboolean enable ) {
+void		GLimp_EnableLogging( bool enable )
+{
 }
 
-void		GLimp_LogComment( const char *comment ) {
+void		GLimp_LogComment( const char* comment )
+{
 }
 
-qboolean	QGL_Init( const char *dllname ) {
-	return qtrue;
+bool	QGL_Init( const char* dllname )
+{
+    return true;
 }
 
-void		QGL_Shutdown( void ) {
+void		QGL_Shutdown( void )
+{
 }
 
-void		GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] ) {
+void		GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] )
+{
 }
 
-void		GLimp_Minimize( void ) {
+void		GLimp_Minimize( void )
+{
 }

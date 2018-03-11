@@ -24,132 +24,133 @@
 
 #include "strvec.h"
 
-typedef struct {
+typedef struct
+{
     char** v;
     unsigned n;
 } StringVector;
 
-void* StringVector_New (void)
+void* StringVector_New( void )
 {
-    StringVector* sv = malloc(sizeof(*sv));
-    if ( !sv )
+    StringVector* sv = malloc( sizeof( *sv ) );
+    if( !sv )
         return NULL;
-
-    sv->v = malloc(sizeof(*sv->v));
-    if ( !sv->v )
+        
+    sv->v = malloc( sizeof( *sv->v ) );
+    if( !sv->v )
     {
-        free(sv);
+        free( sv );
         return NULL;
     }
-
+    
     sv->n = 0;
     return sv;
 }
 
-void StringVector_Delete (void* pv)
+void StringVector_Delete( void* pv )
 {
     unsigned i;
-    StringVector* sv = (StringVector*)pv;
-
-    if ( !sv )
+    StringVector* sv = ( StringVector* )pv;
+    
+    if( !sv )
         return;
-
-    for ( i = 0; i < sv->n; i++ )
-        free(sv->v[i]);
-
-    free(sv->v);
-    free(sv);
+        
+    for( i = 0; i < sv->n; i++ )
+        free( sv->v[i] );
+        
+    free( sv->v );
+    free( sv );
 }
 
-int StringVector_Add (void* pv, const char* s)
+int StringVector_Add( void* pv, const char* s )
 {
-    StringVector* sv = (StringVector*)pv;
+    StringVector* sv = ( StringVector* )pv;
     char** v;
     char* temp;
-
-    if ( !sv || !s )
+    
+    if( !sv || !s )
         return 0;
-
-    temp = strdup(s);
-    if ( !temp )
+        
+    temp = strdup( s );
+    if( !temp )
         return 0;
-
-    v = realloc(sv->v, (sv->n+2) * sizeof(char*));
-    if ( !v )
+        
+    v = realloc( sv->v, ( sv->n + 2 ) * sizeof( char* ) );
+    if( !v )
         return 0;
-
+        
     sv->v = v;
-    sv->v[sv->n++] = temp; 
+    sv->v[sv->n++] = temp;
     sv->v[sv->n] = NULL;
-
+    
     return 1;
 }
 
-char* StringVector_Get (void* pv, unsigned index)
+char* StringVector_Get( void* pv, unsigned index )
 {
-    StringVector* sv = (StringVector*)pv;
-
-    if ( !sv || index >= sv->n )
+    StringVector* sv = ( StringVector* )pv;
+    
+    if( !sv || index >= sv->n )
         return NULL;
-
+        
     return sv->v[index];
 }
 
-int StringVector_AddVector (void* pd, void* ps)
+int StringVector_AddVector( void* pd, void* ps )
 {
     unsigned i = 0;
-    const char* s = StringVector_Get(ps, i++);
-
-    while ( s )
+    const char* s = StringVector_Get( ps, i++ );
+    
+    while( s )
     {
-        if ( !StringVector_Add(pd, s) )
+        if( !StringVector_Add( pd, s ) )
             return 0;
-
-        s = StringVector_Get(ps, i++);
+            
+        s = StringVector_Get( ps, i++ );
     }
     return 1;
 }
 
-const char** StringVector_GetVector (void* pv)
+const char** StringVector_GetVector( void* pv )
 {
-    StringVector* sv = (StringVector*)pv;
-
-    if ( !sv )
+    StringVector* sv = ( StringVector* )pv;
+    
+    if( !sv )
         return NULL;
-
-    return (const char**)sv->v;
+        
+    return ( const char** )sv->v;
 }
 
-const char* StringVector_toString(void* pv)
+const char* StringVector_toString( void* pv )
 {
     unsigned i = 0;
-    const char* s = StringVector_Get(pv, i++);
-
+    const char* s = StringVector_Get( pv, i++ );
+    
     char* ret = NULL;
     size_t siz = 0;
-
-    while ( s )
+    
+    while( s )
     {
-        size_t n = siz + strlen(s) + 2;
+        size_t n = siz + strlen( s ) + 2;
         size_t o = n - 1;
-
-        char* _tmp = realloc(ret, n);
-        if ( !_tmp )
+        
+        char* _tmp = realloc( ret, n );
+        if( !_tmp )
         {
-            free(ret);
+            free( ret );
             return NULL;
         }
         ret = _tmp;
-
-        memcpy(ret + siz, s, strlen(s));
+        
+        memcpy( ret + siz, s, strlen( s ) );
         ret[o] = ' ';
         siz = n;
-
-        s = StringVector_Get(pv, i++);
+        
+        s = StringVector_Get( pv, i++ );
     }
-
-    if ( ret && siz )
-        ret[siz-1] = '\0';
-
+    
+    if( ret && siz )
+        ret[siz - 1] = '\0';
+        
     return ret;
 }

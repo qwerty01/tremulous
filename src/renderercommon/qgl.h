@@ -33,12 +33,12 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #	include <SDL_opengl.h>
 #endif
 
-extern void (APIENTRYP qglActiveTextureARB) (GLenum texture);
-extern void (APIENTRYP qglClientActiveTextureARB) (GLenum texture);
-extern void (APIENTRYP qglMultiTexCoord2fARB) (GLenum target, GLfloat s, GLfloat t);
+extern void ( APIENTRYP qglActiveTextureARB )( GLenum texture );
+extern void ( APIENTRYP qglClientActiveTextureARB )( GLenum texture );
+extern void ( APIENTRYP qglMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t );
 
-extern void (APIENTRYP qglLockArraysEXT) (GLint first, GLsizei count);
-extern void (APIENTRYP qglUnlockArraysEXT) (void);
+extern void ( APIENTRYP qglLockArraysEXT )( GLint first, GLsizei count );
+extern void ( APIENTRYP qglUnlockArraysEXT )( void );
 
 
 //===========================================================================
@@ -385,7 +385,7 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 	GLE(void, ActiveTexture, GLenum texture) \
 	GLE(void, CompressedTexImage2D, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data) \
 	GLE(void, CompressedTexSubImage2D, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data) \
-
+ 
 // OpenGL 1.5, was GL_ARB_vertex_buffer_object and GL_ARB_occlusion_query
 #define QGL_1_5_PROCS \
 	GLE(void, GenQueries, GLsizei n, GLuint *ids) \
@@ -399,7 +399,7 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 	GLE(void, GenBuffers, GLsizei n, GLuint *buffers) \
 	GLE(void, BufferData, GLenum target, GLsizeiptr size, const void *data, GLenum usage) \
 	GLE(void, BufferSubData, GLenum target, GLintptr offset, GLsizeiptr size, const void *data) \
-
+ 
 // OpenGL 2.0, was GL_ARB_shading_language_100, GL_ARB_vertex_program, GL_ARB_shader_objects, and GL_ARB_vertex_shader
 #define QGL_2_0_PROCS \
 	GLE(void, AttachShader, GLuint program, GLuint shader) \
@@ -431,7 +431,7 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 	GLE(void, UniformMatrix4fv, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) \
 	GLE(void, ValidateProgram, GLuint program) \
 	GLE(void, VertexAttribPointer, GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) \
-
+ 
 // GL_NVX_gpu_memory_info
 #ifndef GL_NVX_gpu_memory_info
 #define GL_NVX_gpu_memory_info
@@ -483,7 +483,7 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 // OpenGL 3.0 specific
 #define QGL_3_0_PROCS \
 	GLE(const GLubyte *, GetStringi, GLenum name, GLuint index) \
-
+ 
 // GL_ARB_framebuffer_object, built-in to OpenGL 3.0
 #define QGL_ARB_framebuffer_object_PROCS \
 	GLE(void, BindRenderbuffer, GLenum target, GLuint renderbuffer) \
@@ -499,13 +499,13 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 	GLE(void, GenerateMipmap, GLenum target) \
 	GLE(void, BlitFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter) \
 	GLE(void, RenderbufferStorageMultisample, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) \
-
+ 
 // GL_ARB_vertex_array_object, built-in to OpenGL 3.0
 #define QGL_ARB_vertex_array_object_PROCS \
 	GLE(void, BindVertexArray, GLuint array) \
 	GLE(void, DeleteVertexArrays, GLsizei n, const GLuint *arrays) \
 	GLE(void, GenVertexArrays, GLsizei n, GLuint *arrays) \
-
+ 
 #ifndef GL_ARB_texture_compression_rgtc
 #define GL_ARB_texture_compression_rgtc
 #define GL_COMPRESSED_RED_RGTC1                       0x8DBB
@@ -555,7 +555,7 @@ extern void (APIENTRYP qglUnlockArraysEXT) (void);
 	GLE(GLenum, CheckNamedFramebufferStatusEXT, GLuint framebuffer, GLenum target) \
 	GLE(GLvoid, NamedFramebufferTexture2DEXT, GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level) \
 	GLE(GLvoid, NamedFramebufferRenderbufferEXT, GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer) \
-
+ 
 #define GLE(ret, name, ...) typedef ret APIENTRY name##proc(__VA_ARGS__); extern name##proc * qgl##name;
 QGL_1_3_PROCS;
 QGL_1_5_PROCS;

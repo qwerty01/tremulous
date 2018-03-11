@@ -39,6 +39,6 @@ along with Tremulous; if not, see <https://www.gnu.org/licenses/>
 #define RSA_STRING_LENGTH (RSA_KEY_LENGTH / 4 + 1)
 
 void Crypto_Init( void );
-void qnettle_random( void *ctx, size_t length, uint8_t *dst );
+void qnettle_random( void* ctx, size_t length, uint8_t* dst );
 
 #endif /* __CRYPTO_H__ */

@@ -109,7 +109,7 @@ typedef struct iqmanim
 
 enum
 {
-    IQM_LOOP = 1<<0
+    IQM_LOOP = 1 << 0
 };
 
 typedef struct iqmvertexarray

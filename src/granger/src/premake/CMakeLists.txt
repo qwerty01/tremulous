@@ -1,3 +1,5 @@
+set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
+
 if(NOT WIN32)
     add_definitions(-Wall -Wextra)
 endif(NOT WIN32)
@@ -30,3 +32,9 @@ add_library(premake
 	premake.h
 	string_endswith.c
     )
+
+target_include_directories(
+    premake PUBLIC
+    ${EXTERNAL_DIR}/lua-5.3.3/include
+    )
+

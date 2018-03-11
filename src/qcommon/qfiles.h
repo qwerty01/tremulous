@@ -54,19 +54,20 @@ QVM files
 
 #define VM_MAGIC 0x12721444
 #define VM_MAGIC_VER2 0x12721445
-typedef struct {
+typedef struct
+{
     int vmMagic;
-
+    
     int instructionCount;
-
+    
     int codeOffset;
     int codeLength;
-
+    
     int dataOffset;
     int dataLength;
     int litLength;  // ( dataLength - litLength ) should be byteswapped on load
     int bssLength;  // zero filled memory appended to datalength
-
+    
     //!!! below here is VM_MAGIC_VER2 !!!
     int jtrgLength;  // number of jump table targets
 } vmHeader_t;
@@ -94,14 +95,16 @@ typedef struct {
 // vertex scales
 #define MD3_XYZ_SCALE (1.0 / 64)
 
-typedef struct md3Frame_s {
+typedef struct md3Frame_s
+{
     vec3_t bounds[2];
     vec3_t localOrigin;
     float radius;
     char name[16];
 } md3Frame_t;
 
-typedef struct md3Tag_s {
+typedef struct md3Tag_s
+{
     char name[MAX_QPATH];  // tag name
     vec3_t origin;
     vec3_t axis[3];
@@ -117,63 +120,69 @@ typedef struct md3Tag_s {
 ** st                           sizeof( md3St_t ) * numVerts
 ** XyzNormals           sizeof( md3XyzNormal_t ) * numVerts * numFrames
 */
-typedef struct {
+typedef struct
+{
     int ident;  //
-
+    
     char name[MAX_QPATH];  // polyset name
-
+    
     int flags;
     int numFrames;  // all surfaces in a model should have the same
-
+    
     int numShaders;  // all surfaces in a model should have the same
     int numVerts;
-
+    
     int numTriangles;
     int ofsTriangles;
-
+    
     int ofsShaders;  // offset from start of md3Surface_t
     int ofsSt;  // texture coords are common for all frames
     int ofsXyzNormals;  // numVerts * numFrames
-
+    
     int ofsEnd;  // next surface follows
 } md3Surface_t;
 
-typedef struct {
+typedef struct
+{
     char name[MAX_QPATH];
     int shaderIndex;  // for in-game use
 } md3Shader_t;
 
-typedef struct {
+typedef struct
+{
     int indexes[3];
 } md3Triangle_t;
 
-typedef struct {
+typedef struct
+{
     float st[2];
 } md3St_t;
 
-typedef struct {
+typedef struct
+{
     short xyz[3];
     short normal;
 } md3XyzNormal_t;
 
-typedef struct {
+typedef struct
+{
     int ident;
     int version;
-
+    
     char name[MAX_QPATH];  // model name
-
+    
     int flags;
-
+    
     int numFrames;
     int numTags;
     int numSurfaces;
-
+    
     int numSkins;
-
+    
     int ofsFrames;  // offset for first frame
     int ofsTags;  // numFrames * numTags
     int ofsSurfaces;  // first surface, others follow
-
+    
     int ofsEnd;  // end of file
 } md3Header_t;
 
@@ -204,38 +213,42 @@ MDR file format
 #define MDR_VERSION 2
 #define MDR_MAX_BONES 128
 
-typedef struct {
+typedef struct
+{
     int boneIndex;  // these are indexes into the boneReferences,
     float boneWeight;  // not the global per-frame bone list
     vec3_t offset;
 } mdrWeight_t;
 
-typedef struct {
+typedef struct
+{
     vec3_t normal;
     vec2_t texCoords;
     int numWeights;
     mdrWeight_t weights[1];  // variable sized
 } mdrVertex_t;
 
-typedef struct {
+typedef struct
+{
     int indexes[3];
 } mdrTriangle_t;
 
-typedef struct {
+typedef struct
+{
     int ident;
-
+    
     char name[MAX_QPATH];  // polyset name
     char shader[MAX_QPATH];
     int shaderIndex;  // for in-game use
-
+    
     int ofsHeader;  // this will be a negative number
-
+    
     int numVerts;
     int ofsVerts;
-
+    
     int numTriangles;
     int ofsTriangles;
-
+    
     // Bone references are a set of ints representing all the bones
     // present in any vertex weights for this surface.  This is
     // needed because a model may have surfaces that need to be
@@ -243,15 +256,17 @@ typedef struct {
     // to re-interpolate all the bones for each surface.
     int numBoneReferences;
     int ofsBoneReferences;
-
+    
     int ofsEnd;  // next surface follows
 } mdrSurface_t;
 
-typedef struct {
+typedef struct
+{
     float matrix[3][4];
 } mdrBone_t;
 
-typedef struct {
+typedef struct
+{
     vec3_t bounds[2];  // bounds of all surfaces of all LOD's for this frame
     vec3_t localOrigin;  // midpoint of bounds, used for sphere cull
     float radius;  // dist from localOrigin to corner
@@ -259,46 +274,51 @@ typedef struct {
     mdrBone_t bones[1];  // [numBones]
 } mdrFrame_t;
 
-typedef struct {
+typedef struct
+{
     unsigned char Comp[24];  // MC_COMP_BYTES is in MatComp.h, but don't want to couple
 } mdrCompBone_t;
 
-typedef struct {
+typedef struct
+{
     vec3_t bounds[2];  // bounds of all surfaces of all LOD's for this frame
     vec3_t localOrigin;  // midpoint of bounds, used for sphere cull
     float radius;  // dist from localOrigin to corner
     mdrCompBone_t bones[1];  // [numBones]
 } mdrCompFrame_t;
 
-typedef struct {
+typedef struct
+{
     int numSurfaces;
     int ofsSurfaces;  // first surface, others follow
     int ofsEnd;  // next lod follows
 } mdrLOD_t;
 
-typedef struct {
+typedef struct
+{
     int boneIndex;
     char name[32];
 } mdrTag_t;
 
-typedef struct {
+typedef struct
+{
     int ident;
     int version;
-
+    
     char name[MAX_QPATH];  // model name
-
+    
     // frames and bones are shared by all levels of detail
     int numFrames;
     int numBones;
     int ofsFrames;  // mdrFrame_t[numFrames]
-
+    
     // each level of detail has completely separate sets of surfaces
     int numLODs;
     int ofsLODs;
-
+    
     int numTags;
     int ofsTags;
-
+    
     int ofsEnd;  // end of file
 } mdrHeader_t;
 
@@ -357,7 +377,8 @@ typedef struct {
 
 //=============================================================================
 
-typedef struct {
+typedef struct
+{
     int fileofs, filelen;
 } lump_t;
 
@@ -380,20 +401,23 @@ typedef struct {
 #define LUMP_VISIBILITY 16
 #define HEADER_LUMPS 17
 
-typedef struct {
+typedef struct
+{
     int ident;
     int version;
-
+    
     lump_t lumps[HEADER_LUMPS];
 } dheader_t;
 
-typedef struct {
+typedef struct
+{
     float mins[3], maxs[3];
     int firstSurface, numSurfaces;
     int firstBrush, numBrushes;
 } dmodel_t;
 
-typedef struct {
+typedef struct
+{
     char shader[MAX_QPATH];
     int surfaceFlags;
     int contentFlags;
@@ -401,50 +425,57 @@ typedef struct {
 
 // planes x^1 is allways the opposite of plane x
 
-typedef struct {
+typedef struct
+{
     float normal[3];
     float dist;
 } dplane_t;
 
-typedef struct {
+typedef struct
+{
     int planeNum;
     int children[2];  // negative numbers are -(leafs+1), not nodes
     int mins[3];  // for frustom culling
     int maxs[3];
 } dnode_t;
 
-typedef struct {
+typedef struct
+{
     int cluster;  // -1 = opaque cluster (do I still store these?)
     int area;
-
+    
     int mins[3];  // for frustum culling
     int maxs[3];
-
+    
     int firstLeafSurface;
     int numLeafSurfaces;
-
+    
     int firstLeafBrush;
     int numLeafBrushes;
 } dleaf_t;
 
-typedef struct {
+typedef struct
+{
     int planeNum;  // positive plane side faces out of the leaf
     int shaderNum;
 } dbrushside_t;
 
-typedef struct {
+typedef struct
+{
     int firstSide;
     int numSides;
     int shaderNum;  // the shader that determines the contents flags
 } dbrush_t;
 
-typedef struct {
+typedef struct
+{
     char shader[MAX_QPATH];
     int brushNum;
     int visibleSide;  // the brush side that ray tests need to clip against (-1 == none)
 } dfog_t;
 
-typedef struct {
+typedef struct
+{
     vec3_t xyz;
     float st[2];
     float lightmap[2];
@@ -456,26 +487,27 @@ typedef struct {
 
 typedef enum { MST_BAD, MST_PLANAR, MST_PATCH, MST_TRIANGLE_SOUP, MST_FLARE } mapSurfaceType_t;
 
-typedef struct {
+typedef struct
+{
     int shaderNum;
     int fogNum;
     int surfaceType;
-
+    
     int firstVert;
     int numVerts;
-
+    
     int firstIndex;
     int numIndexes;
-
+    
     int lightmapNum;
     int lightmapX, lightmapY;
     int lightmapWidth, lightmapHeight;
-
+    
     vec3_t lightmapOrigin;
     vec3_t lightmapVecs[3];  // for patches, [0] and [1] are lodbounds
-
+    
     int patchWidth;
     int patchHeight;
 } dsurface_t;
 
-#endif
+#endif //!__QFILES_H__

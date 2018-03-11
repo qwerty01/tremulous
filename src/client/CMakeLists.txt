@@ -1,43 +1,22 @@
-#
-##  .o88b. db      d888888b d88888b d8b   db d888888b
-## d8P  Y8 88        `88'   88'     888o  88 `~~88~~'
-## 8P      88         88    88ooooo 88V8o 88    88
-## 8b      88         88    88~~~~~ 88 V8o88    88
-## Y8b  d8 88booo.   .88.   88.     88  V888    88
-##  `Y88P' Y88888P Y888888P Y88888P VP   V8P    YP
-#
-
-include(${CMAKE_SOURCE_DIR}/cmake/SDL2.cmake)
-
+#Dushan - many of definitions are missing
 add_definitions(
     -DUSE_LOCAL_HEADERS
     -DUSE_RESTCLIENT
-	#Dushan - we need this
-	-DUSE_CURL_DLOPEN
+    #Dushan - we need this
+    -DUSE_CURL_DLOPEN
     -DUSE_CODEC_OPUS
     -DUSE_OPENAL
     -DUSE_OPENAL_DLOPEN
     -DUSE_INTERNAL_JPEG
     -DUSE_RENDERER_DLOPEN
     -DNDEBUG
-    -DPRODUCT_VERSION="1.3.0 alpha"
-    ${SDL2_DEFINES}
     )
 	
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
-		add_definitions(
-			-D_CRT_SECURE_NO_WARNINGS
-			-D__AMD64__
-			-D_AMD64_
-			-D__WIN64__ 
-			-D_WIN64
-			)
+		add_definitions( -D_CRT_SECURE_NO_WARNINGS -D__AMD64__ -D_AMD64_ -D__WIN64__ -D_WIN64 )
 	else()
-		add_definitions(
-			-_WIN32
-			-WIN32
-			)
+		add_definitions( -D_WIN32 -DWIN32 )
 	endif()
 endif()
 
@@ -45,21 +24,22 @@ endif()
 set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/external)
 if(APPLE)
-set(SYS_SOURCES ${ENGINE_DIR}/sys/sys_osx.mm)
+  set(SYS_SOURCES ${ENGINE_DIR}/sys/sys_osx.mm)
 endif(APPLE)
 
 if(WIN32)
 set(SYS_SOURCES
     ${ENGINE_DIR}/sys/con_win32.cpp
     ${ENGINE_DIR}/sys/sys_win32.cpp
-	${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
-	${ENGINE_DIR}/sys/win_resource.h
+    ${ENGINE_DIR}/sys/sys_win32_default_homepath.cpp
+    ${ENGINE_DIR}/sys/win_resource.h
     )
 else(WIN32)
 set(SYS_SOURCES
     ${ENGINE_DIR}/sys/con_tty.cpp
     ${ENGINE_DIR}/sys/sys_unix.cpp
-    ${ENGINE_DIR}/asm/snapvector.c
+    ${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
+    ${EXTERNAL_DIR}/semver/src/lib/semantic_version_v2.cpp 
     )
 endif(WIN32)
 
@@ -85,31 +65,31 @@ add_executable(
     cl_scrn.cpp
     cl_ui.cpp
     cl_updates.cpp
-    libmumblelink.cpp
-    qal.cpp
-    snd_adpcm.cpp
-    snd_codec.cpp
-    snd_codec_ogg.cpp
-    snd_codec_opus.cpp
-    snd_codec_wav.cpp
-    snd_dma.cpp
-    snd_main.cpp
-    snd_mem.cpp
-    snd_mix.cpp
-    snd_openal.cpp
-    snd_wavelet.cpp
-	client.h
+    ${ENGINE_DIR}/audio/libmumblelink.cpp
+    ${ENGINE_DIR}/audio/qal.cpp
+    ${ENGINE_DIR}/audio/snd_adpcm.cpp
+    ${ENGINE_DIR}/audio/snd_codec.cpp
+    ${ENGINE_DIR}/audio/snd_codec_ogg.cpp
+    ${ENGINE_DIR}/audio/snd_codec_opus.cpp
+    ${ENGINE_DIR}/audio/snd_codec_wav.cpp
+    ${ENGINE_DIR}/audio/snd_dma.cpp
+    ${ENGINE_DIR}/audio/snd_main.cpp
+    ${ENGINE_DIR}/audio/snd_mem.cpp
+    ${ENGINE_DIR}/audio/snd_mix.cpp
+    ${ENGINE_DIR}/audio/snd_openal.cpp
+    ${ENGINE_DIR}/audio/snd_wavelet.cpp
+    client.h
     #
-    ${ENGINE_DIR}/qcommon/cm_load.cpp
-    ${ENGINE_DIR}/qcommon/cm_patch.cpp
-    ${ENGINE_DIR}/qcommon/cm_polylib.cpp
-    ${ENGINE_DIR}/qcommon/cm_test.cpp
-    ${ENGINE_DIR}/qcommon/cm_trace.cpp
+    ${ENGINE_DIR}/cm/cm_load.cpp
+    ${ENGINE_DIR}/cm/cm_patch.cpp
+    ${ENGINE_DIR}/cm/cm_polylib.cpp
+    ${ENGINE_DIR}/cm/cm_test.cpp
+    ${ENGINE_DIR}/cm/cm_trace.cpp
     ${ENGINE_DIR}/qcommon/cmd.cpp
-	${ENGINE_DIR}/qcommon/cmd.h
+    ${ENGINE_DIR}/qcommon/cmd.h
     ${ENGINE_DIR}/qcommon/common.cpp
     ${ENGINE_DIR}/qcommon/crypto.cpp
-	${ENGINE_DIR}/qcommon/crypto.h
+    ${ENGINE_DIR}/qcommon/crypto.h
     ${ENGINE_DIR}/qcommon/cvar.cpp
     ${ENGINE_DIR}/qcommon/cvar.h
     ${ENGINE_DIR}/qcommon/files.cpp
@@ -121,17 +101,17 @@ add_executable(
     ${ENGINE_DIR}/qcommon/md5.cpp
     ${ENGINE_DIR}/qcommon/msg.cpp
     ${ENGINE_DIR}/qcommon/msg.h
-	${ENGINE_DIR}/qcommon/net.h
+    ${ENGINE_DIR}/qcommon/net.h
     ${ENGINE_DIR}/qcommon/net_chan.cpp
     ${ENGINE_DIR}/qcommon/net_ip.cpp
     ${ENGINE_DIR}/qcommon/net.h
     ${ENGINE_DIR}/qcommon/parse.cpp
     ${ENGINE_DIR}/qcommon/puff.cpp
-    ${ENGINE_DIR}/qcommon/q_shared.c
+    ${ENGINE_DIR}/qcommon/q_shared.cpp
     ${ENGINE_DIR}/qcommon/q3_lauxlib.cpp
     ${ENGINE_DIR}/qcommon/q3_lauxlib.h
-	${ENGINE_DIR}/qcommon/q_math.c
-	${ENGINE_DIR}/qcommon/qcommon.h
+    ${ENGINE_DIR}/qcommon/q_math.cpp
+    ${ENGINE_DIR}/qcommon/qcommon.h
     ${ENGINE_DIR}/qcommon/unzip.cpp
     ${ENGINE_DIR}/qcommon/vm.cpp
     ${ENGINE_DIR}/qcommon/vm_interpreted.cpp
@@ -147,26 +127,15 @@ add_executable(
     ${ENGINE_DIR}/server/sv_main.cpp
     ${ENGINE_DIR}/server/sv_net_chan.cpp
     ${ENGINE_DIR}/server/sv_snapshot.cpp
-    ${ENGINE_DIR}/server/sv_world.cpp
+    ${ENGINE_DIR}/server/sv_world.cpp 
     #
     ${ENGINE_DIR}/sys/con_log.cpp
-	${ENGINE_DIR}/sys/con_passive.cpp
+    ${ENGINE_DIR}/sys/con_passive.cpp
     ${ENGINE_DIR}/sys/sys_main.cpp
     ${ENGINE_DIR}/sys/sys_shared.h
     ${SYS_SOURCES}
-
-    #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v1.cpp
-    #${EXTERNAL_DIR}/semver/src/lib/semantic_version_v2.cpp
     )
 
-if(APPLE AND UNIX)
-add_executable(
-    tremulous
-    #
-    ${ENGINE_DIR}/asm/snapvector.c
-	)
-endif(APPLE AND UNIX)
-	
 if(APPLE)
  # FIXME Prefixed with "lua" to prevent cmake from doing "-l-framework Cocoa"
  set(SYSLIBS "-framework Cocoa -framework Security -framework OpenAL -framework IOKit")
@@ -196,10 +165,8 @@ target_link_libraries(
     ogg
     opus
     opusfile
-    #
     script_api
     restclient
-    #
     ${FRAMEWORKS}
     ${CURL_LIBRARIES}
     ${SDL2_LIBRARY}
@@ -225,19 +192,21 @@ include_directories(
     ${EXTERNAL_DIR}/semver/src/include
     ${SDL2_INCLUDE_DIR}
     ${OPENAL_INCLUDE_DIR}
-	${CURL_INCLUDE_DIR}
+    ${CURL_INCLUDE_DIR}
     )
 
+if (APPLE AND UNIX)
 if (USE_RENDERER_DLOPEN)
     add_custom_command(
         TARGET tremulous
         POST_BUILD COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${CMAKE_BINARY_DIR}/src/renderergl1/librenderergl1${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl1${CMAKE_SHARED_LIBRARY_SUFFIX}
+        ARGS -E copy ${CMAKE_BINARY_DIR}/src/renderergl1/librenderer_opengl1${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl1${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
 
     add_custom_command(
         TARGET tremulous
         POST_BUILD COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${CMAKE_BINARY_DIR}/src/renderergl2/librenderergl2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl2${CMAKE_SHARED_LIBRARY_SUFFIX}
+        ARGS -E copy ${CMAKE_BINARY_DIR}/src/renderergl2/librenderer_opengl2${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/renderer_opengl2${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
 endif(USE_RENDERER_DLOPEN)
+endif(APPLE AND UNIX)

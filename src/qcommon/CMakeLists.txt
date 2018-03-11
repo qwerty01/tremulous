@@ -1,69 +1,60 @@
 add_library (
     common STATIC
-    cm_load.c
-    cm_local.h
-    cm_patch.c
-    cm_patch.h
-    cm_polylib.c
-    cm_polylib.h
-    cm_public.h
-    cm_test.c
-    cm_trace.c
+    ${ENGINE_DIR}/cm/cm_load.cpp
+    ${ENGINE_DIR}/cm/cm_local.h
+    ${ENGINE_DIR}/cm/cm_patch.cpp
+    ${ENGINE_DIR}/cm/cm_patch.h
+    ${ENGINE_DIR}/cm/cm_polylib.cpp
+    ${ENGINE_DIR}/cm/cm_polylib.h
+    ${ENGINE_DIR}/cm/cm_public.h
+    ${ENGINE_DIR}/cm/cm_test.cpp
+    ${ENGINE_DIR}/cm/cm_trace.cpp
     cmd.cpp
-    common.c
+    common.cpp
     cvar.cpp
     dialog.h
-    files.c
-    huffman.c
-    ioapi.c
+    files.cpp
+    huffman.cpp
+    ioapi.cpp
     ioapi.h
     json.h
-    md4.c
-    md5.c
-    msg.c
-    net_chan.c
-    net_ip.c
-    parse.c
-    puff.c
+    md4.cpp
+    md5.cpp
+    msg.cpp
+    net_chan.cpp
+    net_ip.cpp
+    parse.cpp
+    puff.cpp
     puff.h
     q3_lauxlib.cpp
     q3_lauxlib.h
-    q_math.c
+    q_math.cpp
     q_platform.h
-    q_shared.c
+    q_shared.cpp
     q_shared.h
     qcommon.h
     qfiles.h
     surfaceflags.h
 	unistd.h
-    unzip.c
+    unzip.cpp
     unzip.h
-    vm.c
-    vm_interpreted.c
-    vm_local.h
-    vm_none.c
-    vm_powerpc.c
-    vm_powerpc_asm.c
+    vm.cpp
+    vm_interpreted.cpp
+    vm_local.hpp
+    vm_none.cpp
+    vm_powerpc.cpp
+    vm_powerpc_asm.cpp
     vm_powerpc_asm.h
-    vm_sparc.c
+    vm_sparc.cpp
     vm_sparc.h
-    vm_x86.c
+    vm_x86.cpp
 )
 
 if(WIN32 AND MSVC)
 	if(CMAKE_CL_64)
-		add_definitions(
-			-D_CRT_SECURE_NO_WARNINGS
-			-D__AMD64__
-			-D_AMD64_
-			-D__WIN64__ 
-			-D_WIN64
-			)
+		add_definitions( -D_CRT_SECURE_NO_WARNINGS -D__AMD64__ -D_AMD64_ -D__WIN64__ -D_WIN64 )
 	else()
-		add_definitions(
-			-_WIN32
-			-WIN32
-			)
+		add_definitions( -D_WIN32 -DWIN32 )
 	endif()
 endif()
 
