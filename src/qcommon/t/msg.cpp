@@ -1,25 +1,8 @@
 // Unit tests for MSG_ReadString, MSG_ReadBigString and MSG_ReadStringLine
 // Victor Roemer (wtfbbqhax), <victor@badsec.org>.
 
-// 
-// Messages
-//
-//
-//  Out Of Band: 
-//     
-//    0                   1                   2                   3
-//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//   |              -1               |           RAW DATA          ...
-//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-//
-//
-//  Sequence Number (s32)
-//  QPort (u16):
-//  
-//
-
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <vector>
@@ -37,15 +20,34 @@ using namespace std;
 
 cvar_t *cl_shownet = nullptr;
 
-void Com_Error( int code, const char *fmt, ... ) { exit(1); }
+void Com_Error( int code, const char *fmt, ... ) { abort(); }
 void Com_Printf( const char *fmt, ... ) { }
 
-TEST_CASE("full message - MSG_ReadString")
+TEST_CASE("off by one?")
 {
     byte msg_buf[MAX_STRING_CHARS];
     msg_t msg;
 
-    char str[MAX_STRING_CHARS];
+    char str[sizeof(msg_buf)];
+    memset(&str, 'A', sizeof(str));
+    str[sizeof(str)-1] = '\0';
+
+    MSG_Init(&msg, msg_buf, sizeof(msg_buf));
+    MSG_WriteString2(&msg, str, sizeof(msg_buf));
+    MSG_WriteByte(&msg, 55);
+
+    MSG_BeginReading(&msg);
+    MSG_ReadString(&msg);
+    REQUIRE(MSG_ReadByte(&msg) == 0);
+    REQUIRE(MSG_ReadByte(&msg) == 55);
+}
+
+TEST_CASE("full message - MSG_ReadString")
+{
+    byte msg_buf[MAX_STRING_CHARS * 2];
+    msg_t msg;
+
+    char str[sizeof(msg_buf)];
     memset(&str, 'A', sizeof(str));
     str[sizeof(str)-1] = '\0';
 
@@ -53,38 +55,52 @@ TEST_CASE("full message - MSG_ReadString")
     MSG_WriteString2(&msg, str, sizeof(msg_buf));
 
     MSG_BeginReading(&msg);
-    string ret { MSG_ReadString(&msg) };
+    const char* ret = MSG_ReadString(&msg);
 
-    REQUIRE(ret == str);
+    REQUIRE(strlen(ret) == 1023);
 }
 
-TEST_CASE("Read/Write OOB string")
+TEST_CASE("MSG_ReadStringLine (OOB)")
 {
     byte msg_buf[MAX_MSGLEN];
     msg_t msg;
     
     MSG_InitOOB(&msg, msg_buf, sizeof(msg_buf));
-    MSG_WriteString(&msg, "Hello world!");
-
-    // OOB messages are not compressed
-    REQUIRE(!strcmp((const char*)msg.data, "Hello world!"));
+    MSG_WriteString(&msg, "Hello world!\nI am a message!");
 
     MSG_BeginReadingOOB(&msg);
     string ret { MSG_ReadStringLine(&msg) };
 
     REQUIRE(ret == "Hello world!");
+
+    ret = MSG_ReadStringLine(&msg);
+    REQUIRE(ret == "I am a message!");
+
+    int c = MSG_ReadChar(&msg);
+    REQUIRE(c == -1);
+
+    // Can't read past the EOL
+    ret = MSG_ReadStringLine(&msg);
+    REQUIRE(ret == "");
 }
 
-TEST_CASE("Read/Write string")
+TEST_CASE("MSG_ReadStringLine")
 {
     byte msg_buf[MAX_MSGLEN];
     msg_t msg;
     
     MSG_Init(&msg, msg_buf, sizeof(msg_buf));
-    MSG_WriteString(&msg, "Hello world!");
+    MSG_WriteString(&msg, "Hello world!\nI am a message!");
 
     MSG_BeginReading(&msg);
     string ret { MSG_ReadStringLine(&msg) };
 
     REQUIRE(ret == "Hello world!");
+
+    ret = MSG_ReadStringLine(&msg);
+    REQUIRE(ret == "I am a message!");
+
+    // Can't read past the EOL
+    ret = MSG_ReadStringLine(&msg);
+    REQUIRE(ret == "");
 }
