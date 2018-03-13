@@ -506,10 +506,10 @@ const char *MSG_ReadString(msg_t *msg)
         if (c == -1 || c == 0)
             break;
 
-        string[l++] = c;
-
         if (l >= sizeof(string)-1)
             break;
+
+        string[l++] = c;
     }
 
     string[l] = '\0';
@@ -528,10 +528,10 @@ const char *MSG_ReadBigString(msg_t *msg)
         if (c == -1 || c == 0)
             break;
 
-        string[l++] = c;
-
         if (l >= sizeof(string)-1)
             break;
+
+        string[l++] = c;
     }
 
     string[l] = 0;
@@ -550,10 +550,10 @@ const char *MSG_ReadStringLine(msg_t *msg)
         if (c == -1 || c == 0 || c == '\n')
             break;
 
-        string[l++] = c;
-
         if (l >= sizeof(string)-1)
             break;
+
+        string[l++] = c;
     }
 
     string[l] = 0;
