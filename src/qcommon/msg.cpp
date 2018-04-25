@@ -419,19 +419,6 @@ void MSG_WriteAngle16(msg_t *sb, float f)
 //
 
 // returns -1 if no more characters are available
-int MSG_ReadChar(msg_t *msg)
-{
-    int c;
-
-    c = (signed char)MSG_ReadBits(msg, 8);
-    if (msg->readcount > msg->cursize)
-    {
-        c = -1;
-    }
-
-    return c;
-}
-
 int MSG_ReadByte(msg_t *msg)
 {
     int c;
@@ -442,6 +429,11 @@ int MSG_ReadByte(msg_t *msg)
         c = -1;
     }
     return c;
+}
+
+int MSG_ReadChar(msg_t *msg)
+{
+    return MSG_ReadByte(msg);
 }
 
 int MSG_LookaheadByte(msg_t *msg)

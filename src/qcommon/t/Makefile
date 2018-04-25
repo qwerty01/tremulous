@@ -12,6 +12,10 @@ msg: msg.cpp ../msg.cpp ../msg.h ../huffman.h
 #COM_Parse: COM_Parse.cpp ../q_shared.cpp ../q_shared.h
 #	c++ -g -O0 -std=c++14 -I ../../../external/catch -I ../.. ../q_shared.cpp COM_Parse.cpp -o COM_Parse 
 
+check: msg CmdParser
+	./msg
+	./CmdParser
+
 clean:
 	rm -rf COM_Parse
 	rm -rf CmdParser
