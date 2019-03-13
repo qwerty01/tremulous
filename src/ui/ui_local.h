@@ -99,6 +99,8 @@ typedef struct serverStatus_s {
     int currentServer;
     int displayServers[MAX_DISPLAY_SERVERS];
     int numDisplayServers;
+    int numDuplicateMultiprotocolServers;
+    int numDuplicateMultiprotocolServerClients;
     int numPlayersOnServers;
     int nextDisplayRefresh;
     int nextSortTime;
