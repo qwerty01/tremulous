@@ -46,7 +46,7 @@ matrix:
     env: ARCH=x86_64
     before_install:
     - brew update
-    - brew install freetype --universal
+    - brew install freetype
     - rm -rf build
     script:
     - ./misc/travis-ci-build.sh
