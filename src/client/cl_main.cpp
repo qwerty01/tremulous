@@ -773,7 +773,11 @@ static void CL_Record_f(void)
     {
         const char *s = Cmd_Argv(1);
         Q_strncpyz(demoName, s, sizeof(demoName));
-        Com_sprintf(name, sizeof(name), "demos/%s.%s%d", demoName, DEMOEXT, PROTOCOL_VERSION);
+        Com_sprintf(
+          name, sizeof(name),
+          "demos/%s.%s%d", demoName, DEMOEXT,
+            (clc.netchan.alternateProtocol == 0 ?
+              PROTOCOL_VERSION : clc.netchan.alternateProtocol == 1 ? 70 : 69));
     }
     else
     {

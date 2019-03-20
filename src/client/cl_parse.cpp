@@ -373,15 +373,13 @@ void CL_SystemInfoChanged( void ) {
 	clc.voipEnabled = !Q_stricmp(s, "opus");
 #endif
 
-	// don't set any vars when playing a demo
-	if ( clc.demoplaying ) {
-		return;
-	}
-
-	s = Info_ValueForKey( systemInfo, "sv_cheats" );
-	cl_connectedToCheatServer = (bool)atoi( s );
-	if ( !cl_connectedToCheatServer ) {
-		Cvar_SetCheatState();
+	// only set the paks, fs_game, and sv_pure when playing a demo
+	if ( !clc.demoplaying ) {
+		s = Info_ValueForKey( systemInfo, "sv_cheats" );
+		cl_connectedToCheatServer = (bool)atoi( s );
+		if ( !cl_connectedToCheatServer ) {
+			Cvar_SetCheatState();
+		}
 	}
 
 	// check pure server string
@@ -414,6 +412,8 @@ void CL_SystemInfoChanged( void ) {
 			}
 				
 			gameSet = true;
+		} else if ( clc.demoplaying && Q_stricmp(key, "sv_pure" ) ) {
+			continue;
 		}
 
 		if((cvar_flags = Cvar_Flags(key)) == CVAR_NONEXISTENT)

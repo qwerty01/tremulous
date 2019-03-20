@@ -2853,31 +2853,40 @@ static void UI_LoadDemos(void)
     char demolist[4096];
     char demoExt[32];
     char *demoname;
-    int i, len;
+    int  i = 0;
+    int  len, protocol;
 
-    Com_sprintf(demoExt, sizeof(demoExt), "%s%d", DEMOEXT, (int)trap_Cvar_VariableValue("protocol"));
+    uiInfo.demoCount = 0;
 
-    uiInfo.demoCount = trap_FS_GetFileList("demos", demoExt, demolist, 4096);
+    for(protocol = 0; protocol < 3; protocol++) {
+      Com_sprintf(
+        demoExt, sizeof(demoExt), "%s%d", DEMOEXT,
+        protocol == 2 ? 69 : protocol == 1 ? 70 : 71);
 
-    Com_sprintf(demoExt, sizeof(demoExt), ".%s%d", DEMOEXT, (int)trap_Cvar_VariableValue("protocol"));
+      uiInfo.demoCount += trap_FS_GetFileList("demos", demoExt, demolist, 4096);
 
-    if (uiInfo.demoCount)
-    {
-        if (uiInfo.demoCount > MAX_DEMOS)
-            uiInfo.demoCount = MAX_DEMOS;
+      Com_sprintf(
+          demoExt, sizeof(demoExt), ".%s%d", DEMOEXT,
+          protocol == 2 ? 69 : protocol == 1 ? 70 : 71);
 
-        demoname = demolist;
+      if (uiInfo.demoCount)
+      {
+          if (uiInfo.demoCount > MAX_DEMOS)
+              uiInfo.demoCount = MAX_DEMOS;
 
-        for (i = 0; i < uiInfo.demoCount; i++)
-        {
-            len = strlen(demoname);
+          demoname = demolist;
 
-            if (!Q_stricmp(demoname + len - strlen(demoExt), demoExt))
-                demoname[len - strlen(demoExt)] = '\0';
+          for (; i < uiInfo.demoCount; i++)
+          {
+              len = strlen(demoname);
 
-            uiInfo.demoList[i] = String_Alloc(demoname);
-            demoname += len + 1;
-        }
+              if (!Q_stricmp(demoname + len - strlen(demoExt), demoExt))
+                  demoname[len - strlen(demoExt)] = '\0';
+
+              uiInfo.demoList[i] = String_Alloc(demoname);
+              demoname += len + 1;
+          }
+      }
     }
 }
 
