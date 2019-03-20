@@ -1288,6 +1288,12 @@ static void CL_KeyDownEvent( int key, unsigned time )
 		( clc.demoplaying || clc.state == CA_CINEMATIC ) && Key_GetCatcher( ) == 0 ) {
 
 		if (Cvar_VariableValue ("com_cameraMode") == 0) {
+			if( clc.demoplaying && key != K_ESCAPE ) {
+				// avoid accidental stopping of demos from pressing a random key by opening the console
+				Con_ToggleConsole_f ();
+				Key_ClearStates ();
+				return;
+			}
 			Cvar_Set ("nextdemo","");
 			key = K_ESCAPE;
 		}
