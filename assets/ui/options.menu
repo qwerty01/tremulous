@@ -69,7 +69,8 @@
       text "Renderer:"
       cvar "cl_renderer"
       cvarStrList { "OpenGL 1", "opengl1",
-                    "OpenGL 2", "opengl2" }
+                    "OpenGL 2", "opengl2",
+                    "Vulkan", "vulkan" }
       rect X (Y+(ELEM_H+ELEM_GAP)) W ELEM_H
       textalign ALIGN_RIGHT
       textalignx TOFF_X

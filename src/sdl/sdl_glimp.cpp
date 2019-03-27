@@ -875,6 +875,8 @@ success:
 	else
 		Q_strncpyz( glConfig.extensions_string, "Not available (core context, fixme)", sizeof( glConfig.extensions_string ) );
 
+	ri.Printf( PRINT_ALL, "GL_VERSION %s\n", glConfig.version_string );
+
 	// initialize extensions
 	GLimp_InitExtensions( );
 

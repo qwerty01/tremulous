@@ -217,6 +217,8 @@ typedef struct {
 	qboolean				stereoEnabled;
 	qboolean				textureFilterAnisotropic;
 	int							maxAnisotropy;
+
+	qboolean smpActive; // UNUSED, present for compatibility
 } glconfig_t;
 
 #endif	// __TR_TYPES_H
