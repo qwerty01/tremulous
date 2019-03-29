@@ -57,17 +57,16 @@ static cvar_t* r_displayIndex;
 /*
 SDL_WINDOW_FULLSCREEN, for "real" fullscreen with a videomode change; 
 SDL_WINDOW_FULLSCREEN_DESKTOP for "fake" fullscreen that takes the size of the desktop.
-
-static VkBool32 isWindowFullscreen (void)
+*/
+static bool isWindowFullscreen (void)
 {
 	return (SDL_GetWindowFlags(window_sdl) & SDL_WINDOW_FULLSCREEN) != 0;
 }
 
-static VkBool32 isDesktopFullscreen (void)
+static bool isDesktopFullscreen (void)
 {
 	return (SDL_GetWindowFlags(window_sdl) & SDL_WINDOW_FULLSCREEN_DESKTOP) == SDL_WINDOW_FULLSCREEN_DESKTOP;
 }
-*/
 
 
 static void VKimp_DetectAvailableModes(void)
@@ -259,6 +258,37 @@ static int VKimp_SetMode(int mode, bool fullscreen)
 	}
 
     return -1;
+}
+
+
+/*
+ * vk_checkFullScreen
+ */
+void vk_checkFullScreen(void) {
+	if( r_fullscreen->modified ) {
+ 		int         fullscreen;
+ 		bool    needToToggle;
+ 		bool    sdlToggled = false;
+
+ 		// Find out the current state
+ 		fullscreen = isWindowFullscreen() ? 1 : 0;
+
+ 		if( r_fullscreen->integer && ri.Cvar_VariableIntegerValue( "in_nograb" ) ) {
+ 			ri.Printf( PRINT_ALL, "Fullscreen not allowed with in_nograb 1\n");
+ 			ri.Cvar_Set( "r_fullscreen", "0" );
+ 			r_fullscreen->modified = false;
+ 		}
+
+ 		// Is the state we want different from the current state?
+ 		needToToggle = !!r_fullscreen->integer != fullscreen;
+
+ 		if( needToToggle ) {
+			// TODO: Make transitioning too/from full screen more smooth
+ 			ri.Cmd_ExecuteText(EXEC_APPEND, "vid_restart\n");
+ 		}
+
+ 		r_fullscreen->modified = false;
+ 	}
 }
 
 

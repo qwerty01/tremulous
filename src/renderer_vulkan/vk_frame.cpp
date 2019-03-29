@@ -639,6 +639,7 @@ void vk_end_frame(void)
     VkResult result = qvkQueuePresentKHR(vk.queue, &present_info);
     if(result == VK_SUCCESS)
     {
+        vk_checkFullScreen( );
         return;
     }
     else if( (result == VK_ERROR_OUT_OF_DATE_KHR) || (result == VK_ERROR_SURFACE_LOST_KHR))

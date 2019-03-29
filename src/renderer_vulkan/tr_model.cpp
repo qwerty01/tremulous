@@ -35,6 +35,7 @@ model_t *R_AllocModel( void ) {
 	model_t		*mod;
 
 	if ( tr.numModels == MAX_MOD_KNOWN ) {
+		ri.Printf(PRINT_WARNING, "R_AllocModel: MAX_MOD_KNOWN.\n");
 		return NULL;
 	}
 

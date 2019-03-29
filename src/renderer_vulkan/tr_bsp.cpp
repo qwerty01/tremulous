@@ -1353,9 +1353,6 @@ static	void R_LoadSubmodels( lump_t *l )
 			model->bmodel = out;
 			Com_sprintf( model->name, sizeof( model->name ), "*%d", i );
 
-      if ( ++tr.numModels == MAX_MOD_KNOWN ) {
-            ri.Printf(PRINT_WARNING, "R_AllocModel: MAX_MOD_KNOWN.\n");
-	    }
       ri.Printf( PRINT_ALL, "Allocate Memory for %s model. \n", model->name);
 
 		for (j=0 ; j<3 ; j++) {

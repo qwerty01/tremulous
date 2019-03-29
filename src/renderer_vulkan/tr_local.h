@@ -777,7 +777,7 @@ typedef struct {
 
 
 
-float R_NoiseGet4f( float x, float y, float z, float t );
+float R_NoiseGet4f( float x, float y, float z, double t );
 void  R_NoiseInit( void );
 
 void R_RenderView( viewParms_t *parms );
@@ -1145,6 +1145,7 @@ void RE_AddAdditiveLightToScene( const vec3_t org, float intensity, float r, flo
 void RE_RenderScene( const refdef_t *fd );
 
 void RE_SetColor( const float *rgba );
+void RE_SetClipRegion( const float *region );
 void RE_StretchPic ( float x, float y, float w, float h, 
 					  float s1, float t1, float s2, float t2, qhandle_t hShader );
 void RE_EndFrame( int *frontEndMsec, int *backEndMsec );

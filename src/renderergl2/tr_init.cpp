@@ -544,7 +544,7 @@ void R_ScreenshotFilename( int lastNumber, char *fileName ) {
 
 /* 
 ================== 
-R_ScreenshotFilename
+R_ScreenshotFilenameJPEG
 ================== 
 */  
 void R_ScreenshotFilenameJPEG( int lastNumber, char *fileName ) {
@@ -750,7 +750,7 @@ void R_ScreenShotJPEG_f (void) {
 	if ( !silent ) {
 		ri.Printf (PRINT_ALL, "Wrote %s\n", checkname);
 	}
-} 
+}
 
 //============================================================================
 

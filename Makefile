@@ -238,8 +238,9 @@ ifndef USE_LOCAL_HEADERS
 USE_LOCAL_HEADERS=$(USE_INTERNAL_LIBS)
 endif
 
+## TODO: Fix the dynamic library builds of the vulkan renderer
 ifndef USE_RENDERER_DLOPEN
-USE_RENDERER_DLOPEN=1
+USE_RENDERER_DLOPEN=0
 endif
 
 ifndef USE_YACC

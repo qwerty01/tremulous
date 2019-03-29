@@ -749,7 +749,7 @@ image_t* R_FindImageFile(const char *name, VkBool32 mipmap, VkBool32 allowPicmip
 
 
 
-void RE_UploadCinematic (int w, int h, int cols, int rows, const unsigned char *data, int client, VkBool32 dirty)
+void RE_UploadCinematic (int w, int h, int cols, int rows, const unsigned char *data, int client, bool dirty)
 {
 
     image_t* prtImage = tr.scratchImage[client];

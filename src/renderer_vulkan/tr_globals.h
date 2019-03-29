@@ -66,6 +66,8 @@ typedef struct {
 	frontEndCounters_t		pc;
 	int						frontEndMsec;		// not in pc due to clearing issue
 
+	vec4_t				clipRegion;			// 2D clipping region
+
 	//
 	// put large tables at the end, so most elements will be
 	// within the +/32K indexed range on risc processors

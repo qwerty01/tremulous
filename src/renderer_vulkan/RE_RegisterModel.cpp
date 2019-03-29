@@ -34,10 +34,11 @@ asked for again.
 */
 qhandle_t RE_RegisterModel( const char *name )
 {
-    ri.Printf( PRINT_ALL, "RegisterModel: %s. \n", name);
-
-    bool	orgNameFailed = false;
+	bool	orgNameFailed = false;
+	model_t* mod;
 	int			orgLoader = -1;
+
+	ri.Printf( PRINT_ALL, "RegisterModel: %s. \n", name);
 
 	if ( !name || !name[0] ) {
 		ri.Printf( PRINT_WARNING, "RE_RegisterModel: NULL name\n" );
@@ -54,13 +55,11 @@ qhandle_t RE_RegisterModel( const char *name )
 	//
     qhandle_t hModel;
 
-	for ( hModel = 1; hModel < tr.numModels; hModel++ )
-    {
-		if ( 0 == strcmp( tr.models[hModel]->name, name ) )
-        {
-			if( tr.models[hModel]->type == MOD_BAD )
-            {
-                ri.Printf( PRINT_WARNING, "tr.models[%d]->type = MOD_BAD \n", hModel);
+	for ( hModel = 1; hModel < tr.numModels; hModel++ ) {
+		mod = tr.models[hModel];
+		if ( !strcmp( mod->name, name ) ) {
+			if( mod->type == MOD_BAD ) {
+				ri.Printf( PRINT_WARNING, "tr.models[%d]->type = MOD_BAD \n", hModel);
 				return 0;
 			}
 			return hModel;
@@ -69,8 +68,6 @@ qhandle_t RE_RegisterModel( const char *name )
 
 
 	// allocate a new model_t
-	model_t* mod;
-
 	ri.Printf( PRINT_ALL, "Allocate Memory for %s. \n", name);
 	if ( ( mod = R_AllocModel() ) == NULL ) {
 		ri.Printf( PRINT_WARNING, "RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
