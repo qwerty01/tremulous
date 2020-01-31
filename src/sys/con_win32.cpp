@@ -210,15 +210,24 @@ static void CON_Show( void )
 	writeArea.Right = MAX_EDIT_LINE;
 
 	// set color to white
-	attrib = CON_ColorCharToAttrib( COLOR_WHITE );
+	attrib = CON_ColorVecToAttrib( g_color_table[ColorIndex(COLOR_WHITE)] );
 
 	// build a space-padded CHAR_INFO array
 	for( i = 0; i < MAX_EDIT_LINE; i++ )
 	{
 		if( i < qconsole_linelen )
 		{
-			if( i + 1 < qconsole_linelen && Q_IsColorString( qconsole_line + i ) )
-				attrib = CON_ColorCharToAttrib( *( qconsole_line + i + 1 ) );
+			if( i + 1 < qconsole_linelen && Q_IsColorString( qconsole_line + i ) ) {
+				vec4_t color;
+
+				if(Q_IsHardcodedColor(qconsole_line + i)) {
+					Vector4Copy(g_color_table[ColorIndex(*(qconsole_line + i + 1 ))], color);
+				} else {
+					Q_GetVectFromHexColor(qconsole_line + i, color);
+				}
+
+				attrib = CON_ColorVecToAttrib( color );
+			}
 
 			line[ i ].Char.AsciiChar = qconsole_line[ i ];
 		}
