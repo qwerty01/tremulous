@@ -1005,8 +1005,8 @@ static void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fad
     {
         fillRect.x += w->borderSize;
         fillRect.y += w->borderSize;
-        fillRect.w -= w->borderSize + 1;
-        fillRect.h -= w->borderSize + 1;
+        fillRect.w -= w->borderSize * 2;
+        fillRect.h -= w->borderSize * 2;
     }
 
     if (w->style == WINDOW_STYLE_FILLED)
@@ -1020,6 +1020,8 @@ static void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fad
             DC->drawHandlePic(fillRect.x, fillRect.y, fillRect.w, fillRect.h, w->background);
             DC->setColor(NULL);
         }
+        else if( w->border == WINDOW_BORDER_ROUNDED )
+            DC->fillRoundedRect( fillRect.x, fillRect.y, fillRect.w, fillRect.h, w->borderSize, w->borderStyle, w->backColor );
         else
             DC->fillRect(fillRect.x, fillRect.y, fillRect.w, fillRect.h, w->backColor);
     }
@@ -1086,6 +1088,11 @@ static void Border_Paint(Window *w)
         GradientBar_Paint(&r, w->borderColor);
         r.y = w->rect.y + w->rect.h - 1;
         GradientBar_Paint(&r, w->borderColor);
+    }
+    else if( w->border == WINDOW_BORDER_ROUNDED )
+    {
+        // rounded, style depending of borderStyle
+        DC->drawRoundedRect( w->rect.x, w->rect.y, w->rect.w, w->rect.h, w->borderSize, w->borderStyle, w->borderColor );
     }
 }
 
@@ -1818,6 +1825,131 @@ void Script_playLooped(itemDef_t *item, char **args)
     }
 }
 
+#define MAX_BUCKET_MENU_SOUNDS 20
+
+void Script_playLoopedBucket(itemDef_t *item, char **args)
+{
+    char         play_looped_sound_path[MAX_QPATH];
+    char         sound[MAX_BUCKET_MENU_SOUNDS][MAX_QPATH];
+    char         selected_list_cvar_string[1024];
+    char         sound_list[MAX_BUCKET_MENU_SOUNDS*MAX_QPATH];
+    char         *sound_ptr;
+    char         *p;
+    const char   *selected_list_cvar;
+    const char   *val;
+    const char   *sound_bucket_directory;
+    int          selected_sound_index[MAX_BUCKET_MENU_SOUNDS];
+    int          i, j, file_length;
+    unsigned int num_sounds = 0;
+    unsigned int num_wav = 0;
+    unsigned int num_ogg = 0;
+    unsigned int num_selected_sound_indecies = 0;
+    unsigned int *play_looped_bucket_handle =
+        &((menuDef_t*)item->parent)->play_looped_bucket_handle;
+    qboolean     *play_looped_bucket_allocated =
+        &((menuDef_t*)item->parent)->play_looped_bucket_allocated;
+    qboolean     new_bucket = qfalse;
+
+    for(i = 0; i < MAX_BUCKET_MENU_SOUNDS; i++) {
+        sound[i][0] = '\0';
+    }
+
+    (void)item;
+
+    if(!String_Parse(args, &sound_bucket_directory)) {
+        return;
+    }
+
+    if(!String_Parse(args, &selected_list_cvar)) {
+        return;
+    }
+
+    num_wav = DC->FS_GetFileList( sound_bucket_directory, ".wav",
+      sound_list, 10 * MAX_QPATH );
+    sound_ptr = sound_list;
+    num_sounds = num_wav;
+
+    for( i = 0; i < num_wav; i++, sound_ptr += file_length + 1 ) {
+      file_length = strlen(sound_ptr);
+      strcpy(sound[i], va("%s", sound_ptr));
+    }
+
+    num_sounds = num_wav;
+
+    num_ogg = DC->FS_GetFileList( sound_bucket_directory, ".ogg",
+      sound_list, 10 * MAX_QPATH );
+    sound_ptr = sound_list;
+
+    for( i = 0; i < num_ogg; i++, sound_ptr += file_length + 1 ) {
+      file_length = strlen(sound_ptr);
+      strcpy(sound[num_sounds + i], va("%s", sound_ptr));
+    }
+
+    num_sounds += num_ogg;
+
+    if(num_sounds == 0) {
+        return;
+    }
+
+    if(!*play_looped_bucket_allocated) {
+        *play_looped_bucket_handle = DC->Bucket_Create_Bucket( );
+        *play_looped_bucket_allocated = qtrue;
+        new_bucket = qtrue;
+        for(i = 0; i < num_sounds; i++) {
+            DC->Bucket_Add_Item_To_Bucket(
+                *play_looped_bucket_handle, (void*)sound[i]);
+        }
+    }
+
+    if(selected_list_cvar) {
+        DC->getCVarString(
+            selected_list_cvar, selected_list_cvar_string,
+            sizeof(selected_list_cvar_string));
+
+        p = selected_list_cvar_string;
+
+        for(i = 0; i < MAX_BUCKET_MENU_SOUNDS; i++) {
+            if(String_Parse(&p, &val)) {
+                for(j = 0; j < num_sounds; j++) {
+                    //ensure that the specified selected sound exists
+                    if(!Q_stricmp(val, sound[j])) {
+                        selected_sound_index[num_selected_sound_indecies] = j;
+                        num_selected_sound_indecies++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        Com_Memset(selected_list_cvar_string, 0, sizeof(selected_list_cvar_string));
+        if(num_selected_sound_indecies >= num_sounds) {
+            num_selected_sound_indecies = 0;
+        }
+
+        for(i = 0; i < num_selected_sound_indecies; i++) {
+            Q_strcat(selected_list_cvar_string, 1024, va("%s ",sound[selected_sound_index[i]]));
+            if(new_bucket) {
+                DC->Bucket_Select_A_Specific_Item(
+                  *play_looped_bucket_handle, (void*)sound[selected_sound_index[i]]);
+            }
+        }
+    }
+
+    val =
+        (char*)DC->Bucket_Select_A_Random_Item(*play_looped_bucket_handle);
+
+    if(selected_list_cvar) {
+        Q_strcat(selected_list_cvar_string, 1024, val);
+        DC->setCVar(selected_list_cvar, selected_list_cvar_string);
+    }
+
+    if(val) {
+        strcpy(play_looped_sound_path, va("%s/%s", sound_bucket_directory, val));
+        DC->stopBackgroundTrack();
+        DC->startBackgroundTrack(play_looped_sound_path, play_looped_sound_path);
+    }
+}
+
 static ID_INLINE float UI_EmoticonHeight(fontInfo_t *font, float scale)
 {
     return font->glyphs[(int)'['].height * scale * font->glyphScale;
@@ -2189,10 +2321,77 @@ static void UI_Text_Paint_Generic(
                     float yadj = useScale * glyph->top;
 
                     DC->setColor(NULL);
-                    DC->drawHandlePic(
-                        x, y - yadj, (emoticonW * emoticonWidth), emoticonH,
-                        emoticonHandle );
-                    DC->setColor( newColor );
+
+                    if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
+                    {
+                        int ofs;
+
+                        if (style == ITEM_TEXTSTYLE_SHADOWED)
+                            ofs = 1;
+                        else
+                            ofs = 2;
+
+                        colorBlack[3] = newColor[3] * 4 / 8 / 6;
+                        DC->setColor(colorBlack);
+                        DC->drawHandlePic(
+                          x + ofs - 0.2f, y + ofs - 0.2f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.2f, y + ofs - 0.2f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs - 0.2f, y + ofs + 0.2f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.2f, y + ofs + 0.2f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        colorBlack[3] = newColor[3] * 3 / 8 / 6;
+                        DC->setColor(colorBlack);
+                        DC->drawHandlePic(
+                          x + ofs - 0.4f, y + ofs - 0.4f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.4f, y + ofs - 0.4f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs - 0.4f, y + ofs + 0.4f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.4f, y + ofs + 0.4f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        colorBlack[3] = newColor[3] * 1 / 8 / 6;
+                        DC->setColor(colorBlack);
+                        DC->drawHandlePic(
+                          x + ofs - 0.6f, y + ofs - 0.6f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.6f, y + ofs - 0.6f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs - 0.6f, y + ofs + 0.6f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+                        DC->drawHandlePic(
+                          x + ofs + 0.6f, y + ofs + 0.6f - yadj,
+                          (emoticonW * emoticonWidth), emoticonH,
+                          emoticonHandle);
+
+                        DC->setColor(NULL);
+                        colorBlack[3] = 1.0f;
+                    }
+
+                    DC->drawHandlePic(x, y - yadj, (emoticonW * emoticonWidth), emoticonH, emoticonHandle);
+                    DC->setColor(newColor);
                     x += (emoticonW * emoticonWidth) + gapAdjust;
                     s += emoticonLen;
                     count += emoticonWidth;
@@ -2225,24 +2424,70 @@ static void UI_Text_Paint_Generic(
                 ofs = 1;
             else
                 ofs = 2;
-                colorBlack[3] = newColor[3];
-                DC->setColor(colorBlack);
-                UI_Text_PaintChar(x + ofs, y + ofs, useScale, glyph, 0.0f);
-                DC->setColor(newColor);
-                colorBlack[3] = 1.0f;
+
+            colorBlack[3] = newColor[3] * 4 / 8 / 6;
+            DC->setColor(colorBlack);
+            UI_Text_PaintChar(
+                x + ofs - 0.2f, y + ofs - 0.2f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.2f, y + ofs - 0.2f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs - 0.2f, y + ofs + 0.2f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.2f, y + ofs + 0.2f, useScale, glyph, 0.0f);
+            colorBlack[3] = newColor[3] * 3 / 8 / 6;
+            DC->setColor(colorBlack);
+            UI_Text_PaintChar(
+                x + ofs - 0.4f, y + ofs - 0.4f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.4f, y + ofs - 0.4f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs - 0.4f, y + ofs + 0.4f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.4f, y + ofs + 0.4f, useScale, glyph, 0.0f);
+            colorBlack[3] = newColor[3] * 1 / 8 / 6;
+            DC->setColor(colorBlack);
+            UI_Text_PaintChar(
+                x + ofs - 0.6f, y + ofs - 0.6f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.6f, y + ofs - 0.6f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs - 0.6f, y + ofs + 0.6f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(
+                x + ofs + 0.6f, y + ofs + 0.6f, useScale, glyph, 0.0f);
+
+            DC->setColor(newColor);
+            colorBlack[3] = 1.0f;
         }
         else if (style == ITEM_TEXTSTYLE_NEON)
         {
             vec4_t glow;
 
             memcpy(&glow[0], &newColor[0], sizeof(vec4_t));
-            glow[3] *= 0.2f;
 
             DC->setColor(glow);
-            UI_Text_PaintChar(x, y, useScale, glyph, 6.0f);
-            UI_Text_PaintChar(x, y, useScale, glyph, 4.0f);
-            DC->setColor(newColor);
-            UI_Text_PaintChar(x, y, useScale, glyph, 2.0f);
+            UI_Text_PaintChar(x - 0.1f, y - 0.1f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(x + 0.1f, y - 0.1f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(x - 0.1f, y + 0.1f, useScale, glyph, 0.0f);
+            UI_Text_PaintChar(x + 0.1f, y + 0.1f, useScale, glyph, 0.0f);
+            glow[3] = newColor[3] * 4 / 8 / 4;
+            DC->setColor(glow);
+            UI_Text_PaintChar(x - 0.2f, y - 0.2f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x + 0.2f, y - 0.2f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x - 0.2f, y + 0.2f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x + 0.2f, y + 0.2f, useScale, glyph, 0.4f);
+            glow[3] = newColor[3] * 3 / 8 / 4;
+            DC->setColor(glow);
+            UI_Text_PaintChar(x - 0.4f, y - 0.4f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x + 0.4f, y - 0.4f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x - 0.4f, y + 0.4f, useScale, glyph, 0.4f);
+            UI_Text_PaintChar(x + 0.4f, y + 0.4f, useScale, glyph, 0.4f);
+            glow[3] = newColor[3] * 1 / 8 / 4;
+            DC->setColor(glow);
+            UI_Text_PaintChar(x - 0.8f, y - 0.8f, useScale, glyph, 0.8f);
+            UI_Text_PaintChar(x + 0.8f, y - 0.8f, useScale, glyph, 0.8f);
+            UI_Text_PaintChar(x - 0.8f, y + 0.8f, useScale, glyph, 0.8f);
+            UI_Text_PaintChar(x + 0.8f, y + 0.8f, useScale, glyph, 0.8f);
 
             DC->setColor(colorWhite);
         }
@@ -2295,6 +2540,7 @@ void UI_Text_PaintWithCursor(
 }
 
 commandDef_t commandList[] = {
+    {"bucketPlayLooped", &Script_playLoopedBucket}, // group/name
     {"close", &Script_Close},  // menu
     {"conditionalopen", &Script_ConditionalOpen},  // menu
     {"exec", &Script_Exec},  // group/name
@@ -2985,6 +3231,10 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
             DC->setCVar(item->cvar, va("%i", !DC->getCVarValue(item->cvar)));
             return qtrue;
         }
+        else if (key == K_BACKSPACE || key == K_DEL)
+        {
+            DC->resetCVar(item->cvar);
+        }
     }
 
     return qfalse;
@@ -3117,6 +3367,10 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
             {
                 current = (Item_Multi_FindCvarByValue(item) + max - 1) % max;
                 changed = qtrue;
+            }
+            else if (key == K_BACKSPACE || key == K_DEL)
+            {
+                DC->resetCVar(item->cvar);
             }
 
             if (changed)
@@ -3711,28 +3965,35 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
     if (item->window.flags & WINDOW_HASFOCUS && item->cvar &&
         Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory))
     {
-        if (item->typeData.edit && (key == K_ENTER || key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3))
+        if (item->typeData.edit)
         {
-            rectDef_t testRect;
-            width = SLIDER_WIDTH;
-
-            if (item->text)
-                x = item->textRect.x + item->textRect.w + ITEM_VALUE_OFFSET;
-            else
-                x = item->window.rect.x;
-
-            testRect = item->window.rect;
-            value = (float)SLIDER_THUMB_WIDTH / 2;
-            testRect.x = x - value;
-            testRect.w = SLIDER_WIDTH + value;
-
-            if (Rect_ContainsPoint(&testRect, DC->cursorx, DC->cursory))
+            if (key == K_ENTER || key == K_MOUSE1 || key == K_MOUSE2 || key == K_MOUSE3)
             {
-                value = (float)(DC->cursorx - x) / width;
-                value *= (item->typeData.edit->maxVal - item->typeData.edit->minVal);
-                value += item->typeData.edit->minVal;
-                DC->setCVar(item->cvar, va("%f", value));
-                return qtrue;
+                rectDef_t testRect;
+                width = SLIDER_WIDTH;
+
+                if (item->text)
+                    x = item->textRect.x + item->textRect.w + ITEM_VALUE_OFFSET;
+                else
+                    x = item->window.rect.x;
+
+                testRect = item->window.rect;
+                value = (float)SLIDER_THUMB_WIDTH / 2;
+                testRect.x = x - value;
+                testRect.w = SLIDER_WIDTH + value;
+
+                if (Rect_ContainsPoint(&testRect, DC->cursorx, DC->cursory))
+                {
+                    value = (float)(DC->cursorx - x) / width;
+                    value *= (item->typeData.edit->maxVal - item->typeData.edit->minVal);
+                    value += item->typeData.edit->minVal;
+                    DC->setCVar(item->cvar, va("%f", value));
+                    return qtrue;
+                }
+            }
+            else if (key == K_BACKSPACE || key == K_DEL)
+            {
+                DC->resetCVar(item->cvar);
             }
         }
     }
@@ -5048,11 +5309,14 @@ static bind_t g_bindings[] = {{"+scores", K_TAB, -1, -1, -1, -1}, {"+button2", K
     {"reload", 'r', -1, -1, -1, -1},  // reload
     {"buy ammo", 'b', -1, -1, -1, -1},  // buy ammo
     {"itemact medkit", 'm', -1, -1, -1, -1},  // use medkit
+    {"rotatebuildleft", ',', -1, -1, -1, -1},  // Rotate ghost build to left
+    {"rotatebuildright", '.', -1, -1, -1, -1},  // Rotate ghost build to right
+    {"rotatebuild", 'l', -1, -1, -1, -1},  // Reset ghost build rotation
     {"+button7", 'q', -1, -1, -1, -1},  // buildable use
     {"deconstruct", 'e', -1, -1, -1, -1},  // buildable destroy
     {"weapprev", '[', -1, -1, -1, -1}, {"weapnext", ']', -1, -1, -1, -1}, {"+button3", K_MOUSE3, -1, -1, -1, -1},
     {"+button4", K_MOUSE4, -1, -1, -1, -1}, {"vote yes", K_F1, -1, -1, -1, -1}, {"vote no", K_F2, -1, -1, -1, -1},
-    {"teamvote yes", K_F3, -1, -1, -1, -1}, {"teamvote no", K_F4, -1, -1, -1, -1},
+    {"teamvote yes", K_F3, -1, -1, -1, -1}, {"teamvote no", K_F4, -1, -1, -1, -1}, {"ready", K_F5, -1, -1, -1, -1},
     {"scoresUp", K_KP_PGUP, -1, -1, -1, -1}, {"scoresDown", K_KP_PGDN, -1, -1, -1, -1},
     {"screenshotJPEG", -1, -1, -1, -1, -1}, {"messagemode", -1, -1, -1, -1, -1}, {"messagemode2", -1, -1, -1, -1, -1},
     {"messagemode5",  -1, -1, -1, -1}, {"messagemode6", -1, -1, -1, -1}};
@@ -5488,6 +5752,8 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
     listBoxDef_t *listPtr = item->typeData.list;
     menuDef_t *menu = (menuDef_t *)item->parent;
     float one, two;
+    rectDef_t itemRect;
+    vec4_t hightlightColor;
 
     one = 1.0f * DC->aspectScale;
     two = 2.0f * DC->aspectScale;
@@ -5496,8 +5762,15 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
     y = SCROLLBAR_Y(item) + (listPtr->elementHeight * renderPos);
     w = item->window.rect.w - (two * item->window.borderSize);
 
+    itemRect.x = x;
+    itemRect.y = y;
+    itemRect.w = w;
+    itemRect.h = listPtr->elementHeight;
+
+    highlight = highlight && row == item->cursorPos;
+
     if (scrollbar)
-        w -= SCROLLBAR_ARROW_WIDTH;
+        w -= SCROLLBAR_ARROW_WIDTH + 1.0f;
 
     if (listPtr->elementStyle == LISTBOX_IMAGE)
     {
@@ -5508,7 +5781,7 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
         if (image)
             DC->drawHandlePic(x + one, y + 1.0f, listPtr->elementWidth - two, listPtr->elementHeight - 2.0f, image);
 
-        if (highlight && row == item->cursorPos)
+        if (highlight)
         {
             DC->drawRect(
                 x, y, listPtr->elementWidth, listPtr->elementHeight, item->window.borderSize, item->window.borderColor);
@@ -5521,6 +5794,17 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
         const float m = UI_Text_EmHeight(item->textscale);
         char text[MAX_STRING_CHARS];
         qhandle_t optionalImage;
+        Vector4Copy(item->window.outlineColor, hightlightColor);
+
+        if (highlight || Rect_ContainsPoint(&itemRect, DC->cursorx, DC->cursory))
+        {
+          if (!highlight)
+            hightlightColor[3] *= 0.55f;
+          if( item->window.border == WINDOW_BORDER_ROUNDED )
+            DC->fillRoundedRect(x, y, w, listPtr->elementHeight, item->window.borderSize, item->window.borderStyle, hightlightColor);
+          else
+              DC->fillRect(x, y, w, listPtr->elementHeight, hightlightColor);
+        }
 
         if (listPtr->numColumns > 0)
         {
@@ -5576,7 +5860,7 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
                     }
 
                     UI_Text_Paint(x + columnPos + alignOffset, y + m + ((listPtr->elementHeight - m) / 2.0f),
-                        item->textscale, item->window.foreColor, text, 0, 0, item->textStyle);
+                        item->textscale, (highlight ? menu->focusColor : item->window.foreColor), text, 0, 0, item->textStyle);
                 }
 
                 UI_ClearClipRegion();
@@ -5600,14 +5884,11 @@ void Item_ListBoxRow_Paint(itemDef_t *item, int row, int renderPos, qboolean hig
             else if (text[0])
             {
                 UI_Text_Paint(x + offset, y + m + ((listPtr->elementHeight - m) / 2.0f), item->textscale,
-                    item->window.foreColor, text, 0, 0, item->textStyle);
+                    (highlight ? menu->focusColor : item->window.foreColor), text, 0, 0, item->textStyle);
             }
 
             UI_ClearClipRegion();
         }
-
-        if (highlight && row == item->cursorPos)
-            DC->fillRect(x, y, w, listPtr->elementHeight, item->window.outlineColor);
     }
 }
 
@@ -5656,7 +5937,7 @@ void Item_ComboBox_Paint(itemDef_t *item)
     h = item->window.rect.h - 2.0f;
 
     // Down arrow
-    DC->drawHandlePic(x, y, SCROLLBAR_ARROW_WIDTH, h, DC->Assets.scrollBarArrowDown);
+    DC->drawHandlePic(x, y, SCROLLBAR_ARROW_WIDTH, h, DC->Assets.showMoreArrow);
     Item_ListBoxRow_Paint(item, item->cursorPos, 0, qfalse, qtrue);
     if (g_comboBoxItem != NULL)
     {
@@ -6910,6 +7191,22 @@ qboolean ItemParse_bordercolor(itemDef_t *item, int handle)
     return qtrue;
 }
 
+qboolean ItemParse_borderstyle(itemDef_t *item, int handle)
+{
+    int i;
+    float f;
+
+    for (i = 0; i < 4; i++)
+    {
+        if (!PC_Float_Parse(handle, &f))
+            return qfalse;
+
+        item->window.borderStyle[i] = f;
+    }
+
+    return qtrue;
+}
+
 qboolean ItemParse_outlinecolor(itemDef_t *item, int handle)
 {
     if (!PC_Color_Parse(handle, &item->window.outlineColor))
@@ -7269,7 +7566,8 @@ keywordHash_t itemParseKeywords[] = {{"name", ItemParse_name, TYPE_ANY, NULL}, {
     {"textalignx", ItemParse_textalignx, TYPE_ANY, NULL}, {"textaligny", ItemParse_textaligny, TYPE_ANY, NULL},
     {"textscale", ItemParse_textscale, TYPE_ANY, NULL}, {"textstyle", ItemParse_textstyle, TYPE_ANY, NULL},
     {"backcolor", ItemParse_backcolor, TYPE_ANY, NULL}, {"forecolor", ItemParse_forecolor, TYPE_ANY, NULL},
-    {"bordercolor", ItemParse_bordercolor, TYPE_ANY, NULL}, {"outlinecolor", ItemParse_outlinecolor, TYPE_ANY, NULL},
+    {"bordercolor", ItemParse_bordercolor, TYPE_ANY, NULL}, {"borderstyle", ItemParse_borderstyle, TYPE_ANY, NULL},
+    {"outlinecolor", ItemParse_outlinecolor, TYPE_ANY, NULL},
     {"background", ItemParse_background, TYPE_ANY, NULL}, {"onFocus", ItemParse_onFocus, TYPE_ANY, NULL},
     {"leaveFocus", ItemParse_leaveFocus, TYPE_ANY, NULL}, {"mouseEnter", ItemParse_mouseEnter, TYPE_ANY, NULL},
     {"mouseExit", ItemParse_mouseExit, TYPE_ANY, NULL}, {"mouseEnterText", ItemParse_mouseEnterText, TYPE_ANY, NULL},
@@ -7578,6 +7876,23 @@ qboolean MenuParse_bordercolor(itemDef_t *item, int handle)
     return qtrue;
 }
 
+qboolean MenuParse_borderstyle(itemDef_t *item, int handle)
+{
+    int i;
+    float f;
+    menuDef_t *menu = (menuDef_t *)item;
+
+    for (i = 0; i < 4; i++)
+    {
+        if (!PC_Float_Parse(handle, &f))
+            return qfalse;
+
+        menu->window.borderStyle[i] = f;
+    }
+
+    return qtrue;
+}
+
 qboolean MenuParse_focuscolor(itemDef_t *item, int handle)
 {
     int i;
@@ -7758,6 +8073,7 @@ keywordHash_t menuParseKeywords[] = {{"font", MenuParse_font, 0, NULL}, {"name",
     {"onClose", MenuParse_onClose, 0, NULL}, {"onESC", MenuParse_onESC, 0, NULL}, {"border", MenuParse_border, 0, NULL},
     {"borderSize", MenuParse_borderSize, 0, NULL}, {"backcolor", MenuParse_backcolor, 0, NULL},
     {"forecolor", MenuParse_forecolor, 0, NULL}, {"bordercolor", MenuParse_bordercolor, 0, NULL},
+    {"borderstyle", MenuParse_borderstyle, 0, NULL},
     {"focuscolor", MenuParse_focuscolor, 0, NULL}, {"disablecolor", MenuParse_disablecolor, 0, NULL},
     {"outlinecolor", MenuParse_outlinecolor, 0, NULL}, {"background", MenuParse_background, 0, NULL},
     {"ownerdraw", MenuParse_ownerdraw, 0, NULL}, {"ownerdrawFlag", MenuParse_ownerdrawFlag, 0, NULL},
