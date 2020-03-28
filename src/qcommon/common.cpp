@@ -455,6 +455,8 @@ void Com_Colors_f(void) {
         Com_Printf("^7\n");
     }
 
+    Com_Printf("\n^3 %-20s %-6s %-20s %-6s^7\n\n", "Color", "Code", "Color", "Code");
+
     Com_Printf("\n^3To escape from the color code escape and print ^5^^^3 as and ordinary character, use ^5^^^^^3.\n\n");
     Com_Printf("^3The format for the hardcoded standard color codes is ^5^^x^3, where x is alphanumeric (^7[^50-9^7][^5a-z^7][^5A-Z^7]^3).\n\n");
     Com_Printf("^3The short format for custom hexadecimal defined color codes is ^5^^#xxx^3, where x is a hexadecimal (^7[^50-9^7][^5a-f^7][^5A-F^7]^3).\n\n");
