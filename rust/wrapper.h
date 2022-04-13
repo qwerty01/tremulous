@@ -3,5 +3,3 @@
 #include <qcommon/files.h>
 #include <qcommon/cvar.h>
 #include <client/client.h>
-
-//int main2(int argc, char **argv);

@@ -1161,14 +1161,14 @@ debug:
 	  OPTIMIZE="$(DEBUG_CFLAGS)" OPTIMIZEVM="$(DEBUG_CFLAGS)" \
 	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
     RUST_RLIB=$(RUST_RLIB) RUST_DLIB=$(RUST_DLIB) RUST_LIB=$(RUST_DLIB) \
-    RUST_BDIR=$(RUST_DDIR) RUST_TARGET=$(RUST_TARGET)
+    RUST_BDIR=$(RUST_DDIR) RUST_TARGET=$(RUST_TARGET) RUST_SOURCES=$(RUST_SOURCES)
 release:
 	@$(MAKE) targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
       CXXFLAGS="$(BASE_CFLAGS) $(CXXFLAGS)" \
 	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" OPTIMIZEVM="-DNDEBUG $(OPTIMIZEVM)" \
 	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
     RUST_RLIB=$(RUST_RLIB) RUST_DLIB=$(RUST_DLIB) RUST_LIB=$(RUST_RLIB) \
-    RUST_BDIR=$(RUST_RDIR) RUST_TARGET=$(RUST_TARGET)
+    RUST_BDIR=$(RUST_RDIR) RUST_TARGET=$(RUST_TARGET) RUST_SOURCES=$(RUST_SOURCES)
 
 ifneq ($(call bin_path, tput),)
   TERM_COLUMNS=$(shell if c=`tput cols`; then echo $$(($$c-4)); else echo 76; fi)
@@ -1268,7 +1268,7 @@ endif
 	@echo "  Output:"
 	$(call print_list, $(NAKED_TARGETS))
 	@echo ""
-	@$(MAKE) $(TARGETS) V=$(V)
+	@$(MAKE) $(TARGETS) $(B).zip V=$(V)
 #$(B).zip 
 
 $(B).zip: $(TARGETS)
@@ -1276,7 +1276,7 @@ ifeq ($(PLATFORM),darwin)
 	@("./make-macosx-app.sh" release $(ARCH); if [ "$$?" -eq 0 ] && [ -d "$(B)/Tremulous.app" ]; then rm -f $@; cd $(B) && zip --symlinks -r9 ../../$@ GPL COPYING CC `find "Tremulous.app" -print | sed -e "s!$(B)/!!g"`; else rm -f $@; cd $(B) && zip -q -r9 ../../$@ $(NAKED_TARGETS); fi)
 else
 	@rm -f $@
-	@(cd $(B) && zip -q -r9 ../../$@ $(NAKED_TARGETS))
+	@(cd $(B) && zip -r9 ../../$@ $(NAKED_TARGETS))
 endif
 
 makedirs:
@@ -2664,10 +2664,10 @@ $(B)/$(BASEGAME)_11/vm/ui.qvm: $(UIVMOBJ11) $(UIDIR)/ui_syscalls_11.asm $(Q3ASM)
 #############################################################################
 
 $(B)/$(BASEGAME)/vms-gpp-$(VERSION).pk3: $(B)/$(BASEGAME)/vm/ui.qvm $(B)/$(BASEGAME)/vm/cgame.qvm $(B)/$(BASEGAME)/vm/game.qvm
-	@(cd $(B)/$(BASEGAME) && zip -q -r vms-$(VERSION).pk3 vm/)
+	@(cd $(B)/$(BASEGAME) && zip -r vms-$(VERSION).pk3 vm/)
 
 $(B)/$(BASEGAME)_11/vms-1.1.0-$(VERSION).pk3: $(B)/$(BASEGAME)_11/vm/ui.qvm $(B)/$(BASEGAME)_11/vm/cgame.qvm 
-	@(cd $(B)/$(BASEGAME)_11 && zip -q -r vms-$(VERSION).pk3 vm/)
+	@(cd $(B)/$(BASEGAME)_11 && zip -r vms-$(VERSION).pk3 vm/)
 
 
 #############################################################################
@@ -2675,7 +2675,7 @@ $(B)/$(BASEGAME)_11/vms-1.1.0-$(VERSION).pk3: $(B)/$(BASEGAME)_11/vm/ui.qvm $(B)
 #############################################################################
 
 $(B)/$(BASEGAME)/data-$(VERSION).pk3: $(ASSETS_DIR)/ui/main.menu
-	@(cd $(ASSETS_DIR) && zip -q -r data-$(VERSION).pk3 *)
+	@(cd $(ASSETS_DIR) && zip -r data-$(VERSION).pk3 *)
 	@mv $(ASSETS_DIR)/data-$(VERSION).pk3 $(B)/$(BASEGAME)
 
 #############################################################################
