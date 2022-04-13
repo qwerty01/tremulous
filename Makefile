@@ -125,6 +125,10 @@ endif
 
 BASEGAME_CFLAGS=-I../../${MOUNT_DIR}
 
+ifndef RUST_DIR
+RUST_DIR=rust
+endif
+
 ifndef COPYDIR
 COPYDIR="/usr/local/games/tremulous"
 endif
@@ -293,6 +297,10 @@ ALHDIR=$(EXTERNAL_DIR)/AL
 LIBSDIR=$(EXTERNAL_DIR)/libs
 TEMPDIR=/tmp
 
+RUST_SOURCES = $(wildcard $(RUST_DIR)/**/*.rs)
+RUST_TARGET = 
+
+
 bin_path=$(shell which $(1) 2> /dev/null)
 
 # We won't need this if we only build the server
@@ -339,6 +347,11 @@ INSTALL=install
 MKDIR=mkdir
 EXTRA_FILES=
 CLIENT_EXTRA_FILES=
+RUST_TARGET = x86_64-unknown-linux-gnu
+RUST_DDIR=$(BD)/$(RUST_DIR)/$(RUST_TARGET)/debug
+RUST_RDIR=$(BR)/$(RUST_DIR)/$(RUST_TARGET)/release
+RUST_DLIB=$(RUST_DDIR)/libtremulous.a
+RUST_RLIB=$(RUST_RDIR)/libtremulous.a
 
 ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu"))
   BASE_CFLAGS += -DUSE_ICON
@@ -385,9 +398,10 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu")
   SHLIBCFLAGS=-fPIC -fvisibility=hidden
   SHLIBLDFLAGS=-shared
   #$(LDFLAGS)
+	LDFLAGS+=-L$(RUST_BDIR)
 
   THREAD_LIBS=-lpthread
-  LIBS=-ldl -lm
+  LIBS=-ldl -lm -ltremulous $(THREAD_LIBS)
   GRANGER_LIBS=-lm -ldl
 
   CLIENT_LIBS=$(SDL_LIBS)
@@ -434,6 +448,11 @@ ifeq ($(PLATFORM),darwin)
   CLIENT_LIBS=
   RENDERER_LIBS=
   OPTIMIZEVM=
+  RUST_TARGET = x86_64-apple-darwin
+  RUST_DDIR=$(BD)/$(RUST_DIR)/$(RUST_TARGET)/debug
+  RUST_RDIR=$(BR)/$(RUST_DIR)/$(RUST_TARGET)/release
+  RUST_DLIB=$(RUST_DDIR)/libtremulous.a
+  RUST_RLIB=$(RUST_RDIR)/libtremulous.a
   #CXXFLAGS+=-stdlib=libc++
 
   # FIXME This is probably bad idea to comment this out 
@@ -533,8 +552,18 @@ else # ifeq darwin
 #############################################################################
 
 ifdef MINGW
+  RUST_TARGET = x86_64-pc-windows-msvc
+  RUST_DDIR=$(BD)/$(RUST_DIR)/$(RUST_TARGET)/debug
+  RUST_RDIR=$(BR)/$(RUST_DIR)/$(RUST_TARGET)/release
+  RUST_DLIB=$(RUST_DDIR)/libtremulous.lib
+  RUST_RLIB=$(RUST_RDIR)/libtremulous.lib
 
   ifeq ($(CROSS_COMPILING),1)
+    RUST_TARGET = x86_64-pc-windows-gnu
+    RUST_DDIR=$(BD)/$(RUST_DIR)/$(RUST_TARGET)/debug
+    RUST_RDIR=$(BR)/$(RUST_DIR)/$(RUST_TARGET)/release
+    RUST_DLIB=$(RUST_DDIR)/libtremulous.a
+    RUST_RLIB=$(RUST_RDIR)/libtremulous.a
     # If CC is already set to something generic, we probably want to use
     # something more specific
     ifneq ($(findstring $(strip $(CC)),cc gcc),)
@@ -587,7 +616,7 @@ ifdef MINGW
 
   CFLAGS += -static -static-libgcc -static-libstdc++
   CXXFLAGS += -static -static-libgcc -static-libstdc++
-  LDFLAGS += -static -static-libgcc -static-libstdc++
+  LDFLAGS += -static -static-libgcc -static-libstdc++ -L$(RUST_BDIR)
   GRANGER_CFLAGS = -D_CRT_SECURE_NO_WARNINGS
 
   BASE_CFLAGS += -DUSE_ICON
@@ -638,7 +667,7 @@ ifdef MINGW
     TOOLS_CC=$(CC)
   endif
 
-  LIBS= -lws2_32 -lwinmm -lpsapi
+  LIBS= -ltremulous -lws2_32 -luserenv -lwinmm -lpsapi -lpthread
   # clang 3.4 doesn't support this
   ifneq ("$(CC)", $(findstring "$(CC)", "clang" "clang++"))
     CLIENT_LDFLAGS += -mwindows
@@ -714,7 +743,7 @@ ifeq ($(PLATFORM),freebsd)
 
   THREAD_LIBS=-lpthread
   # don't need -ldl (FreeBSD)
-  LIBS=-lm
+  LIBS=-lm -ltremulous $(THREAD_LIBS)
   GRANGER_LIBS = -lm
 
   CLIENT_LIBS =
@@ -1111,6 +1140,13 @@ $(echo_cmd) "WINDRES $<"
 $(Q)$(WINDRES) -i $< -o $@
 endef
 
+ifndef RUST_LIB
+RUST_LIB=$(RUST_RLIB)
+endif
+ifndef RUST_BDIR
+RUST_BDIR=$(RUST_RDIR)
+endif
+
 
 #############################################################################
 # MAIN TARGETS
@@ -1123,12 +1159,16 @@ debug:
 	@$(MAKE) targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
       CXXFLAGS="$(BASE_CFLAGS) $(CXXFLAGS)" \
 	  OPTIMIZE="$(DEBUG_CFLAGS)" OPTIMIZEVM="$(DEBUG_CFLAGS)" \
-	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V)
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
+    RUST_RLIB=$(RUST_RLIB) RUST_DLIB=$(RUST_DLIB) RUST_LIB=$(RUST_DLIB) \
+    RUST_BDIR=$(RUST_DDIR) RUST_TARGET=$(RUST_TARGET)
 release:
 	@$(MAKE) targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS) $(DEPEND_CFLAGS)" \
       CXXFLAGS="$(BASE_CFLAGS) $(CXXFLAGS)" \
 	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" OPTIMIZEVM="-DNDEBUG $(OPTIMIZEVM)" \
-	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V)
+	  CLIENT_CFLAGS="$(CLIENT_CFLAGS)" SERVER_CFLAGS="$(SERVER_CFLAGS)" V=$(V) \
+    RUST_RLIB=$(RUST_RLIB) RUST_DLIB=$(RUST_DLIB) RUST_LIB=$(RUST_RLIB) \
+    RUST_BDIR=$(RUST_RDIR) RUST_TARGET=$(RUST_TARGET)
 
 ifneq ($(call bin_path, tput),)
   TERM_COLUMNS=$(shell if c=`tput cols`; then echo $$(($$c-4)); else echo 76; fi)
@@ -1222,17 +1262,21 @@ endif
 	@echo "  CLIENT_LIBS:"
 	$(call print_wrapped, $(CLIENT_LIBS))
 	@echo ""
+	@echo "  RUST_LIB:"
+	$(call print_wrapped, $(RUST_LIB))
+	@echo ""
 	@echo "  Output:"
 	$(call print_list, $(NAKED_TARGETS))
 	@echo ""
-	@$(MAKE) $(TARGETS) $(B).zip V=$(V)
+	@$(MAKE) $(TARGETS) V=$(V)
+#$(B).zip 
 
 $(B).zip: $(TARGETS)
 ifeq ($(PLATFORM),darwin)
-	@("./make-macosx-app.sh" release $(ARCH); if [ "$$?" -eq 0 ] && [ -d "$(B)/Tremulous.app" ]; then rm -f $@; cd $(B) && zip --symlinks -r9 ../../$@ GPL COPYING CC `find "Tremulous.app" -print | sed -e "s!$(B)/!!g"`; else rm -f $@; cd $(B) && zip -r9 ../../$@ $(NAKED_TARGETS); fi)
+	@("./make-macosx-app.sh" release $(ARCH); if [ "$$?" -eq 0 ] && [ -d "$(B)/Tremulous.app" ]; then rm -f $@; cd $(B) && zip --symlinks -r9 ../../$@ GPL COPYING CC `find "Tremulous.app" -print | sed -e "s!$(B)/!!g"`; else rm -f $@; cd $(B) && zip -q -r9 ../../$@ $(NAKED_TARGETS); fi)
 else
 	@rm -f $@
-	@(cd $(B) && zip -r9 ../../$@ $(NAKED_TARGETS))
+	@(cd $(B) && zip -q -r9 ../../$@ $(NAKED_TARGETS))
 endif
 
 makedirs:
@@ -1837,7 +1881,9 @@ Q3OBJ = \
   $(B)/client/sdl_snd.o \
   \
   $(B)/client/con_log.o \
-  $(B)/client/sys_main.o
+  $(B)/client/sys_main.o \
+  $(B)/client/rust_common.o \
+  $(B)/client/rust_client.o
 
 ifdef MINGW
   Q3OBJ += \
@@ -2271,28 +2317,28 @@ ifeq ($(USE_MUMBLE),1)
 endif
 
 ifneq ($(USE_RENDERER_DLOPEN),0)
-$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(LIBSDLMAIN)
+$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(LIBSDLMAIN) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) -std=c++1y $(CXXFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) $(Q3OBJ) \
 		$(LIBSDLMAIN) $(CLIENT_LIBS) $(LIBS) -o $@ 
 
-$(B)/renderer_opengl1$(SHLIBNAME): $(Q3ROBJ) $(JPGOBJ)
+$(B)/renderer_opengl1$(SHLIBNAME): $(Q3ROBJ) $(JPGOBJ) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) $(SHLIBLDFLAGS) -o $@ $(Q3ROBJ) $(JPGOBJ) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LDFLAGS)
 
-$(B)/renderer_opengl2$(SHLIBNAME): $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ)
+$(B)/renderer_opengl2$(SHLIBNAME): $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) $(SHLIBLDFLAGS) -o $@ $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) \
 		$(THREAD_LIBS) $(LIBSDLMAIN) $(RENDERER_LIBS) $(LDFLAGS)
 else
-$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(JPGOBJ) $(LIBSDLMAIN)
+$(B)/$(CLIENTBIN)$(FULLBINEXT): $(Q3OBJ) $(Q3ROBJ) $(JPGOBJ) $(LIBSDLMAIN) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) -std=c++1y $(CXXFLAGS) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3ROBJ) $(JPGOBJ) \
 		$(LIBSDLMAIN) $(CLIENT_LIBS) $(RENDERER_LIBS) $(LIBS)
 
-$(B)/$(CLIENTBIN)_opengl2$(FULLBINEXT): $(Q3OBJ) $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) $(LIBSDLMAIN)
+$(B)/$(CLIENTBIN)_opengl2$(FULLBINEXT): $(Q3OBJ) $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) $(LIBSDLMAIN) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) -std=c++1y $(CXXFLAGS) $(CLIENT_CFLAGS) $(CFLAGS) $(CLIENT_LDFLAGS) $(LDFLAGS) \
 		-o $@ $(Q3OBJ) $(Q3R2OBJ) $(Q3R2STRINGOBJ) $(JPGOBJ) \
@@ -2355,7 +2401,9 @@ Q3DOBJ = \
   $(B)/ded/null_snddma.o \
   \
   $(B)/ded/con_log.o \
-  $(B)/ded/sys_main.o
+  $(B)/ded/sys_main.o \
+  $(B)/ded/rust_common.o \
+  $(B)/ded/rust_server.o
 
 ifeq ($(ARCH),x86)
   Q3DOBJ += \
@@ -2409,7 +2457,7 @@ ifeq ($(PLATFORM),darwin)
     $(B)/ded/sys_osx.o
 endif
 
-$(B)/$(SERVERBIN)$(FULLBINEXT): $(Q3DOBJ)
+$(B)/$(SERVERBIN)$(FULLBINEXT): $(Q3DOBJ) $(RUST_LIB)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(Q3DOBJ) $(LIBS)
 
@@ -2616,10 +2664,10 @@ $(B)/$(BASEGAME)_11/vm/ui.qvm: $(UIVMOBJ11) $(UIDIR)/ui_syscalls_11.asm $(Q3ASM)
 #############################################################################
 
 $(B)/$(BASEGAME)/vms-gpp-$(VERSION).pk3: $(B)/$(BASEGAME)/vm/ui.qvm $(B)/$(BASEGAME)/vm/cgame.qvm $(B)/$(BASEGAME)/vm/game.qvm
-	@(cd $(B)/$(BASEGAME) && zip -r vms-$(VERSION).pk3 vm/)
+	@(cd $(B)/$(BASEGAME) && zip -q -r vms-$(VERSION).pk3 vm/)
 
 $(B)/$(BASEGAME)_11/vms-1.1.0-$(VERSION).pk3: $(B)/$(BASEGAME)_11/vm/ui.qvm $(B)/$(BASEGAME)_11/vm/cgame.qvm 
-	@(cd $(B)/$(BASEGAME)_11 && zip -r vms-$(VERSION).pk3 vm/)
+	@(cd $(B)/$(BASEGAME)_11 && zip -q -r vms-$(VERSION).pk3 vm/)
 
 
 #############################################################################
@@ -2627,7 +2675,7 @@ $(B)/$(BASEGAME)_11/vms-1.1.0-$(VERSION).pk3: $(B)/$(BASEGAME)_11/vm/ui.qvm $(B)
 #############################################################################
 
 $(B)/$(BASEGAME)/data-$(VERSION).pk3: $(ASSETS_DIR)/ui/main.menu
-	@(cd $(ASSETS_DIR) && zip -r data-$(VERSION).pk3 *)
+	@(cd $(ASSETS_DIR) && zip -q -r data-$(VERSION).pk3 *)
 	@mv $(ASSETS_DIR)/data-$(VERSION).pk3 $(B)/$(BASEGAME)
 
 #############################################################################
@@ -2661,6 +2709,12 @@ $(B)/client/%.o: $(CMDIR)/%.cpp
 
 $(B)/client/%.o: $(OGGDIR)/src/%.c
 	$(DO_CC)
+
+$(B)/client/%.o: $(RUST_DIR)/%.c
+	$(DO_CC)
+
+$(B)/client/%.o: $(RUST_DIR)/%.cpp
+	$(DO_CXX)
 
 $(B)/client/vorbis/%.o: $(VORBISDIR)/lib/%.c
 	$(DO_CC)
@@ -2782,6 +2836,12 @@ $(B)/ded/%.o: $(NDIR)/%.c
 $(B)/ded/%.o: $(NDIR)/%.cpp
 	$(DO_DED_CXX)
 
+$(B)/ded/%.o: $(RUST_DIR)/%.c
+	$(DO_DED_CC)
+
+$(B)/ded/%.o: $(RUST_DIR)/%.cpp
+	$(DO_DED_CXX)
+
 # Extra dependencies to ensure the git version is incorporated
 ifeq ($(USE_GIT),1)
   $(B)/client/cl_console.o : .git/index
@@ -2856,6 +2916,17 @@ $(B)/$(BASEGAME)/qcommon/%.o: $(CMDIR)/%.c
 $(B)/$(BASEGAME)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 	$(DO_Q3LCC)
 
+
+#############################################################################
+# RUST
+#############################################################################
+$(RUST_DLIB): $(RUST_SOURCES)
+	@echo "RUSTD $@"
+	@cd rust && cargo build --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET)
+
+$(RUST_RLIB): $(RUST_SOURCES)
+	@echo "RUSTR $@"
+	@cd rust && cargo build --release --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET)
 
 #############################################################################
 # MISC

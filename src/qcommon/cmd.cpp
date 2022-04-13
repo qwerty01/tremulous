@@ -47,6 +47,10 @@ int			cmd_wait;
 cmd_t		cmd_text;
 byte		cmd_text_buf[MAX_CMD_BUFFER];
 
+//=============================================================================
+// From RUST
+bool Cmd_ExecuteCommand(const char* command);
+bool Cmd_CommandCompletionSafe(void(*callback)(char*));
 
 //=============================================================================
 
@@ -394,7 +398,7 @@ typedef struct cmdContext_s
 
 static cmdContext_t		cmd;
 static cmdContext_t		savedCmd;
-static cmd_function_t	*cmd_functions;		// possible commands to execute
+//static cmd_function_t	*cmd_functions;		// possible commands to execute
 
 /*
 ============
@@ -672,95 +676,95 @@ void Cmd_TokenizeStringIgnoreQuotes( const char *text_in ) {
 Cmd_FindCommand
 ============
 */
-cmd_function_t *Cmd_FindCommand( const char *cmd_name )
-{
-	cmd_function_t *cmd;
-	for( cmd = cmd_functions; cmd; cmd = cmd->next )
-		if( !Q_stricmp( cmd_name, cmd->name ) )
-			return cmd;
-	return nullptr;
-}
+//cmd_function_t *Cmd_FindCommand( const char *cmd_name )
+//{
+//	cmd_function_t *cmd;
+//	for( cmd = cmd_functions; cmd; cmd = cmd->next )
+//		if( !Q_stricmp( cmd_name, cmd->name ) )
+//			return cmd;
+//	return nullptr;
+//}
 
 /*
 ============
 Cmd_FindCommand
 ============
 */
-bool Cmd_CommadExists( const char *cmd_name )
-{
-	return Cmd_FindCommand( cmd_name ) ? true : false;
-}
+//bool Cmd_CommadExists( const char *cmd_name )
+//{
+//	return Cmd_FindCommand( cmd_name ) ? true : false;
+//}
 
 /*
 ============
 Cmd_AddCommand
 ============
 */
-void	Cmd_AddCommand( const char *cmd_name, xcommand_t function ) {
-	cmd_function_t	*cmd;
-	
-	// fail if the command already exists
-	if( Cmd_FindCommand( cmd_name ) )
-	{
-		// allow completion-only commands to be silently doubled
-		if( function != nullptr )
-			Com_Printf( "Cmd_AddCommand: %s already defined\n", cmd_name );
-		return;
-	}
-
-	// use a small malloc to avoid zone fragmentation
-	cmd = new cmd_function_t;
-	cmd->name = CopyString( cmd_name );
-	cmd->function = function;
-	cmd->complete = nullptr;
-	cmd->next = cmd_functions;
-	cmd_functions = cmd;
-}
+//void	Cmd_AddCommand( const char *cmd_name, xcommand_t function ) {
+//	cmd_function_t	*cmd;
+//	
+//	// fail if the command already exists
+//	if( Cmd_FindCommand( cmd_name ) )
+//	{
+//		// allow completion-only commands to be silently doubled
+//		if( function != nullptr )
+//			Com_Printf( "Cmd_AddCommand: %s already defined\n", cmd_name );
+//		return;
+//	}
+//
+//	// use a small malloc to avoid zone fragmentation
+//	cmd = new cmd_function_t;
+//	cmd->name = CopyString( cmd_name );
+//	cmd->function = function;
+//	cmd->complete = nullptr;
+//	cmd->next = cmd_functions;
+//	cmd_functions = cmd;
+//}
 
 /*
 ============
 Cmd_SetCommandCompletionFunc
 ============
 */
-void Cmd_SetCommandCompletionFunc( const char *command, completionFunc_t complete ) {
-	cmd_function_t	*cmd;
-
-	for( cmd = cmd_functions; cmd; cmd = cmd->next ) {
-		if( !Q_stricmp( command, cmd->name ) ) {
-			cmd->complete = complete;
-			return;
-		}
-	}
-}
+//void Cmd_SetCommandCompletionFunc( const char *command, completionFunc_t complete ) {
+//	cmd_function_t	*cmd;
+//
+//	for( cmd = cmd_functions; cmd; cmd = cmd->next ) {
+//		if( !Q_stricmp( command, cmd->name ) ) {
+//			cmd->complete = complete;
+//			return;
+//		}
+//	}
+//}
 
 /*
 ============
 Cmd_RemoveCommand
 ============
 */
-void Cmd_RemoveCommand( const char *cmd_name )
-{
-	cmd_function_t	*cmd, **back;
-
-	back = &cmd_functions;
-	for ( ;; )
-    {
-		cmd = *back;
-		if ( !cmd ) {
-			// command wasn't active
-			return;
-		}
-		if ( !strcmp( cmd_name, cmd->name ) ) {
-			*back = cmd->next;
-			if (cmd->name) {
-				Z_Free(cmd->name);
-			}
-			delete cmd;
-			return;
-		}
-		back = &cmd->next;
-	}
-}
+//void Cmd_RemoveCommand( const char *cmd_name )
+//{
+//	cmd_function_t	*cmd, **back;
+//
+//	back = &cmd_functions;
+//	for ( ;; )
+//    {
+//		cmd = *back;
+//		if ( !cmd ) {
+//			// command wasn't active
+//			return;
+//		}
+//		if ( !strcmp( cmd_name, cmd->name ) ) {
+//			*back = cmd->next;
+//			if (cmd->name) {
+//				Z_Free(cmd->name);
+//			}
+//			delete cmd;
+//			return;
+//		}
+//		back = &cmd->next;
+//	}
+//}
 
 /*
 ============
@@ -769,59 +773,59 @@ Cmd_RemoveCommandSafe
 Only remove commands with no associated function
 ============
 */
-void Cmd_RemoveCommandSafe( const char *cmd_name )
-{
-	cmd_function_t *cmd = Cmd_FindCommand( cmd_name );
-
-	if( !cmd )
-		return;
-
-	if( cmd->function )
-	{
-		Com_Error( ERR_DROP, "Restricted source tried to remove system command \"%s\"",
-                cmd_name );
-		return;
-	}
-
-	Cmd_RemoveCommand( cmd_name );
-}
+//void Cmd_RemoveCommandSafe( const char *cmd_name )
+//{
+//	cmd_function_t *cmd = Cmd_FindCommand( cmd_name );
+//
+//	if( !cmd )
+//		return;
+//
+//	if( cmd->function )
+//	{
+//		Com_Error( ERR_DROP, "Restricted source tried to remove system command \"%s\"",
+//                cmd_name );
+//		return;
+//	}
+//
+//	Cmd_RemoveCommand( cmd_name );
+//}
 
 /*
 ============
 Cmd_CommandCompletion
 ============
 */
-void	Cmd_CommandCompletion( void(*callback)(const char *s) ) {
-	cmd_function_t	*cmd;
-	
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next) {
-		callback( cmd->name );
-	}
-}
+//void	Cmd_CommandCompletion( void(*callback)(const char *s) ) {
+//	cmd_function_t	*cmd;
+//	
+//	for (cmd=cmd_functions ; cmd ; cmd=cmd->next) {
+//		callback( cmd->name );
+//	}
+//}
 
 /*
 ============
 Cmd_CompleteArgument
 ============
 */
-void Cmd_CompleteArgument( const char *command, char *args, int argNum )
-{
-    cmd_function_t	*cmd;
-
-    // FIXIT-H: There needs to be a way to toggle this functionality at runtime
-    // rather than just crashing when a cgame doesn't provide support. #45
-    //  https://github.com/GrangerHub/tremulous/issues/45
-#if 0
-#ifndef DEDICATED
-    // Forward command argument completion to CGAME VM
-    if( cls.cgame && !VM_Call( cls.cgame, CG_CONSOLE_COMPLETARGUMENT, argNum ) )
-#endif
-#endif
-    // Call local completion if VM doesn't pick up
-    for( cmd = cmd_functions; cmd; cmd = cmd->next )
-        if( !Q_stricmp( command, cmd->name ) && cmd->complete )
-            cmd->complete( args, argNum );
-}
+//void Cmd_CompleteArgument( const char *command, char *args, int argNum )
+//{
+//    cmd_function_t	*cmd;
+//
+//    // FIXIT-H: There needs to be a way to toggle this functionality at runtime
+//    // rather than just crashing when a cgame doesn't provide support. #45
+//    //  https://github.com/GrangerHub/tremulous/issues/45
+//#if 0
+//#ifndef DEDICATED
+//    // Forward command argument completion to CGAME VM
+//    if( cls.cgame && !VM_Call( cls.cgame, CG_CONSOLE_COMPLETARGUMENT, argNum ) )
+//#endif
+//#endif
+//    // Call local completion if VM doesn't pick up
+//    for( cmd = cmd_functions; cmd; cmd = cmd->next )
+//        if( !Q_stricmp( command, cmd->name ) && cmd->complete )
+//            cmd->complete( args, argNum );
+//}
 
 
 /*
@@ -841,25 +845,28 @@ void	Cmd_ExecuteString( const char *text ) {
 	}
 
 	// check registered command functions	
-	for ( prev = &cmd_functions ; *prev ; prev = &cmdFunc->next ) {
-		cmdFunc = *prev;
-		if ( !Q_stricmp( cmd.argv[0], cmdFunc->name ) ) {
-			// rearrange the links so that the command will be
-			// near the head of the list next time it is used
-			*prev = cmdFunc->next;
-			cmdFunc->next = cmd_functions;
-			cmd_functions = cmdFunc;
-
-			// perform the action
-			if ( !cmdFunc->function ) {
-				// let the cgame or game handle it
-				break;
-			} else {
-				cmdFunc->function ();
-			}
-			return;
-		}
+	if ( Cmd_ExecuteCommand ( cmd.argv[0] ) ) {
+		return;
 	}
+	//for ( prev = &cmd_functions ; *prev ; prev = &cmdFunc->next ) {
+	//	cmdFunc = *prev;
+	//	if ( !Q_stricmp( cmd.argv[0], cmdFunc->name ) ) {
+	//		// rearrange the links so that the command will be
+	//		// near the head of the list next time it is used
+	//		*prev = cmdFunc->next;
+	//		cmdFunc->next = cmd_functions;
+	//		cmd_functions = cmdFunc;
+
+	//		// perform the action
+	//		if ( !cmdFunc->function ) {
+	//			// let the cgame or game handle it
+	//			break;
+	//		} else {
+	//			cmdFunc->function ();
+	//		}
+	//		return;
+	//	}
+	//}
 	
 	// check cvars
 	if ( Cvar_Command() ) {
@@ -890,26 +897,32 @@ void	Cmd_ExecuteString( const char *text ) {
 Cmd_List_f
 ============
 */
+static const char *sg_match;
+static size_t sg_count;
+static void list_callback(char* name) {
+	if (sg_match && !Com_Filter(sg_match, name, false))
+		return;
+	Com_Printf ("%s\n", name);
+	sg_count++;
+}
 void Cmd_List_f (void)
 {
 	cmd_function_t* cmd;
-	int i;
-	const char* match;
 
 	if ( Cmd_Argc() > 1 ) {
-		match = Cmd_Argv( 1 );
+		sg_match = Cmd_Argv( 1 );
 	} else {
-		match = nullptr;
+		sg_match = nullptr;
 	}
 
-	i = 0;
-	for (cmd=cmd_functions ; cmd ; cmd=cmd->next) {
-		if (match && !Com_Filter(match, cmd->name, false)) continue;
+	sg_count = 0;
+	Cmd_CommandCompletionSafe(list_callback);
+	//for (cmd=cmd_functions ; cmd ; cmd=cmd->next) {
+	//	if (match && !Com_Filter(match, cmd->name, false)) continue;
 
-		Com_Printf ("%s\n", cmd->name);
-		i++;
-	}
-	Com_Printf ("%i commands\n", i);
+	//	i++;
+	//}
+	Com_Printf ("%li commands\n", sg_count);
 }
 
 /*
