@@ -1,0 +1,21 @@
+[package]
+name = "tremulous"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+crate-type = ["staticlib"]
+
+[features]
+server = []
+client = []
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lazy_static = "1.4.0"
+log = "0.4.14"
+thiserror = "1.0.30"
+
+[build-dependencies]
+bindgen = "0.59.0"

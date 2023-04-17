@@ -204,7 +204,7 @@ FS_LoadStack
 return load stack
 =================
 */
-int FS_LoadStack(void) { return fs_loadStack; }
+int FS_LoadStack2(void) { return fs_loadStack; }
 
 inline fileInPack_t* pack_t::find(string filename)
 {

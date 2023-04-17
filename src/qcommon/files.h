@@ -262,6 +262,7 @@ long         FS_filelength (fileHandle_t f);
 void         FS_ReplaceSeparators (char *path);
 void         FS_ForceFlush (fileHandle_t f);
 int          FS_LoadStack (void);
+int          FS_LoadStack2(void);
 bool         FS_Initialized (void);
 
 void         FS_Which_f (void);

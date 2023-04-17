@@ -8,5 +8,5 @@ if [[ $failed -eq 1 ]]; then
     exit $failed
 fi
 
-./misc/download-paks.sh
+#./misc/download-paks.sh
 chmod -R ugo+rw build
