@@ -59,6 +59,7 @@ struct netadr_t {
     int alternateProtocol;
 };
 
+extern "C" {
 void NET_Init(void);
 void NET_Shutdown(void);
 void NET_Restart_f(void);
@@ -80,6 +81,7 @@ bool NET_GetLoopPacket(netsrc_t sock, struct netadr_t *net_from, struct msg_t *n
 void NET_JoinMulticast6(void);
 void NET_LeaveMulticast6(void);
 void NET_Sleep(int msec);
+}
 
 #define MAX_MSGLEN 16384  // max length of a message, which may be fragmented into multiple packets
 

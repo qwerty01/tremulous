@@ -439,7 +439,7 @@ typedef struct {
 
 loopback_t loopbacks[2];
 
-bool NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message)
+extern "C" bool tNET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message)
 {
     int i;
     loopback_t *loop;
@@ -572,7 +572,7 @@ NET_OutOfBandPrint
 Sends a text message in an out-of-band datagram
 ================
 */
-void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
+extern "C" void QDECL tNET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
 {
     va_list argptr;
     char string[MAX_MSGLEN];
@@ -598,7 +598,7 @@ NET_OutOfBandPrint
 Sends a data message in an out-of-band datagram (only used for "connect")
 ================
 */
-void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
+extern "C" void QDECL tNET_OutOfBandData(netsrc_t sock, netadr_t adr, byte *format, int len)
 {
     byte string[MAX_MSGLEN * 2];
     int i;
@@ -630,7 +630,7 @@ Traps "localhost" for loopback, passes everything else to system
 return 0 on address not found, 1 on address found with port, 2 on address found without port.
 =============
 */
-int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
+extern "C" int tNET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
 {
     char base[MAX_STRING_CHARS], *search;
     char *port = NULL;

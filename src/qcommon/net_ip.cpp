@@ -445,7 +445,7 @@ NET_CompareBaseAdrMask
 Compare without port, and up to the bit number given in netmask.
 ===================
 */
-bool NET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
+extern "C" bool tNET_CompareBaseAdrMask(netadr_t a, netadr_t b, int netmask)
 {
     uint8_t cmpmask, *addra, *addrb;
     int curbyte;
@@ -501,8 +501,8 @@ NET_CompareBaseAdr
 Compares without the port
 ===================
 */
-bool NET_CompareBaseAdr(netadr_t a, netadr_t b) { return NET_CompareBaseAdrMask(a, b, -1); }
-const char *NET_AdrToString(netadr_t a)
+extern "C" bool tNET_CompareBaseAdr(netadr_t a, netadr_t b) { return NET_CompareBaseAdrMask(a, b, -1); }
+extern "C" const char *tNET_AdrToString(netadr_t a)
 {
     static char s[NET_ADDRSTRMAXLEN];
 
@@ -520,7 +520,7 @@ const char *NET_AdrToString(netadr_t a)
     return s;
 }
 
-const char *NET_AdrToStringwPort(netadr_t a)
+extern "C" const char *tNET_AdrToStringwPort(netadr_t a)
 {
     static char s[NET_ADDRSTRMAXLEN];
 
@@ -534,7 +534,7 @@ const char *NET_AdrToStringwPort(netadr_t a)
     return s;
 }
 
-bool NET_CompareAdr(netadr_t a, netadr_t b)
+extern "C" bool tNET_CompareAdr(netadr_t a, netadr_t b)
 {
     if (!NET_CompareBaseAdr(a, b)) return false;
 
@@ -548,7 +548,7 @@ bool NET_CompareAdr(netadr_t a, netadr_t b)
     return false;
 }
 
-bool NET_IsLocalAddress(netadr_t adr) { return (bool)(adr.type == NA_LOOPBACK); }
+extern "C" bool tNET_IsLocalAddress(netadr_t adr) { return (bool)(adr.type == NA_LOOPBACK); }
 //=============================================================================
 
 /*
@@ -1078,7 +1078,7 @@ NET_JoinMulticast
 Join an ipv6 multicast group
 ====================
 */
-void NET_JoinMulticast6(void)
+extern "C" void tNET_JoinMulticast6(void)
 {
     /*
     TODO: accommodate
@@ -1134,7 +1134,7 @@ void NET_JoinMulticast6(void)
     */
 }
 
-void NET_LeaveMulticast6()
+extern "C" void tNET_LeaveMulticast6()
 {
     /*
     TODO: accommodate
@@ -1601,7 +1601,7 @@ static bool NET_GetCvars(void)
 NET_Config
 ====================
 */
-void NET_Config(bool enableNetworking)
+extern "C" void tNET_Config(bool enableNetworking)
 {
     bool modified;
     bool stop;
@@ -1699,7 +1699,7 @@ void NET_Config(bool enableNetworking)
 NET_Init
 ====================
 */
-void NET_Init(void)
+extern "C" void tNET_Init(void)
 {
 #ifdef _WIN32
     int r;
@@ -1725,7 +1725,7 @@ void NET_Init(void)
 NET_Shutdown
 ====================
 */
-void NET_Shutdown(void)
+extern "C" void tNET_Shutdown(void)
 {
     if (!networkingEnabled)
     {
@@ -1786,7 +1786,7 @@ NET_Sleep
 Sleeps msec or until something happens on the network
 ====================
 */
-void NET_Sleep(int msec)
+extern "C" void tNET_Sleep(int msec)
 {
     struct timeval timeout;
     fd_set fdr;
@@ -1839,4 +1839,4 @@ void NET_Sleep(int msec)
 NET_Restart_f
 ====================
 */
-void NET_Restart_f(void) { NET_Config(true); }
+extern "C" void tNET_Restart_f(void) { NET_Config(true); }

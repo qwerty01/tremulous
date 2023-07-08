@@ -1,3 +1,4 @@
+#![feature(c_variadic)]
 use std::os::raw::c_int;
 
 //use log::error;

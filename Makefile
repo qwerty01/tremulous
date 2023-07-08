@@ -297,7 +297,8 @@ ALHDIR=$(EXTERNAL_DIR)/AL
 LIBSDIR=$(EXTERNAL_DIR)/libs
 TEMPDIR=/tmp
 
-RUST_SOURCES = $(wildcard $(RUST_DIR)/**/*.rs)
+RUST_SOURCES = $(shell find $(RUST_DIR)/src -name "*.rs")
+RUST_SOURCES += $(RUST_DIR)/wrapper.h
 RUST_TARGET = 
 
 
@@ -2922,11 +2923,11 @@ $(B)/$(BASEGAME)/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 #############################################################################
 $(RUST_DLIB): $(RUST_SOURCES)
 	@echo "RUSTD $@"
-	@cd rust && cargo build --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET) $(RUST_FEATURES)
+	$(Q)cd rust && cargo build --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET) $(RUST_FEATURES)
 
 $(RUST_RLIB): $(RUST_SOURCES)
 	@echo "RUSTR $@"
-	@cd rust && cargo build --release --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET) $(RUST_FEATURES)
+	$(Q)cd rust && cargo build --release --target-dir=../$(B)/$(RUST_DIR) --target $(RUST_TARGET) $(RUST_FEATURES)
 
 #############################################################################
 # MISC
@@ -2939,7 +2940,7 @@ TOOLSOBJ = $(LBURGOBJ) $(Q3CPPOBJ) $(Q3RCCOBJ) $(Q3LCCOBJ) $(Q3ASMOBJ)
 STRINGOBJ = $(Q3R2STRINGOBJ)
 
 clean: clean-debug clean-release
-	@rm -f $(B)/compile_commands.json $(B)/compile_commands.txt $(B)/compile_commands.txt-e
+	$(Q)rm -f $(B)/compile_commands.json $(B)/compile_commands.txt $(B)/compile_commands.txt-e
 
 clean-debug:
 	@$(MAKE) clean2 B=$(BD)
@@ -2949,11 +2950,12 @@ clean-release:
 
 clean2:
 	@echo "CLEAN $(B)"
-	@rm -rf $(B)/scripts
-	@rm -f $(OBJ)
-	@rm -f $(OBJ_D_FILES)
-	@rm -f $(STRINGOBJ)
-	@rm -f $(TARGETS)
+	$(Q)rm -rf $(B)/scripts
+	$(Q)rm -f $(OBJ)
+	$(Q)rm -f $(OBJ_D_FILES)
+	$(Q)rm -f $(STRINGOBJ)
+	$(Q)rm -f $(TARGETS)
+	$(Q)rm -f $(RUST_LIB)
 
 toolsclean: toolsclean-debug toolsclean-release
 
@@ -2965,12 +2967,12 @@ toolsclean-release:
 
 toolsclean2:
 	@echo "TOOLS_CLEAN $(B)"
-	@rm -f $(TOOLSOBJ)
-	@rm -f $(TOOLSOBJ_D_FILES)
-	@rm -f $(LBURG) $(DAGCHECK_C) $(Q3RCC) $(Q3CPP) $(Q3LCC) $(Q3ASM)
+	$(Q)rm -f $(TOOLSOBJ)
+	$(Q)rm -f $(TOOLSOBJ_D_FILES)
+	$(Q)rm -f $(LBURG) $(DAGCHECK_C) $(Q3RCC) $(Q3CPP) $(Q3LCC) $(Q3ASM)
 
 distclean: clean toolsclean
-	@rm -rf $(BUILD_DIR)
+	$(Q)rm -rf $(BUILD_DIR)
 
 dist:
 	git archive --format zip --output $(CLIENTBIN)-$(VERSION).zip HEAD
